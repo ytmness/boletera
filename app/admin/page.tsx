@@ -89,7 +89,7 @@ export default function AdminPage() {
               <Button
                 onClick={handleLogout}
                 variant="outline"
-                className="border-white/20 text-white hover:bg-white/10"
+                className="border-white/20 text-white bg-transparent hover:bg-white/10"
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 Cerrar Sesión

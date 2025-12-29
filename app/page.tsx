@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Mail, Info } from "lucide-react";
+import { toast } from "sonner";
 import { Header } from "@/components/eventos/Header";
 import { HeroCarousel } from "@/components/eventos/HeroCarousel";
 import { ConcertCarousel } from "@/components/eventos/ConcertCarousel";
-import { TicketSelector } from "@/components/eventos/TicketSelector";
 import { Cart } from "@/components/eventos/Cart";
 import { CartItem, Concert } from "@/components/eventos/types";
 
@@ -63,9 +64,9 @@ function convertEventToConcert(event: any): Concert {
 }
 
 export default function HomePage() {
+  const router = useRouter();
   const [concerts, setConcerts] = useState<Concert[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedConcert, setSelectedConcert] = useState<Concert | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [showCart, setShowCart] = useState(false);
 
@@ -138,6 +139,33 @@ export default function HomePage() {
     loadEvents();
   }, []);
 
+  const handleSelectConcert = async (concert: Concert) => {
+    // Verificar si el evento tiene mesas configuradas
+    try {
+      const response = await fetch(`/api/events/${concert.id}`);
+      const data = await response.json();
+      
+      if (data.success && data.data) {
+        const event = data.data;
+        // Verificar si tiene algún ticketType con isTable = true
+        const hasTables = event.ticketTypes?.some((tt: any) => tt.isTable === true);
+        
+        if (hasTables) {
+          // Si tiene mesas, redirigir a la página de mesas
+          router.push(`/eventos/${concert.id}/mesas`);
+        } else {
+          // Si no tiene mesas, mostrar un mensaje o redirigir a otra página
+          toast.error("Este evento no tiene mesas configuradas. Próximamente podrás comprar boletos generales.");
+        }
+      } else {
+        toast.error("Error al cargar información del evento");
+      }
+    } catch (error) {
+      console.error("Error al verificar evento:", error);
+      toast.error("Error al verificar el evento");
+    }
+  };
+
   const handleAddToCart = (items: CartItem[]) => {
     setCartItems((prev) => [...prev, ...items]);
   };
@@ -198,7 +226,7 @@ export default function HomePage() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
               <HeroCarousel
                 concerts={concerts.slice(0, 4)}
-                onSelectConcert={setSelectedConcert}
+                onSelectConcert={handleSelectConcert}
               />
             </div>
 
@@ -218,7 +246,7 @@ export default function HomePage() {
                 </h2>
                 <ConcertCarousel
                   concerts={concerts.slice(0, 4)}
-                  onSelectConcert={setSelectedConcert}
+                  onSelectConcert={handleSelectConcert}
                 />
               </div>
             )}
@@ -230,7 +258,7 @@ export default function HomePage() {
                 </h2>
                 <ConcertCarousel
                   concerts={concerts.slice(4)}
-                  onSelectConcert={setSelectedConcert}
+                  onSelectConcert={handleSelectConcert}
                 />
               </div>
             )}
@@ -308,13 +336,6 @@ export default function HomePage() {
         </div>
       </footer>
 
-      {selectedConcert && (
-        <TicketSelector
-          concert={selectedConcert}
-          onClose={() => setSelectedConcert(null)}
-          onAddToCart={handleAddToCart}
-        />
-      )}
 
       {showCart && (
         <Cart

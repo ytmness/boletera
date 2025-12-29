@@ -516,7 +516,7 @@ export function CreateEventModal({ onClose, onSuccess }: CreateEventModalProps) 
               type="button"
               onClick={onClose}
               variant="outline"
-              className="border-white/30 text-white hover:bg-white/10"
+              className="border-white/30 text-white bg-transparent hover:bg-white/10"
               disabled={isLoading}
             >
               Cancelar
