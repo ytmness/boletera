@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Mail, Info } from "lucide-react";
 import { Header } from "@/components/eventos/Header";
 import { HeroCarousel } from "@/components/eventos/HeroCarousel";
 import { ConcertCarousel } from "@/components/eventos/ConcertCarousel";
@@ -8,277 +9,134 @@ import { TicketSelector } from "@/components/eventos/TicketSelector";
 import { Cart } from "@/components/eventos/Cart";
 import { CartItem, Concert } from "@/components/eventos/types";
 
-const concerts: Concert[] = [
-  {
-    id: "1",
-    artist: "Víctor Mendivil",
-    tour: "En Concierto 2025",
-    date: "15 de Marzo, 2025",
-    time: "21:00 hrs",
-    venue: "Arena Monterrey",
-    image: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=1200",
-    minPrice: 850,
-    sections: [
-      {
-        id: "vip-1",
-        name: "VIP - Mesa 4 personas",
-        description: "Mesa VIP con 4 asientos, acceso preferente",
-        price: 2500,
-        available: 30,
-      },
-      {
-        id: "preferente-1",
-        name: "Preferente",
-        description: "Asientos numerados, excelente vista",
-        price: 1500,
-        available: 120,
-      },
-      {
-        id: "general-1",
-        name: "General",
-        description: "De pie, cerca del escenario",
-        price: 850,
-        available: 350,
-      },
-    ],
-  },
-  {
-    id: "2",
-    artist: "Los Tigres del Norte",
-    tour: "Gira 2025",
-    date: "22 de Marzo, 2025",
-    time: "21:00 hrs",
-    venue: "Arena Monterrey",
-    image: "https://images.unsplash.com/photo-1764649841400-e502bb1ee65b?w=1200",
-    minPrice: 900,
-    sections: [
-      {
-        id: "vip-2",
-        name: "VIP - Frente al Escenario",
-        description: "Acceso preferente, meet & greet",
-        price: 2800,
-        available: 50,
-      },
-      {
-        id: "preferente-2",
-        name: "Preferente",
-        description: "Asientos numerados",
-        price: 1600,
-        available: 120,
-      },
-      {
-        id: "general-2",
-        name: "General",
-        description: "De pie, cerca del escenario",
-        price: 1200,
-        available: 200,
-      },
-    ],
-  },
-  {
-    id: "3",
-    artist: "Café Tacvba",
-    tour: "Un Viaje Tour",
-    date: "5 de Abril, 2025",
-    time: "20:30 hrs",
-    venue: "Auditorio Citibanamex",
-    image: "https://images.unsplash.com/photo-1762917903361-99e0164dbcc5?w=1200",
-    minPrice: 750,
-    sections: [
-      {
-        id: "vip-3",
-        name: "VIP Platino",
-        description: "Mejor ubicación",
-        price: 2200,
-        available: 40,
-      },
-      {
-        id: "preferente-3",
-        name: "Preferente A",
-        description: "Zona premium",
-        price: 1400,
-        available: 100,
-      },
-      {
-        id: "general-3",
-        name: "General",
-        description: "De pie",
-        price: 950,
-        available: 250,
-      },
-    ],
-  },
-  {
-    id: "4",
-    artist: "Molotov",
-    tour: "Donde Jugarán Tour",
-    date: "20 de Abril, 2025",
-    time: "21:30 hrs",
-    venue: "Showcenter Complex",
-    image: "https://images.unsplash.com/photo-1709731191876-899e32264420?w=1200",
-    minPrice: 900,
-    sections: [
-      {
-        id: "vip-4",
-        name: "VIP Gold",
-        description: "Acceso exclusivo, open bar",
-        price: 2800,
-        available: 30,
-      },
-      {
-        id: "preferente-4",
-        name: "Preferente",
-        description: "Asientos numerados",
-        price: 1600,
-        available: 90,
-      },
-      {
-        id: "general-4",
-        name: "General",
-        description: "De pie",
-        price: 900,
-        available: 220,
-      },
-    ],
-  },
-  {
-    id: "5",
-    artist: "Caifanes",
-    tour: "El Diablito Tour",
-    date: "10 de Mayo, 2025",
-    time: "20:00 hrs",
-    venue: "Estadio Universitario",
-    image: "https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=1200",
-    minPrice: 1100,
-    sections: [
-      {
-        id: "vip-5",
-        name: "VIP Diamante",
-        description: "Paquete premium",
-        price: 3500,
-        available: 25,
-      },
-      {
-        id: "preferente-5",
-        name: "Preferente Oro",
-        description: "Asientos premium",
-        price: 2000,
-        available: 80,
-      },
-      {
-        id: "general-5",
-        name: "General Numerado",
-        description: "Asientos numerados",
-        price: 1400,
-        available: 300,
-      },
-    ],
-  },
-  {
-    id: "6",
-    artist: "Zoé",
-    tour: "Sonidos de Kármika Resonancia",
-    date: "25 de Mayo, 2025",
-    time: "21:00 hrs",
-    venue: "Arena Monterrey",
-    image: "https://images.unsplash.com/photo-1692176548571-86138128e36c?w=1200",
-    minPrice: 950,
-    sections: [
-      {
-        id: "vip-6",
-        name: "VIP Experiencia",
-        description: "Meet & greet incluido",
-        price: 2900,
-        available: 35,
-      },
-      {
-        id: "preferente-6",
-        name: "Preferente Plus",
-        description: "Asientos premium",
-        price: 1700,
-        available: 110,
-      },
-      {
-        id: "general-6",
-        name: "General",
-        description: "De pie",
-        price: 1100,
-        available: 240,
-      },
-    ],
-  },
-  {
-    id: "7",
-    artist: "Maná",
-    tour: "México Lindo y Querido Tour",
-    date: "15 de Junio, 2025",
-    time: "21:00 hrs",
-    venue: "Estadio Tecnológico",
-    image: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=1200",
-    minPrice: 1200,
-    sections: [
-      {
-        id: "vip-7",
-        name: "VIP Platino",
-        description: "Acceso VIP completo",
-        price: 3200,
-        available: 40,
-      },
-      {
-        id: "preferente-7",
-        name: "Preferente",
-        description: "Zona premium",
-        price: 1800,
-        available: 150,
-      },
-      {
-        id: "general-7",
-        name: "General",
-        description: "Acceso general",
-        price: 1200,
-        available: 500,
-      },
-    ],
-  },
-  {
-    id: "8",
-    artist: "Kinky",
-    tour: "Nada de Nada Tour",
-    date: "5 de Julio, 2025",
-    time: "22:00 hrs",
-    venue: "House of Blues",
-    image: "https://images.unsplash.com/photo-1523198421516-973dc001a953?w=1200",
-    minPrice: 800,
-    sections: [
-      {
-        id: "vip-8",
-        name: "VIP Lounge",
-        description: "Área VIP con barra privada",
-        price: 2400,
-        available: 20,
-      },
-      {
-        id: "preferente-8",
-        name: "Preferente",
-        description: "Mesa reservada",
-        price: 1500,
-        available: 60,
-      },
-      {
-        id: "general-8",
-        name: "General",
-        description: "De pie",
-        price: 1000,
-        available: 150,
-      },
-    ],
-  },
-];
+// Función para convertir eventos de la BD al formato Concert
+function convertEventToConcert(event: any): Concert {
+  const eventDate = new Date(event.eventDate);
+  const formattedDate = eventDate.toLocaleDateString("es-MX", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  // Verificar que tenga tipos de boletos
+  if (!event.ticketTypes || event.ticketTypes.length === 0) {
+    console.warn(`Evento ${event.name} no tiene tipos de boletos`);
+    // Retornar un evento con sección vacía para evitar errores
+    return {
+      id: event.id,
+      artist: event.artist,
+      tour: event.tour || "",
+      date: formattedDate,
+      time: event.eventTime,
+      venue: event.venue,
+      image: event.imageUrl || "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=1200",
+      minPrice: 0,
+      sections: [],
+    };
+  }
+
+  // Calcular precio mínimo (convertir Decimal a número)
+  const minPrice = event.ticketTypes.length > 0
+    ? Math.min(...event.ticketTypes.map((tt: any) => Number(tt.price)))
+    : 0;
+
+  // Convertir ticketTypes a sections
+  const sections = event.ticketTypes.map((tt: any) => ({
+    id: tt.id,
+    name: tt.name,
+    description: tt.description || "",
+    price: Number(tt.price), // Convertir Decimal a número
+    available: Math.max(0, tt.maxQuantity - (tt.soldQuantity || 0)), // Asegurar que no sea negativo
+  }));
+
+  return {
+    id: event.id,
+    artist: event.artist,
+    tour: event.tour || "",
+    date: formattedDate,
+    time: event.eventTime,
+    venue: event.venue,
+    image: event.imageUrl || "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=1200",
+    minPrice,
+    sections,
+  };
+}
 
 export default function HomePage() {
+  const [concerts, setConcerts] = useState<Concert[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedConcert, setSelectedConcert] = useState<Concert | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [showCart, setShowCart] = useState(false);
+
+  // Cargar eventos desde la base de datos
+  useEffect(() => {
+    const loadEvents = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch("/api/events?isActive=true");
+        const data = await response.json();
+
+        if (data.success && data.data) {
+          console.log("Eventos recibidos de la API:", data.data.length);
+          
+          // Filtrar eventos activos que tengan tipos de boletos
+          // Comparar solo la fecha (sin hora) para evitar problemas de zona horaria
+          const now = new Date();
+          // Obtener fecha de hoy en UTC para comparar correctamente
+          const todayUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+          
+          const activeEvents = data.data.filter((event: any) => {
+            const eventDateUTC = new Date(event.eventDate);
+            // Obtener solo la fecha en UTC (sin hora)
+            const eventDateOnly = new Date(Date.UTC(
+              eventDateUTC.getUTCFullYear(),
+              eventDateUTC.getUTCMonth(),
+              eventDateUTC.getUTCDate()
+            ));
+            
+            const hasTicketTypes = event.ticketTypes && event.ticketTypes.length > 0;
+            // Permitir eventos de hoy o futuros
+            const isTodayOrFuture = eventDateOnly >= todayUTC;
+            
+            // Temporalmente mostrar todos los eventos activos para debug
+            // TODO: Restaurar filtro de fecha después de verificar
+            const result = event.isActive && hasTicketTypes; // && isTodayOrFuture;
+            
+            console.log(`Evento ${event.name}:`, {
+              isActive: event.isActive,
+              hasTicketTypes,
+              ticketTypesCount: event.ticketTypes?.length || 0,
+              eventDate: event.eventDate,
+              eventDateOnly: eventDateOnly.toISOString(),
+              todayUTC: todayUTC.toISOString(),
+              isTodayOrFuture,
+              comparison: `${eventDateOnly.getTime()} >= ${todayUTC.getTime()} = ${eventDateOnly.getTime() >= todayUTC.getTime()}`,
+              willShow: result,
+              fechaActual: new Date().toISOString(),
+            });
+            
+            return result;
+          });
+
+          console.log("Eventos activos después del filtro:", activeEvents.length);
+
+          // Convertir eventos al formato Concert
+          const convertedConcerts = activeEvents.map(convertEventToConcert);
+          console.log("Conciertos convertidos:", convertedConcerts.length);
+          setConcerts(convertedConcerts);
+        } else {
+          console.error("Error en la respuesta de la API:", data);
+        }
+      } catch (error) {
+        console.error("Error al cargar eventos:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadEvents();
+  }, []);
 
   const handleAddToCart = (items: CartItem[]) => {
     setCartItems((prev) => [...prev, ...items]);
@@ -300,6 +158,24 @@ export default function HomePage() {
     );
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#2a2c30] to-[#49484e]">
+        <Header
+          cartItemsCount={cartItems.reduce((sum, item) => sum + item.quantity, 0)}
+          onCartClick={() => setShowCart(true)}
+        />
+        <main className="w-full py-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center py-20">
+              <p className="text-white/70 text-xl">Cargando eventos...</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#2a2c30] to-[#49484e]">
       <Header
@@ -308,43 +184,60 @@ export default function HomePage() {
       />
 
       <main className="w-full py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
-          <HeroCarousel
-            concerts={concerts.slice(0, 4)}
-            onSelectConcert={setSelectedConcert}
-          />
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12" id="eventos">
-            <h1 className="text-white mb-4 text-4xl font-bold">Próximos Conciertos</h1>
-            <p className="text-white/70 max-w-2xl mx-auto">
-              Descubre los mejores eventos en vivo. Compra tus boletos de manera segura.
-            </p>
+        {concerts.length === 0 ? (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center py-20">
+              <h1 className="text-white mb-4 text-4xl font-bold">No hay eventos disponibles</h1>
+              <p className="text-white/70 max-w-2xl mx-auto">
+                Pronto tendremos nuevos eventos disponibles. ¡Vuelve pronto!
+              </p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+              <HeroCarousel
+                concerts={concerts.slice(0, 4)}
+                onSelectConcert={setSelectedConcert}
+              />
+            </div>
 
-        <div className="max-w-6xl mx-auto mb-16">
-          <h2 className="text-white text-xl font-semibold mb-6 px-4">
-            Eventos Destacados
-          </h2>
-          <ConcertCarousel
-            concerts={concerts.slice(0, 4)}
-            onSelectConcert={setSelectedConcert}
-          />
-        </div>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-12" id="eventos">
+                <h1 className="text-white mb-4 text-4xl font-bold">Próximos Conciertos</h1>
+                <p className="text-white/70 max-w-2xl mx-auto">
+                  Descubre los mejores eventos en vivo. Compra tus boletos de manera segura.
+                </p>
+              </div>
+            </div>
 
-        <div className="max-w-6xl mx-auto mb-12">
-          <h2 className="text-white text-xl font-semibold mb-6 px-4">
-            Más Eventos
-          </h2>
-          <ConcertCarousel
-            concerts={concerts.slice(4, 8)}
-            onSelectConcert={setSelectedConcert}
-          />
-        </div>
+            {concerts.length > 0 && (
+              <div className="max-w-6xl mx-auto mb-16">
+                <h2 className="text-white text-xl font-semibold mb-6 px-4">
+                  Eventos Destacados
+                </h2>
+                <ConcertCarousel
+                  concerts={concerts.slice(0, 4)}
+                  onSelectConcert={setSelectedConcert}
+                />
+              </div>
+            )}
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
+            {concerts.length > 4 && (
+              <div className="max-w-6xl mx-auto mb-12">
+                <h2 className="text-white text-xl font-semibold mb-6 px-4">
+                  Más Eventos
+                </h2>
+                <ConcertCarousel
+                  concerts={concerts.slice(4)}
+                  onSelectConcert={setSelectedConcert}
+                />
+              </div>
+            )}
+          </>
+        )}
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16" id="nosotros">
           <div className="bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-[#c4a905]/20">
             <h2 className="text-white text-center mb-4 text-3xl font-bold">
               ¿Por qué comprar con Grupo Regia?
@@ -375,6 +268,31 @@ export default function HomePage() {
                 <h4 className="text-white mb-2 font-semibold">Soporte 24/7</h4>
                 <p className="text-white/70">
                   Estamos aquí para ayudarte
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16" id="contacto">
+          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-[#c4a905]/20">
+            <h2 className="text-white text-center mb-6 text-3xl font-bold">
+              Contáctanos
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+              <div className="text-center">
+                <Mail className="w-12 h-12 text-[#c4a905] mx-auto mb-4" />
+                <h4 className="text-white mb-2 font-semibold text-xl">Email</h4>
+                <p className="text-white/70">
+                  contacto@grupoRegia.com
+                </p>
+              </div>
+              <div className="text-center">
+                <Info className="w-12 h-12 text-[#c4a905] mx-auto mb-4" />
+                <h4 className="text-white mb-2 font-semibold text-xl">Horario de Atención</h4>
+                <p className="text-white/70">
+                  Lunes a Viernes: 9:00 AM - 8:00 PM<br />
+                  Sábados: 10:00 AM - 6:00 PM
                 </p>
               </div>
             </div>

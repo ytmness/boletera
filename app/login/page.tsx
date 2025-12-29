@@ -52,30 +52,19 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen regia-gradient flex items-center justify-center px-4">
       <div className="w-full max-w-md">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-3 mb-4">
-            <div className="w-16 h-16 bg-regia-gold rounded-lg flex items-center justify-center">
-              <span className="text-regia-dark font-bold text-2xl">GR</span>
-            </div>
-          </div>
-          <h1 className="text-3xl font-bold text-white mb-2">
-            Boletera Regia
-          </h1>
-          <p className="text-white/70">Sistema de Administración</p>
-        </div>
-
-        {/* Formulario */}
         <div className="regia-card p-8">
-          <h2 className="text-2xl font-bold text-white mb-6 text-center">
-            Iniciar Sesión
-          </h2>
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-white mb-2">
+              Grupo Regia
+            </h1>
+            <p className="text-white/70">Inicia sesión en tu cuenta</p>
+          </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-white/90 mb-2"
+                className="block text-sm font-medium text-white mb-2"
               >
                 Email
               </label>
@@ -84,17 +73,16 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg bg-white/10 border border-regia-gold/30 text-white placeholder-white/50 focus:outline-none focus:border-regia-gold transition-colors"
-                placeholder="tu@email.com"
                 required
-                disabled={isLoading}
+                className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-regia-gold"
+                placeholder="tu@email.com"
               />
             </div>
 
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-white/90 mb-2"
+                className="block text-sm font-medium text-white mb-2"
               >
                 Contraseña
               </label>
@@ -103,19 +91,18 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg bg-white/10 border border-regia-gold/30 text-white placeholder-white/50 focus:outline-none focus:border-regia-gold transition-colors"
-                placeholder="••••••••"
                 required
-                disabled={isLoading}
+                className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-regia-gold"
+                placeholder="••••••••"
               />
             </div>
 
             <Button
               type="submit"
-              className="w-full regia-button-primary py-6 text-lg"
               disabled={isLoading}
+              className="w-full regia-button-primary"
             >
-              {isLoading ? "Ingresando..." : "Ingresar"}
+              {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
             </Button>
           </form>
 
@@ -148,3 +135,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
     // Log de auditoría
     await prisma.auditLog.create({
       data: {
-        userId: user.id,
+        userId: user!.id,
         action: "EVENT_CREATED",
         entityType: "Event",
         entityId: event.id,
@@ -116,3 +116,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

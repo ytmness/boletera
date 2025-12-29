@@ -54,3 +54,4 @@ export const updateEventSchema = createEventSchema.partial();
 export type CreateEventInput = z.infer<typeof createEventSchema>;
 export type UpdateEventInput = z.infer<typeof updateEventSchema>;
 export type TicketTypeInput = z.infer<typeof ticketTypeSchema>;
+

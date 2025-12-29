@@ -71,33 +71,28 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen regia-gradient">
       {/* Header */}
-      <header className="bg-black/20 border-b border-regia-gold/20 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            {/* Logo */}
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-regia-gold rounded-lg flex items-center justify-center">
-                <span className="text-regia-dark font-bold text-xl">GR</span>
-              </div>
-              <div>
-                <h1 className="text-white font-bold text-lg">GRUPO REGIA</h1>
-                <p className="text-regia-gold text-xs">Panel de Administración</p>
-              </div>
+      <header className="bg-[#49484e] border-b border-[#c4a905]/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-white">Panel de Administración</h1>
+              <p className="text-white/70 text-sm">Bienvenido, {user?.name}</p>
             </div>
-
-            {/* User Info */}
             <div className="flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-white font-medium">{user?.name}</p>
-                <p className="text-white/60 text-sm">{user?.role}</p>
-              </div>
+              <Button
+                onClick={() => setShowCreateModal(true)}
+                className="bg-regia-gold hover:bg-regia-gold/90 text-white"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Nuevo Evento
+              </Button>
               <Button
                 onClick={handleLogout}
                 variant="outline"
-                className="border-regia-gold/50 text-white hover:bg-regia-gold hover:text-regia-dark"
+                className="border-white/20 text-white hover:bg-white/10"
               >
                 <LogOut className="w-4 h-4 mr-2" />
-                Salir
+                Cerrar Sesión
               </Button>
             </div>
           </div>
@@ -148,21 +143,12 @@ export default function AdminPage() {
         {/* Events Section */}
         <div className="regia-card p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-white">Gestión de Eventos</h2>
-            <Button
-              onClick={() => setShowCreateModal(true)}
-              className="regia-button-primary"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Crear Evento
-            </Button>
+            <h2 className="text-xl font-bold text-white">Eventos</h2>
           </div>
-
           <EventsTable key={refreshKey} />
         </div>
       </main>
 
-      {/* Create Event Modal */}
       {showCreateModal && (
         <CreateEventModal
           onClose={() => setShowCreateModal(false)}
@@ -172,3 +158,4 @@ export default function AdminPage() {
     </div>
   );
 }
+

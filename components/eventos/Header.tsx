@@ -1,4 +1,5 @@
 import { ShoppingCart, Calendar, Info, Mail, User } from "lucide-react";
+import Link from "next/link";
 
 interface HeaderProps {
   cartItemsCount: number;
@@ -10,27 +11,27 @@ export function Header({ cartItemsCount, onCartClick }: HeaderProps) {
     <header className="bg-[#49484e] border-b border-[#c4a905]/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-36 py-4">
-          <div className="flex items-center gap-3 h-full">
+          <Link href="/" className="flex items-center gap-3 h-full">
             <img src="/assets/logo.png" alt="Grupo Regia" className="h-full w-auto object-contain" />
-          </div>
+          </Link>
           
           <nav className="hidden md:flex items-center gap-6">
-            <a href="#eventos" className="flex items-center gap-2 text-[#f9fbf6] hover:text-[#c4a905] transition-colors">
+            <Link href="/#eventos" className="flex items-center gap-2 text-[#f9fbf6] hover:text-[#c4a905] transition-colors">
               <Calendar className="w-4 h-4" />
               <span>Eventos</span>
-            </a>
-            <a href="#nosotros" className="flex items-center gap-2 text-[#f9fbf6] hover:text-[#c4a905] transition-colors">
+            </Link>
+            <Link href="/#nosotros" className="flex items-center gap-2 text-[#f9fbf6] hover:text-[#c4a905] transition-colors">
               <Info className="w-4 h-4" />
               <span>Nosotros</span>
-            </a>
-            <a href="#contacto" className="flex items-center gap-2 text-[#f9fbf6] hover:text-[#c4a905] transition-colors">
+            </Link>
+            <Link href="/#contacto" className="flex items-center gap-2 text-[#f9fbf6] hover:text-[#c4a905] transition-colors">
               <Mail className="w-4 h-4" />
               <span>Contacto</span>
-            </a>
-            <a href="#cuenta" className="flex items-center gap-2 text-[#f9fbf6] hover:text-[#c4a905] transition-colors">
+            </Link>
+            <Link href="/login" className="flex items-center gap-2 text-[#f9fbf6] hover:text-[#c4a905] transition-colors">
               <User className="w-4 h-4" />
               <span>Mi Cuenta</span>
-            </a>
+            </Link>
           </nav>
 
           <button

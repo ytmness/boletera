@@ -151,7 +151,7 @@ export async function DELETE(
     await prisma.auditLog.create({
       data: {
         userId: user!.id,
-        action: "EVENT_UPDATED",
+        action: "EVENT_DELETED",
         entityType: "Event",
         entityId: params.id,
         changes: { deleted: true },
@@ -170,3 +170,4 @@ export async function DELETE(
     );
   }
 }
+
