@@ -1,13 +1,68 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import fs from "fs";
+import path from "path";
+
+// #region agent log
+const logPath = path.resolve('.cursor', 'debug.log');
+const logEntry = (msg: string, data: any, hypothesisId: string) => {
+  const entry = JSON.stringify({location:'prisma/seed.ts',message:msg,data,timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId});
+  // Always log to console
+  console.log(`[DEBUG ${hypothesisId}] ${msg}:`, JSON.stringify(data, null, 2));
+  // Try to write to file
+  try {
+    const dir = path.dirname(logPath);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.appendFileSync(logPath, entry + '\n', 'utf8');
+  } catch (e: any) {
+    console.error('[DEBUG] Log file write error:', e.message);
+  }
+};
+// Write immediately on import
+console.log('[DEBUG] ===== SCRIPT STARTING =====');
+logEntry('Script started',{cwd:process.cwd(),logPath,nodeVersion:process.version},'A');
+const dbUrlFull = process.env.DATABASE_URL || '';
+logEntry('DATABASE_URL env var',{
+  databaseUrl:dbUrlFull.substring(0,100)+'...',
+  hasDatabaseUrl:!!process.env.DATABASE_URL,
+  fullLength:dbUrlFull.length,
+  fullUrl:dbUrlFull // Log completo para debugging
+},'A');
+logEntry('DIRECT_URL env var',{directUrl:process.env.DIRECT_URL?.substring(0,100)+'...',hasDirectUrl:!!process.env.DIRECT_URL,fullLength:process.env.DIRECT_URL?.length},'A');
+// #endregion
 
 const prisma = new PrismaClient();
 
 async function main() {
+  // #region agent log
+  const dbUrl = process.env.DATABASE_URL || '';
+  let parsedUrl: any = null;
+  try {
+    const url = new URL(dbUrl);
+    parsedUrl = {
+      protocol: url.protocol,
+      username: url.username,
+      password: url.password ? '***' : null,
+      hostname: url.hostname,
+      port: url.port,
+      pathname: url.pathname,
+      search: url.search
+    };
+  } catch (e) {
+    parsedUrl = { error: String(e) };
+  }
+  logEntry('Parsed DATABASE_URL',parsedUrl,'B');
+  // #endregion
+  
   console.log("🌱 Seeding database...");
 
   // Crear usuario admin
   const adminPassword = await bcrypt.hash("admin123", 10);
+  
+  // #region agent log
+  logEntry('Before prisma.user.upsert',{step:'about_to_connect'},'C');
+  // #endregion
+  
   const admin = await prisma.user.upsert({
     where: { email: "admin@grupoRegia.com" },
     update: {},
@@ -98,6 +153,9 @@ async function main() {
 
 main()
   .catch((e) => {
+    // #region agent log
+    logEntry('Error caught',{errorMessage:e.message,errorCode:e.code,errorName:e.name,stack:e.stack?.substring(0,200)},'D');
+    // #endregion
     console.error(e);
     process.exit(1);
   })
