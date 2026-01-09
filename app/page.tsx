@@ -188,7 +188,7 @@ export default function HomePage() {
         {featuredEvent && (
           <div className="absolute inset-0 z-0">
             <div className="w-full h-full flex items-center justify-center">
-              <div className="relative w-full max-w-[95%] lg:max-w-[85%] h-full">
+              <div className="relative w-full max-w-[98%] lg:max-w-[2400px] h-full">
                 <Image
                   src={featuredEvent.image}
                   alt={featuredEvent.artist}
