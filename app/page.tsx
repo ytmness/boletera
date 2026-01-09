@@ -80,20 +80,47 @@ export default function HomePage() {
     // Asegurar que esté silenciado (requerido para autoplay)
     video.muted = true;
     video.volume = 0;
+    video.defaultMuted = true;
     
     const attemptPlay = async () => {
       try {
+        video.muted = true; // Re-asegurar antes de reproducir
+        video.volume = 0;
         await video.play();
-        console.log("✅ Video reproduciéndose");
+        console.log("✅ Video reproduciéndose automáticamente");
+        return true;
       } catch (error) {
-        console.log("⏸️ Autoplay bloqueado");
+        console.log("⏸️ Autoplay bloqueado:", error);
+        return false;
       }
     };
 
-    // Intentar reproducir cuando el video esté listo
-    const timer = setTimeout(attemptPlay, 50);
+    // Múltiples eventos para asegurar reproducción inmediata
+    const handleLoadedData = () => {
+      console.log("📹 Video data loaded");
+      attemptPlay();
+    };
     
-    return () => clearTimeout(timer);
+    const handleCanPlay = () => {
+      console.log("▶️ Video can play");
+      attemptPlay();
+    };
+
+    video.addEventListener('loadeddata', handleLoadedData);
+    video.addEventListener('canplay', handleCanPlay);
+    video.addEventListener('canplaythrough', handleCanPlay);
+
+    // Intentos con intervalos cortos
+    const timer1 = setTimeout(attemptPlay, 100);
+    const timer2 = setTimeout(attemptPlay, 500);
+    
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      video.removeEventListener('loadeddata', handleLoadedData);
+      video.removeEventListener('canplay', handleCanPlay);
+      video.removeEventListener('canplaythrough', handleCanPlay);
+    };
   }, []);
 
   // Cargar sesión del usuario
