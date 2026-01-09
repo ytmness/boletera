@@ -210,94 +210,93 @@ export default function HomePage() {
         )}
 
         {/* Header flotante con logos y navegación integrada */}
-        <header className="absolute top-0 left-0 right-0 z-30 px-8 sm:px-12 lg:px-16 py-6">
-          <div className="w-full flex items-center justify-between relative">
-            {/* Logo GRUPO REGIA - Izquierda */}
+        <header className="absolute top-0 left-0 right-0 z-30 px-6 sm:px-8 lg:px-12 py-6">
+          <div className="w-full hidden lg:flex items-center justify-between">
+            {/* Logo GRUPO REGIA */}
             <div className="flex-shrink-0">
               <Image
                 src="/assets/logo-grupo-regia.png"
                 alt="Grupo Regia"
-                width={120}
-                height={70}
+                width={110}
+                height={65}
                 className="opacity-90 cursor-pointer"
                 onClick={() => router.push("/")}
               />
             </div>
 
-            {/* Navegación Izquierda */}
-            <nav className="hidden lg:flex items-center gap-12 ml-auto mr-auto">
-              <a
-                href="#eventos"
-                className="flex items-center gap-2 text-regia-cream/90 hover:text-regia-gold-bright transition-all duration-300 text-sm font-medium uppercase tracking-wider hover:scale-105"
-              >
-                <Calendar className="w-4 h-4" />
-                <span>Eventos</span>
-              </a>
+            {/* Eventos */}
+            <a
+              href="#eventos"
+              className="flex items-center gap-2 text-regia-cream/90 hover:text-regia-gold-bright transition-all duration-300 text-sm font-medium uppercase tracking-wider hover:scale-105"
+            >
+              <Calendar className="w-4 h-4" />
+              <span>Eventos</span>
+            </a>
 
-              <button
-                onClick={() => router.push("/mis-boletos")}
-                className="flex items-center gap-2 text-regia-cream/90 hover:text-regia-gold-bright transition-all duration-300 text-sm font-medium uppercase tracking-wider hover:scale-105"
-              >
-                <Music className="w-4 h-4" />
-                <span>Mis Boletos</span>
-              </button>
+            {/* Mis Boletos */}
+            <button
+              onClick={() => router.push("/mis-boletos")}
+              className="flex items-center gap-2 text-regia-cream/90 hover:text-regia-gold-bright transition-all duration-300 text-sm font-medium uppercase tracking-wider hover:scale-105"
+            >
+              <Music className="w-4 h-4" />
+              <span>Mis Boletos</span>
+            </button>
 
-              {/* Espacio para la estrella - usando padding invisible */}
-              <div style={{ width: '80px' }}></div>
-
-              {userRole === "ADMIN" && (
-                <button
-                  onClick={() => router.push("/admin")}
-                  className="flex items-center gap-2 text-regia-cream/90 hover:text-regia-gold-bright transition-all duration-300 text-sm font-medium uppercase tracking-wider hover:scale-105"
-                >
-                  <Shield className="w-4 h-4" />
-                  <span>Admin</span>
-                </button>
-              )}
-
-              {(userRole === "ACCESOS" || userRole === "ADMIN") && (
-                <button
-                  onClick={() => router.push("/accesos")}
-                  className="flex items-center gap-2 text-regia-cream/90 hover:text-regia-gold-bright transition-all duration-300 text-sm font-medium uppercase tracking-wider hover:scale-105"
-                >
-                  <Scan className="w-4 h-4" />
-                  <span>Accesos</span>
-                </button>
-              )}
-
-              {user ? (
-                <button
-                  onClick={() => router.push("/login")}
-                  className="flex items-center gap-2 text-regia-cream/90 hover:text-regia-gold-bright transition-all duration-300 text-sm font-medium uppercase tracking-wider hover:scale-105"
-                >
-                  <User className="w-4 h-4" />
-                  <span>{user.name || user.email}</span>
-                </button>
-              ) : (
-                <button
-                  onClick={() => router.push("/login")}
-                  className="flex items-center gap-2 text-regia-cream/90 hover:text-regia-gold-bright transition-all duration-300 text-sm font-medium uppercase tracking-wider hover:scale-105"
-                >
-                  <LogIn className="w-4 h-4" />
-                  <span>Login</span>
-                </button>
-              )}
-            </nav>
-
-            {/* Estrella decorativa - Centro Absoluto */}
-            <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
+            {/* Estrella en el flujo normal */}
+            <div className="flex items-center">
               <Image 
                 src="/assets/estrella.png" 
                 alt="Estrella" 
-                width={60} 
-                height={60} 
+                width={56} 
+                height={56} 
                 className="animate-pulse opacity-90" 
               />
             </div>
 
-            {/* Logo RICO O MUERTO - Derecha */}
+            {/* Admin - solo si tiene rol */}
+            {userRole === "ADMIN" && (
+              <button
+                onClick={() => router.push("/admin")}
+                className="flex items-center gap-2 text-regia-cream/90 hover:text-regia-gold-bright transition-all duration-300 text-sm font-medium uppercase tracking-wider hover:scale-105"
+              >
+                <Shield className="w-4 h-4" />
+                <span>Admin</span>
+              </button>
+            )}
+
+            {/* Accesos - solo si tiene rol */}
+            {(userRole === "ACCESOS" || userRole === "ADMIN") && (
+              <button
+                onClick={() => router.push("/accesos")}
+                className="flex items-center gap-2 text-regia-cream/90 hover:text-regia-gold-bright transition-all duration-300 text-sm font-medium uppercase tracking-wider hover:scale-105"
+              >
+                <Scan className="w-4 h-4" />
+                <span>Accesos</span>
+              </button>
+            )}
+
+            {/* Login / User */}
+            {user ? (
+              <button
+                onClick={() => router.push("/login")}
+                className="flex items-center gap-2 text-regia-cream/90 hover:text-regia-gold-bright transition-all duration-300 text-sm font-medium uppercase tracking-wider hover:scale-105"
+              >
+                <User className="w-4 h-4" />
+                <span>{user.name || user.email}</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => router.push("/login")}
+                className="flex items-center gap-2 text-regia-cream/90 hover:text-regia-gold-bright transition-all duration-300 text-sm font-medium uppercase tracking-wider hover:scale-105"
+              >
+                <LogIn className="w-4 h-4" />
+                <span>Login</span>
+              </button>
+            )}
+
+            {/* Logo RICO O MUERTO */}
             <div className="flex-shrink-0 text-right">
-              <h2 className="text-regia-gold-old font-bold text-xs sm:text-sm tracking-[0.3em] uppercase leading-tight">
+              <h2 className="text-regia-gold-old font-bold text-xs tracking-[0.3em] uppercase leading-tight">
                 RICO O<br/>MUERTO
               </h2>
             </div>
