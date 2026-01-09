@@ -72,10 +72,19 @@ export default function HomePage() {
   const [userRole, setUserRole] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Reproducción automática agresiva
+  // Reproducción automática agresiva con DEBUG
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
+    
+    console.log("🎬 [DEBUG] Video useEffect iniciado", {
+      videoExists: !!video,
+      classList: video?.className,
+      offsetWidth: video?.offsetWidth,
+      offsetHeight: video?.offsetHeight,
+      display: typeof window !== 'undefined' ? window.getComputedStyle(video).display : 'n/a',
+      visibility: typeof window !== 'undefined' ? window.getComputedStyle(video).visibility : 'n/a'
+    });
 
     // Configurar para autoplay (crítico)
     video.muted = true;
@@ -85,9 +94,23 @@ export default function HomePage() {
     video.setAttribute('playsinline', '');
     
     let hasPlayed = false;
+    let attemptCount = 0;
 
     const forcePlay = async () => {
+      attemptCount++;
       if (hasPlayed || !video) return;
+      
+      console.log(`🎯 [DEBUG] Intento #${attemptCount} de reproducir video`, {
+        readyState: video.readyState,
+        paused: video.paused,
+        muted: video.muted,
+        volume: video.volume,
+        networkState: video.networkState,
+        currentTime: video.currentTime,
+        duration: video.duration,
+        videoWidth: video.videoWidth,
+        videoHeight: video.videoHeight
+      });
       
       try {
         // Re-asegurar que esté muted
@@ -98,14 +121,24 @@ export default function HomePage() {
         if (playPromise !== undefined) {
           await playPromise;
           hasPlayed = true;
-          console.log("✅ Video reproduciéndose automáticamente");
+          console.log("✅ [DEBUG] Video playing SUCCESS!", {
+            currentTime: video.currentTime,
+            paused: video.paused
+          });
         }
       } catch (error) {
-        console.log("⏸️ Reintentando reproducción...");
+        console.error("❌ [DEBUG] Video play FAILED", {
+          error: String(error),
+          errorName: error?.name,
+          errorMessage: error?.message,
+          readyState: video.readyState,
+          paused: video.paused
+        });
       }
     };
 
     // Intentos múltiples inmediatos
+    console.log("⏰ [DEBUG] Setting up timers para reproducción");
     forcePlay();
     setTimeout(forcePlay, 100);
     setTimeout(forcePlay, 300);
@@ -113,9 +146,23 @@ export default function HomePage() {
     setTimeout(forcePlay, 1000);
     
     // También intentar cuando el video esté listo
-    const handleCanPlay = () => forcePlay();
-    const handleLoadedData = () => forcePlay();
-    const handleLoadedMetadata = () => forcePlay();
+    const handleCanPlay = () => {
+      console.log("📡 [DEBUG] canplay event fired", { readyState: video.readyState });
+      forcePlay();
+    };
+    const handleLoadedData = () => {
+      console.log("📡 [DEBUG] loadeddata event fired", { readyState: video.readyState, duration: video.duration });
+      forcePlay();
+    };
+    const handleLoadedMetadata = () => {
+      console.log("📡 [DEBUG] loadedmetadata event fired", {
+        readyState: video.readyState,
+        duration: video.duration,
+        videoWidth: video.videoWidth,
+        videoHeight: video.videoHeight
+      });
+      forcePlay();
+    };
     
     video.addEventListener('loadedmetadata', handleLoadedMetadata);
     video.addEventListener('loadeddata', handleLoadedData);
