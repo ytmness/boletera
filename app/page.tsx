@@ -202,10 +202,31 @@ export default function HomePage() {
             </div>
 
             {/* Elemento decorativo central - 3 estrellas */}
-            <div className="hidden md:flex items-center gap-3 absolute left-1/2 -translate-x-1/2">
-              <Image src="/assets/estrella.png" alt="Estrella" width={32} height={32} className="opacity-90 animate-pulse" />
-              <Image src="/assets/estrella.png" alt="Estrella" width={40} height={40} className="opacity-90 animate-pulse" style={{ animationDelay: '0.3s' }} />
-              <Image src="/assets/estrella.png" alt="Estrella" width={32} height={32} className="opacity-90 animate-pulse" style={{ animationDelay: '0.6s' }} />
+            <div className="hidden md:flex items-center gap-4 absolute left-1/2 -translate-x-1/2">
+              <Image 
+                src="/assets/estrella.png" 
+                alt="Estrella" 
+                width={48} 
+                height={48} 
+                className="animate-pulse" 
+                style={{ mixBlendMode: 'screen', filter: 'brightness(1.2)' }}
+              />
+              <Image 
+                src="/assets/estrella.png" 
+                alt="Estrella" 
+                width={56} 
+                height={56} 
+                className="animate-pulse" 
+                style={{ mixBlendMode: 'screen', filter: 'brightness(1.2)', animationDelay: '0.3s' }}
+              />
+              <Image 
+                src="/assets/estrella.png" 
+                alt="Estrella" 
+                width={48} 
+                height={48} 
+                className="animate-pulse" 
+                style={{ mixBlendMode: 'screen', filter: 'brightness(1.2)', animationDelay: '0.6s' }}
+              />
             </div>
 
             {/* Logo secundario - Derecha (usando logo principal temporalmente) */}
@@ -253,9 +274,21 @@ export default function HomePage() {
                   boxShadow: '0 8px 32px rgba(244, 208, 63, 0.4)',
                 }}
               >
-                <Image src="/assets/estrella.png" alt="" width={20} height={20} className="opacity-80" />
+                <Image 
+                  src="/assets/estrella.png" 
+                  alt="" 
+                  width={28} 
+                  height={28} 
+                  style={{ mixBlendMode: 'multiply', filter: 'contrast(1.5)' }}
+                />
                 Comprar Boletos
-                <Image src="/assets/estrella.png" alt="" width={20} height={20} className="opacity-80" />
+                <Image 
+                  src="/assets/estrella.png" 
+                  alt="" 
+                  width={28} 
+                  height={28} 
+                  style={{ mixBlendMode: 'multiply', filter: 'contrast(1.5)' }}
+                />
               </button>
 
               {/* Info adicional debajo del botón */}
