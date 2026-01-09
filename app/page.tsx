@@ -292,8 +292,8 @@ export default function HomePage() {
           </div>
         </header>
 
-        {/* Contenido principal - posicionado más abajo para no tapar la imagen */}
-        <div className="relative z-20 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto mb-16 md:mb-20">
+        {/* Contenido principal - centrado perfecto */}
+        <div className="absolute bottom-32 md:bottom-40 left-1/2 -translate-x-1/2 z-20 w-full max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
           {featuredEvent ? (
             <>
               {/* Nombre del evento - Tipografía gótica/vintage */}
@@ -371,8 +371,8 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* Scroll indicator - Estrella */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 animate-bounce">
+        {/* Scroll indicator - Estrella con más separación */}
+        <div className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-20 animate-bounce">
           <Image 
             src="/assets/estrella.png" 
             alt="Scroll" 
