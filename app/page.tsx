@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Calendar, MapPin, Clock, Music, Users, Sparkles } from "lucide-react";
+import { Calendar, MapPin, Clock, Music, Users } from "lucide-react";
 import { toast } from "sonner";
 import { Cart } from "@/components/eventos/Cart";
 import { CartItem, Concert } from "@/components/eventos/types";
@@ -193,19 +193,19 @@ export default function HomePage() {
             {/* Logo GRUPO REGIA - Izquierda */}
             <div className="flex-shrink-0">
               <Image
-                src="/assets/logo.png"
+                src="/assets/logo-grupo-regia.png"
                 alt="Grupo Regia"
-                width={120}
-                height={60}
+                width={140}
+                height={80}
                 className="opacity-90"
               />
             </div>
 
-            {/* Elemento decorativo central - 3 cruces */}
+            {/* Elemento decorativo central - 3 estrellas */}
             <div className="hidden md:flex items-center gap-3 absolute left-1/2 -translate-x-1/2">
-              <Sparkles className="w-8 h-8 text-regia-gold-old animate-pulse" />
-              <Sparkles className="w-10 h-10 text-regia-gold-bright animate-pulse" style={{ animationDelay: '0.3s' }} />
-              <Sparkles className="w-8 h-8 text-regia-gold-old animate-pulse" style={{ animationDelay: '0.6s' }} />
+              <Image src="/assets/estrella.png" alt="Estrella" width={32} height={32} className="opacity-90 animate-pulse" />
+              <Image src="/assets/estrella.png" alt="Estrella" width={40} height={40} className="opacity-90 animate-pulse" style={{ animationDelay: '0.3s' }} />
+              <Image src="/assets/estrella.png" alt="Estrella" width={32} height={32} className="opacity-90 animate-pulse" style={{ animationDelay: '0.6s' }} />
             </div>
 
             {/* Logo secundario - Derecha (usando logo principal temporalmente) */}
@@ -253,9 +253,9 @@ export default function HomePage() {
                   boxShadow: '0 8px 32px rgba(244, 208, 63, 0.4)',
                 }}
               >
-                <Sparkles className="w-4 h-4 md:w-5 md:h-5" />
+                <Image src="/assets/estrella.png" alt="" width={20} height={20} className="opacity-80" />
                 Comprar Boletos
-                <Sparkles className="w-4 h-4 md:w-5 md:h-5" />
+                <Image src="/assets/estrella.png" alt="" width={20} height={20} className="opacity-80" />
               </button>
 
               {/* Info adicional debajo del botón */}
