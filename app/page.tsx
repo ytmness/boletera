@@ -72,20 +72,62 @@ export default function HomePage() {
   const [userRole, setUserRole] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Asegurar reproducción automática inmediata
+  // Reproducción automática agresiva
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    // Solo asegurar que esté silenciado (el autoPlay nativo se encarga del resto)
+    // Configurar para autoplay (crítico)
     video.muted = true;
     video.volume = 0;
     video.defaultMuted = true;
+    video.setAttribute('muted', '');
+    video.setAttribute('playsinline', '');
     
-    // Intentar reproducir inmediatamente si el video ya tiene datos
-    if (video.readyState >= 2) {
-      video.play().catch(() => {});
-    }
+    let hasPlayed = false;
+
+    const forcePlay = async () => {
+      if (hasPlayed || !video) return;
+      
+      try {
+        // Re-asegurar que esté muted
+        video.muted = true;
+        video.volume = 0;
+        
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+          await playPromise;
+          hasPlayed = true;
+          console.log("✅ Video reproduciéndose automáticamente");
+        }
+      } catch (error) {
+        console.log("⏸️ Reintentando reproducción...");
+      }
+    };
+
+    // Intentos múltiples inmediatos
+    forcePlay();
+    setTimeout(forcePlay, 100);
+    setTimeout(forcePlay, 300);
+    setTimeout(forcePlay, 500);
+    setTimeout(forcePlay, 1000);
+    
+    // También intentar cuando el video esté listo
+    const handleCanPlay = () => forcePlay();
+    const handleLoadedData = () => forcePlay();
+    const handleLoadedMetadata = () => forcePlay();
+    
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    video.addEventListener('loadeddata', handleLoadedData);
+    video.addEventListener('canplay', handleCanPlay);
+    video.addEventListener('canplaythrough', handleCanPlay);
+
+    return () => {
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      video.removeEventListener('loadeddata', handleLoadedData);
+      video.removeEventListener('canplay', handleCanPlay);
+      video.removeEventListener('canplaythrough', handleCanPlay);
+    };
   }, []);
 
   // Cargar sesión del usuario
