@@ -70,31 +70,61 @@ export default function HomePage() {
   const [showCart, setShowCart] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [videoPlaying, setVideoPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Forzar reproducción del video en móvil
+  // Forzar reproducción del video
   useEffect(() => {
-    const playVideo = async () => {
-      if (videoRef.current) {
-        try {
-          await videoRef.current.play();
-        } catch (error) {
-          console.log("Autoplay bloqueado, se requiere interacción del usuario");
-          // Intentar reproducir después del primer touch/click
-          const playOnInteraction = () => {
-            videoRef.current?.play();
-            document.removeEventListener('touchstart', playOnInteraction);
-            document.removeEventListener('click', playOnInteraction);
-          };
-          document.addEventListener('touchstart', playOnInteraction, { once: true });
-          document.addEventListener('click', playOnInteraction, { once: true });
-        }
+    const video = videoRef.current;
+    if (!video) return;
+
+    // Función para intentar reproducir el video
+    const attemptPlay = async () => {
+      try {
+        video.load(); // Forzar carga del video
+        await video.play();
+        setVideoPlaying(true);
+      } catch (error) {
+        console.log("Autoplay bloqueado, esperando interacción");
       }
     };
-    
-    // Esperar un momento para que el DOM esté listo
-    setTimeout(playVideo, 100);
-  }, []);
+
+    // Evento cuando el video puede reproducirse
+    const handleCanPlay = () => {
+      attemptPlay();
+    };
+
+    // Evento cuando el video empieza a reproducirse
+    const handlePlaying = () => {
+      setVideoPlaying(true);
+    };
+
+    video.addEventListener('canplay', handleCanPlay);
+    video.addEventListener('playing', handlePlaying);
+
+    // Intentar reproducir inmediatamente
+    attemptPlay();
+
+    // Reproducir en la primera interacción con TODA la página
+    const playOnInteraction = () => {
+      if (!videoPlaying) {
+        video.play().then(() => {
+          setVideoPlaying(true);
+        }).catch(err => console.log("Error al reproducir:", err));
+      }
+    };
+
+    // Escuchar clicks/touches en toda la página
+    document.addEventListener('touchstart', playOnInteraction, { once: true, passive: true });
+    document.addEventListener('click', playOnInteraction, { once: true });
+
+    return () => {
+      video.removeEventListener('canplay', handleCanPlay);
+      video.removeEventListener('playing', handlePlaying);
+      document.removeEventListener('touchstart', playOnInteraction);
+      document.removeEventListener('click', playOnInteraction);
+    };
+  }, [videoPlaying]);
 
   // Cargar sesión del usuario
   useEffect(() => {
@@ -212,14 +242,21 @@ export default function HomePage() {
         {/* Video de fondo */}
         {featuredEvent && (
           <div className="absolute inset-0 z-0">
+            {/* Poster de fondo que desaparece cuando el video se reproduce */}
+            {!videoPlaying && (
+              <div 
+                className="absolute inset-0 w-full h-full bg-cover bg-center"
+                style={{ backgroundImage: 'url(/assets/flyerfinal-10-1-25.jpg)' }}
+              />
+            )}
+            
             <video
               ref={videoRef}
               autoPlay
               loop
               muted
               playsInline
-              preload="metadata"
-              poster="/assets/flyerfinal-10-1-25.jpg"
+              preload="auto"
               className="w-full h-full object-cover"
               webkit-playsinline="true"
               x5-playsinline="true"
