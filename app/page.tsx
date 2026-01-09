@@ -72,47 +72,38 @@ export default function HomePage() {
   const [userRole, setUserRole] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Forzar reproducción del video en móvil
+  // Reproducción automática agresiva del video
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    // Intentar reproducir el video
+    let playAttempted = false;
+
     const attemptPlay = async () => {
+      if (playAttempted) return;
       try {
+        playAttempted = true;
         await video.play();
+        console.log("Video reproduciéndose");
       } catch (error) {
-        console.log("Autoplay bloqueado, esperando interacción del usuario");
+        playAttempted = false;
+        console.log("Esperando interacción para reproducir");
       }
     };
 
-    // Intentar reproducir cuando el video esté listo
-    const handleCanPlay = () => {
-      attemptPlay();
-    };
+    // Múltiples eventos para asegurar reproducción
+    video.addEventListener('loadeddata', attemptPlay);
+    video.addEventListener('canplay', attemptPlay);
+    video.addEventListener('canplaythrough', attemptPlay);
 
-    video.addEventListener('canplay', handleCanPlay);
-
-    // Intentar reproducir inmediatamente
-    attemptPlay();
-
-    // Reproducir en la primera interacción con la página
-    const playOnInteraction = async () => {
-      try {
-        await video.play();
-      } catch (err) {
-        console.log("Error al reproducir:", err);
-      }
-    };
-
-    // Escuchar clicks/touches en toda la página (solo una vez)
-    document.addEventListener('touchstart', playOnInteraction, { once: true, passive: true });
-    document.addEventListener('click', playOnInteraction, { once: true });
+    // Intentar reproducir inmediatamente después de un pequeño delay
+    const timer = setTimeout(attemptPlay, 100);
 
     return () => {
-      video.removeEventListener('canplay', handleCanPlay);
-      document.removeEventListener('touchstart', playOnInteraction);
-      document.removeEventListener('click', playOnInteraction);
+      clearTimeout(timer);
+      video.removeEventListener('loadeddata', attemptPlay);
+      video.removeEventListener('canplay', attemptPlay);
+      video.removeEventListener('canplaythrough', attemptPlay);
     };
   }, []);
 
@@ -246,6 +237,12 @@ export default function HomePage() {
               x-webkit-airplay="allow"
               disablePictureInPicture
               controlsList="nodownload"
+              onClick={(e) => {
+                const target = e.currentTarget;
+                if (target.paused) {
+                  target.play().catch(err => console.log("Error al reproducir:", err));
+                }
+              }}
             >
               <source src="/assets/hero-video.mp4" type="video/mp4" />
             </video>
