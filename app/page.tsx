@@ -208,24 +208,23 @@ export default function HomePage() {
                 alt="Estrella" 
                 width={48} 
                 height={48} 
-                className="animate-pulse" 
-                style={{ mixBlendMode: 'screen', filter: 'brightness(1.2)' }}
+                className="animate-pulse opacity-90" 
               />
               <Image 
                 src="/assets/estrella.png" 
                 alt="Estrella" 
                 width={56} 
                 height={56} 
-                className="animate-pulse" 
-                style={{ mixBlendMode: 'screen', filter: 'brightness(1.2)', animationDelay: '0.3s' }}
+                className="animate-pulse opacity-95" 
+                style={{ animationDelay: '0.3s' }}
               />
               <Image 
                 src="/assets/estrella.png" 
                 alt="Estrella" 
                 width={48} 
                 height={48} 
-                className="animate-pulse" 
-                style={{ mixBlendMode: 'screen', filter: 'brightness(1.2)', animationDelay: '0.6s' }}
+                className="animate-pulse opacity-90" 
+                style={{ animationDelay: '0.6s' }}
               />
             </div>
 
@@ -279,7 +278,7 @@ export default function HomePage() {
                   alt="" 
                   width={28} 
                   height={28} 
-                  style={{ mixBlendMode: 'multiply', filter: 'contrast(1.5)' }}
+                  className="opacity-80"
                 />
                 Comprar Boletos
                 <Image 
@@ -287,7 +286,7 @@ export default function HomePage() {
                   alt="" 
                   width={28} 
                   height={28} 
-                  style={{ mixBlendMode: 'multiply', filter: 'contrast(1.5)' }}
+                  className="opacity-80"
                 />
               </button>
 
