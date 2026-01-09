@@ -72,38 +72,78 @@ export default function HomePage() {
   const [userRole, setUserRole] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Reproducción automática agresiva del video
+  // Reproducción automática ULTRA agresiva del video (especialmente para móvil)
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    let playAttempted = false;
+    // CRÍTICO: Asegurar que esté silenciado en JavaScript (no solo HTML)
+    video.muted = true;
+    video.volume = 0;
+    video.defaultMuted = true;
 
     const attemptPlay = async () => {
-      if (playAttempted) return;
       try {
-        playAttempted = true;
+        video.muted = true; // Re-asegurar que esté muted
+        video.volume = 0;
         await video.play();
-        console.log("Video reproduciéndose");
+        console.log("✅ Video reproduciéndose");
+        return true;
       } catch (error) {
-        playAttempted = false;
-        console.log("Esperando interacción para reproducir");
+        console.log("⏸️ Autoplay bloqueado:", error);
+        return false;
       }
     };
 
-    // Múltiples eventos para asegurar reproducción
+    // 1. Múltiples eventos del video
     video.addEventListener('loadeddata', attemptPlay);
     video.addEventListener('canplay', attemptPlay);
     video.addEventListener('canplaythrough', attemptPlay);
 
-    // Intentar reproducir inmediatamente después de un pequeño delay
-    const timer = setTimeout(attemptPlay, 100);
+    // 2. Intentos repetidos con intervalos
+    const timer1 = setTimeout(attemptPlay, 100);
+    const timer2 = setTimeout(attemptPlay, 500);
+    const timer3 = setTimeout(attemptPlay, 1000);
+
+    // 3. Listener de scroll para móvil (sin once, para múltiples intentos)
+    let scrollAttempted = false;
+    const playOnScroll = () => {
+      if (!scrollAttempted) {
+        scrollAttempted = true;
+        attemptPlay();
+      }
+    };
+    window.addEventListener('scroll', playOnScroll, { passive: true });
+
+    // 4. Listeners de interacción suave (sin once para reintentos)
+    const playOnInteraction = () => attemptPlay();
+    document.addEventListener('touchstart', playOnInteraction, { passive: true });
+    document.addEventListener('touchmove', playOnInteraction, { passive: true });
+    document.addEventListener('touchend', playOnInteraction, { passive: true });
+
+    // 5. IntersectionObserver para reproducir cuando sea visible
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          attemptPlay();
+        }
+      });
+    }, { threshold: 0.5 });
+    
+    observer.observe(video);
 
     return () => {
-      clearTimeout(timer);
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
       video.removeEventListener('loadeddata', attemptPlay);
       video.removeEventListener('canplay', attemptPlay);
       video.removeEventListener('canplaythrough', attemptPlay);
+      window.removeEventListener('scroll', playOnScroll);
+      document.removeEventListener('touchstart', playOnInteraction);
+      document.removeEventListener('touchmove', playOnInteraction);
+      document.removeEventListener('touchend', playOnInteraction);
+      observer.disconnect();
     };
   }, []);
 
