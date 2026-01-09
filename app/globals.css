@@ -359,39 +359,63 @@
 }
 
 /* Ocultar controles nativos del video y botón de play en móvil */
-video::-webkit-media-controls {
+video::-webkit-media-controls,
+video.hero-video-no-controls::-webkit-media-controls {
+  display: none !important;
+  -webkit-appearance: none !important;
+}
+
+video::-webkit-media-controls-enclosure,
+video.hero-video-no-controls::-webkit-media-controls-enclosure {
   display: none !important;
 }
 
-video::-webkit-media-controls-enclosure {
+video::-webkit-media-controls-panel,
+video.hero-video-no-controls::-webkit-media-controls-panel {
   display: none !important;
 }
 
-video::-webkit-media-controls-panel {
-  display: none !important;
-}
-
-video::-webkit-media-controls-start-playback-button {
+video::-webkit-media-controls-start-playback-button,
+video.hero-video-no-controls::-webkit-media-controls-start-playback-button {
   display: none !important;
   opacity: 0 !important;
   pointer-events: none !important;
+  -webkit-appearance: none !important;
 }
 
-video::-webkit-media-controls-play-button {
+video::-webkit-media-controls-play-button,
+video.hero-video-no-controls::-webkit-media-controls-play-button {
   display: none !important;
+  -webkit-appearance: none !important;
 }
 
-video::-webkit-media-controls-overlay-play-button {
+video::-webkit-media-controls-overlay-play-button,
+video.hero-video-no-controls::-webkit-media-controls-overlay-play-button {
   display: none !important;
   opacity: 0 !important;
+  -webkit-appearance: none !important;
 }
 
 /* Firefox */
-video::-moz-media-controls {
+video::-moz-media-controls,
+video.hero-video-no-controls::-moz-media-controls {
   display: none !important;
 }
 
 /* Microsoft Edge / IE */
-video::-ms-media-controls {
+video::-ms-media-controls,
+video.hero-video-no-controls::-ms-media-controls {
+  display: none !important;
+}
+
+/* Asegurar que el video no tenga apariencia nativa */
+video,
+video.hero-video-no-controls {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+video::-internal-media-controls-overlay-cast-button,
+video.hero-video-no-controls::-internal-media-controls-overlay-cast-button {
   display: none !important;
 }

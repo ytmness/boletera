@@ -258,12 +258,15 @@ export default function HomePage() {
               playsInline
               preload="auto"
               poster="/assets/flyerfinal-10-1-25.jpg"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover hero-video-no-controls"
               webkit-playsinline="true"
               x5-playsinline="true"
               x-webkit-airplay="allow"
               disablePictureInPicture
               controlsList="nodownload"
+              style={{
+                pointerEvents: 'auto'
+              }}
               onClick={(e) => {
                 const target = e.currentTarget;
                 if (target.paused) {
