@@ -164,7 +164,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen regia-bg-main">
       {/* HERO SECTION - Estilo Flyer Cuernavaca */}
-      <section className="relative min-h-screen md:h-[85vh] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[120vh] flex items-center justify-center overflow-visible">
         {/* Imagen de fondo con silueta dramática */}
         {featuredEvent && (
           <div className="absolute inset-0 z-0">
@@ -174,13 +174,9 @@ export default function HomePage() {
               fill
               className="object-cover"
               priority
-              style={{ 
-                transform: 'scale(0.85)',
-                transformOrigin: 'center center'
-              }}
             />
             {/* Overlay oscuro con gradiente */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/60 to-black/90" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/70 to-black/95" />
             
             {/* Efecto de neblina dorada (simulado con gradientes radiales) */}
             <div className="absolute inset-0 opacity-30">
@@ -222,34 +218,34 @@ export default function HomePage() {
         </header>
 
         {/* Contenido principal centrado */}
-        <div className="relative z-20 text-center px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto pt-8 md:pt-0">
+        <div className="relative z-20 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
           {featuredEvent ? (
             <>
               {/* Nombre del evento - Tipografía gótica/vintage */}
               <h1 
-                className="font-display text-6xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-black uppercase mb-6 md:mb-8"
+                className="font-display text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black uppercase mb-8"
                 style={{
                   background: 'linear-gradient(135deg, #F4D03F 0%, #C5A059 50%, #8B7355 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
                   textShadow: '0 0 80px rgba(244, 208, 63, 0.3)',
-                  letterSpacing: '0.02em',
-                  lineHeight: '0.85',
+                  letterSpacing: '0.05em',
+                  lineHeight: '0.9',
                 }}
               >
                 {featuredEvent.artist}
               </h1>
 
               {/* Fecha - Tipografía elegante */}
-              <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-regia-gold-old mb-6 md:mb-8 tracking-[0.15em] uppercase">
+              <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-regia-gold-old mb-8 tracking-[0.2em] uppercase">
                 {featuredEvent.date}
               </p>
 
               {/* Botón CTA principal */}
               <button
                 onClick={() => handleSelectConcert(featuredEvent)}
-                className="group relative inline-flex items-center gap-3 px-10 md:px-14 py-4 md:py-5 text-base md:text-lg font-bold uppercase tracking-widest overflow-hidden transition-all duration-300 hover:-translate-y-1"
+                className="group relative inline-flex items-center gap-3 px-12 py-5 text-lg font-bold uppercase tracking-widest overflow-hidden transition-all duration-300 hover:-translate-y-1"
                 style={{
                   background: 'linear-gradient(135deg, #C5A059 0%, #F4D03F 100%)',
                   color: '#0A0A0A',
@@ -257,19 +253,19 @@ export default function HomePage() {
                   boxShadow: '0 8px 32px rgba(244, 208, 63, 0.4)',
                 }}
               >
-                <Sparkles className="w-4 h-4 md:w-5 md:h-5" />
+                <Sparkles className="w-5 h-5" />
                 Comprar Boletos
-                <Sparkles className="w-4 h-4 md:w-5 md:h-5" />
+                <Sparkles className="w-5 h-5" />
               </button>
 
               {/* Info adicional debajo del botón */}
-              <div className="mt-8 md:mt-10 flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6">
-                <div className="flex items-center gap-2 text-regia-cream/80 text-sm md:text-base">
+              <div className="mt-12 flex flex-col items-center gap-4">
+                <div className="flex items-center gap-2 text-regia-cream/80 text-sm">
                   <MapPin className="w-4 h-4 text-regia-gold-old" />
                   <span>{featuredEvent.venue}</span>
                 </div>
                 {featuredEvent.time && (
-                  <div className="flex items-center gap-2 text-regia-cream/80 text-sm md:text-base">
+                  <div className="flex items-center gap-2 text-regia-cream/80 text-sm">
                     <Clock className="w-4 h-4 text-regia-gold-old" />
                     <span>{featuredEvent.time}</span>
                   </div>
@@ -288,8 +284,8 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* Scroll indicator - Solo en móvil */}
-        <div className="md:hidden absolute bottom-8 left-1/2 -translate-x-1/2 z-20 animate-bounce">
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 animate-bounce">
           <div className="w-6 h-10 border-2 border-regia-gold-old rounded-full flex justify-center p-1">
             <div className="w-1 h-3 bg-regia-gold-bright rounded-full animate-pulse" />
           </div>
