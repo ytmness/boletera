@@ -72,7 +72,7 @@ export default function HomePage() {
   const [userRole, setUserRole] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Reproducción automática optimizada (desktop instantáneo, móvil agresivo)
+  // Reproducción automática para desktop (móvil usa imagen estática)
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -80,58 +80,20 @@ export default function HomePage() {
     // Asegurar que esté silenciado (requerido para autoplay)
     video.muted = true;
     video.volume = 0;
-
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
     const attemptPlay = async () => {
       try {
         await video.play();
         console.log("✅ Video reproduciéndose");
-        return true;
       } catch (error) {
         console.log("⏸️ Autoplay bloqueado");
-        return false;
       }
     };
 
-    if (!isMobile) {
-      // DESKTOP: Confiar en autoplay nativo + un solo intento
-      const timer = setTimeout(attemptPlay, 50);
-      return () => clearTimeout(timer);
-    }
-
-    // MÓVIL: Estrategia agresiva
-    const timers: NodeJS.Timeout[] = [];
-    timers.push(setTimeout(attemptPlay, 100));
-    timers.push(setTimeout(attemptPlay, 500));
-
-    // Listeners para móvil
-    let interactionAttempted = false;
-    const playOnInteraction = () => {
-      if (!interactionAttempted) {
-        interactionAttempted = true;
-        attemptPlay();
-      }
-    };
-
-    document.addEventListener('touchstart', playOnInteraction, { once: true, passive: true });
-    window.addEventListener('scroll', playOnInteraction, { once: true, passive: true });
-
-    // IntersectionObserver para móvil
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        attemptPlay();
-      }
-    }, { threshold: 0.5 });
+    // Intentar reproducir cuando el video esté listo
+    const timer = setTimeout(attemptPlay, 50);
     
-    observer.observe(video);
-
-    return () => {
-      timers.forEach(t => clearTimeout(t));
-      document.removeEventListener('touchstart', playOnInteraction);
-      window.removeEventListener('scroll', playOnInteraction);
-      observer.disconnect();
-    };
+    return () => clearTimeout(timer);
   }, []);
 
   // Cargar sesión del usuario
@@ -247,9 +209,10 @@ export default function HomePage() {
     <div className="min-h-screen regia-bg-main overflow-x-hidden">
       {/* HERO SECTION - Estilo Flyer Cuernavaca con Video de Fondo */}
       <section className="relative w-full min-h-screen flex flex-col items-center justify-end overflow-hidden bg-black">
-        {/* Video de fondo */}
+        {/* Video de fondo (solo desktop) / Imagen (móvil) */}
         {featuredEvent && (
           <div className="absolute inset-0 z-0">
+            {/* Video solo en desktop */}
             <video
               ref={videoRef}
               autoPlay
@@ -258,24 +221,21 @@ export default function HomePage() {
               playsInline
               preload="auto"
               poster="/assets/flyerfinal-10-1-25.jpg"
-              className="w-full h-full object-cover hero-video-no-controls"
+              className="hidden lg:block w-full h-full object-cover hero-video-no-controls"
               webkit-playsinline="true"
               x5-playsinline="true"
               x-webkit-airplay="allow"
               disablePictureInPicture
               controlsList="nodownload"
-              style={{
-                pointerEvents: 'auto'
-              }}
-              onClick={(e) => {
-                const target = e.currentTarget;
-                if (target.paused) {
-                  target.play().catch(err => console.log("Error al reproducir:", err));
-                }
-              }}
             >
               <source src="/assets/hero-video.mp4" type="video/mp4" />
             </video>
+
+            {/* Imagen estática en móvil */}
+            <div 
+              className="lg:hidden w-full h-full bg-cover bg-center"
+              style={{ backgroundImage: 'url(/assets/flyerfinal-10-1-25.jpg)' }}
+            />
             {/* Overlay oscuro con gradiente - más suave para ver el video */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/80" />
             
