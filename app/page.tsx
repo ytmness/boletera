@@ -189,48 +189,48 @@ export default function HomePage() {
 
         {/* Header flotante con logos */}
         <header className="absolute top-0 left-0 right-0 z-30 px-4 sm:px-6 lg:px-8 py-6">
-          <div className="max-w-7xl mx-auto flex items-start justify-between">
+          <div className="max-w-7xl mx-auto flex items-center justify-between relative">
             {/* Logo GRUPO REGIA - Izquierda */}
             <div className="flex-shrink-0">
               <Image
                 src="/assets/logo-grupo-regia.png"
                 alt="Grupo Regia"
-                width={140}
-                height={80}
+                width={160}
+                height={90}
                 className="opacity-90"
               />
             </div>
 
             {/* Elemento decorativo central - 3 estrellas */}
-            <div className="hidden md:flex items-center gap-4 absolute left-1/2 -translate-x-1/2">
+            <div className="hidden md:flex items-center gap-5 absolute left-1/2 -translate-x-1/2">
               <Image 
                 src="/assets/estrella.png" 
                 alt="Estrella" 
-                width={48} 
-                height={48} 
+                width={64} 
+                height={64} 
                 className="animate-pulse opacity-90" 
               />
               <Image 
                 src="/assets/estrella.png" 
                 alt="Estrella" 
-                width={56} 
-                height={56} 
+                width={72} 
+                height={72} 
                 className="animate-pulse opacity-95" 
                 style={{ animationDelay: '0.3s' }}
               />
               <Image 
                 src="/assets/estrella.png" 
                 alt="Estrella" 
-                width={48} 
-                height={48} 
+                width={64} 
+                height={64} 
                 className="animate-pulse opacity-90" 
                 style={{ animationDelay: '0.6s' }}
               />
             </div>
 
-            {/* Logo secundario - Derecha (usando logo principal temporalmente) */}
+            {/* Logo secundario - Derecha */}
             <div className="flex-shrink-0 text-right">
-              <h2 className="text-regia-gold-old font-bold text-xs sm:text-sm tracking-[0.3em] uppercase">
+              <h2 className="text-regia-gold-old font-bold text-sm sm:text-base md:text-lg tracking-[0.25em] uppercase leading-tight">
                 RICO O<br/>MUERTO
               </h2>
             </div>
