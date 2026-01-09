@@ -194,6 +194,11 @@ export default function HomePage() {
               playsInline
               preload="auto"
               className="w-full h-full object-cover"
+              webkit-playsinline="true"
+              x5-playsinline="true"
+              x-webkit-airplay="allow"
+              disablePictureInPicture
+              controlsList="nodownload"
             >
               <source src="/assets/hero-video.mp4" type="video/mp4" />
             </video>
@@ -360,7 +365,14 @@ export default function HomePage() {
               </div>
 
               {/* Scroll indicator - Estrella centrada respecto al contenido */}
-              <div className="mt-12 md:mt-16 flex justify-center animate-bounce">
+              <button
+                onClick={() => {
+                  const nextSection = document.getElementById('info-evento');
+                  nextSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
+                className="mt-12 md:mt-16 mx-auto flex justify-center animate-bounce cursor-pointer hover:scale-110 transition-transform duration-300"
+                aria-label="Scroll hacia abajo"
+              >
                 <Image 
                   src="/assets/estrella.png" 
                   alt="Scroll" 
@@ -368,7 +380,7 @@ export default function HomePage() {
                   height={48} 
                   className="opacity-90" 
                 />
-              </div>
+              </button>
             </>
           ) : (
             <div className="text-center">
@@ -385,7 +397,7 @@ export default function HomePage() {
 
       {/* SECCIÓN: INFORMACIÓN DEL EVENTO */}
       {featuredEvent && (
-        <section className="relative py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black via-regia-metallic-gray/30 to-black">
+        <section id="info-evento" className="relative py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black via-regia-metallic-gray/30 to-black">
           <div className="max-w-5xl mx-auto">
             <h2 className="regia-title-main text-4xl md:text-5xl text-center mb-16">
               Información del Evento
