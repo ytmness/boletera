@@ -72,77 +72,64 @@ export default function HomePage() {
   const [userRole, setUserRole] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Reproducción automática ULTRA agresiva del video (especialmente para móvil)
+  // Reproducción automática optimizada (desktop instantáneo, móvil agresivo)
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    // CRÍTICO: Asegurar que esté silenciado en JavaScript (no solo HTML)
+    // Asegurar que esté silenciado (requerido para autoplay)
     video.muted = true;
     video.volume = 0;
-    video.defaultMuted = true;
 
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
     const attemptPlay = async () => {
       try {
-        video.muted = true; // Re-asegurar que esté muted
-        video.volume = 0;
         await video.play();
         console.log("✅ Video reproduciéndose");
         return true;
       } catch (error) {
-        console.log("⏸️ Autoplay bloqueado:", error);
+        console.log("⏸️ Autoplay bloqueado");
         return false;
       }
     };
 
-    // 1. Múltiples eventos del video
-    video.addEventListener('loadeddata', attemptPlay);
-    video.addEventListener('canplay', attemptPlay);
-    video.addEventListener('canplaythrough', attemptPlay);
+    if (!isMobile) {
+      // DESKTOP: Confiar en autoplay nativo + un solo intento
+      const timer = setTimeout(attemptPlay, 50);
+      return () => clearTimeout(timer);
+    }
 
-    // 2. Intentos repetidos con intervalos
-    const timer1 = setTimeout(attemptPlay, 100);
-    const timer2 = setTimeout(attemptPlay, 500);
-    const timer3 = setTimeout(attemptPlay, 1000);
+    // MÓVIL: Estrategia agresiva
+    const timers: NodeJS.Timeout[] = [];
+    timers.push(setTimeout(attemptPlay, 100));
+    timers.push(setTimeout(attemptPlay, 500));
 
-    // 3. Listener de scroll para móvil (sin once, para múltiples intentos)
-    let scrollAttempted = false;
-    const playOnScroll = () => {
-      if (!scrollAttempted) {
-        scrollAttempted = true;
+    // Listeners para móvil
+    let interactionAttempted = false;
+    const playOnInteraction = () => {
+      if (!interactionAttempted) {
+        interactionAttempted = true;
         attemptPlay();
       }
     };
-    window.addEventListener('scroll', playOnScroll, { passive: true });
 
-    // 4. Listeners de interacción suave (sin once para reintentos)
-    const playOnInteraction = () => attemptPlay();
-    document.addEventListener('touchstart', playOnInteraction, { passive: true });
-    document.addEventListener('touchmove', playOnInteraction, { passive: true });
-    document.addEventListener('touchend', playOnInteraction, { passive: true });
+    document.addEventListener('touchstart', playOnInteraction, { once: true, passive: true });
+    window.addEventListener('scroll', playOnInteraction, { once: true, passive: true });
 
-    // 5. IntersectionObserver para reproducir cuando sea visible
+    // IntersectionObserver para móvil
     const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          attemptPlay();
-        }
-      });
+      if (entries[0].isIntersecting) {
+        attemptPlay();
+      }
     }, { threshold: 0.5 });
     
     observer.observe(video);
 
     return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      clearTimeout(timer3);
-      video.removeEventListener('loadeddata', attemptPlay);
-      video.removeEventListener('canplay', attemptPlay);
-      video.removeEventListener('canplaythrough', attemptPlay);
-      window.removeEventListener('scroll', playOnScroll);
+      timers.forEach(t => clearTimeout(t));
       document.removeEventListener('touchstart', playOnInteraction);
-      document.removeEventListener('touchmove', playOnInteraction);
-      document.removeEventListener('touchend', playOnInteraction);
+      window.removeEventListener('scroll', playOnInteraction);
       observer.disconnect();
     };
   }, []);
