@@ -164,7 +164,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen regia-bg-main">
       {/* HERO SECTION - Estilo Flyer Cuernavaca */}
-      <section className="relative min-h-[120vh] flex items-center justify-center overflow-visible">
+      <section className="relative min-h-[120vh] flex flex-col items-center justify-end overflow-visible">
         {/* Imagen de fondo con silueta dramática */}
         {featuredEvent && (
           <div className="absolute inset-0 z-0">
@@ -217,13 +217,13 @@ export default function HomePage() {
           </div>
         </header>
 
-        {/* Contenido principal centrado */}
-        <div className="relative z-20 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+        {/* Contenido principal - posicionado más abajo para no tapar la imagen */}
+        <div className="relative z-20 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto mb-16 md:mb-20">
           {featuredEvent ? (
             <>
               {/* Nombre del evento - Tipografía gótica/vintage */}
               <h1 
-                className="font-display text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black uppercase mb-8"
+                className="font-display text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase mb-4 md:mb-6"
                 style={{
                   background: 'linear-gradient(135deg, #F4D03F 0%, #C5A059 50%, #8B7355 100%)',
                   WebkitBackgroundClip: 'text',
@@ -238,14 +238,14 @@ export default function HomePage() {
               </h1>
 
               {/* Fecha - Tipografía elegante */}
-              <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-regia-gold-old mb-8 tracking-[0.2em] uppercase">
+              <p className="text-xl sm:text-2xl md:text-3xl font-bold text-regia-gold-old mb-6 md:mb-8 tracking-[0.2em] uppercase">
                 {featuredEvent.date}
               </p>
 
               {/* Botón CTA principal */}
               <button
                 onClick={() => handleSelectConcert(featuredEvent)}
-                className="group relative inline-flex items-center gap-3 px-12 py-5 text-lg font-bold uppercase tracking-widest overflow-hidden transition-all duration-300 hover:-translate-y-1"
+                className="group relative inline-flex items-center gap-3 px-10 py-4 text-base md:text-lg font-bold uppercase tracking-widest overflow-hidden transition-all duration-300 hover:-translate-y-1"
                 style={{
                   background: 'linear-gradient(135deg, #C5A059 0%, #F4D03F 100%)',
                   color: '#0A0A0A',
@@ -253,13 +253,13 @@ export default function HomePage() {
                   boxShadow: '0 8px 32px rgba(244, 208, 63, 0.4)',
                 }}
               >
-                <Sparkles className="w-5 h-5" />
+                <Sparkles className="w-4 h-4 md:w-5 md:h-5" />
                 Comprar Boletos
-                <Sparkles className="w-5 h-5" />
+                <Sparkles className="w-4 h-4 md:w-5 md:h-5" />
               </button>
 
               {/* Info adicional debajo del botón */}
-              <div className="mt-12 flex flex-col items-center gap-4">
+              <div className="mt-6 md:mt-8 flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6">
                 <div className="flex items-center gap-2 text-regia-cream/80 text-sm">
                   <MapPin className="w-4 h-4 text-regia-gold-old" />
                   <span>{featuredEvent.venue}</span>
