@@ -211,9 +211,9 @@ export default function HomePage() {
 
         {/* Header flotante con logos y navegación integrada */}
         <header className="absolute top-0 left-0 right-0 z-30 px-8 sm:px-12 lg:px-16 py-6">
-          <div className="w-full flex items-center justify-between">
-            {/* Logo GRUPO REGIA - Extremo Izquierdo */}
-            <div className="flex-shrink-0">
+          <div className="w-full flex items-center">
+            {/* Logo GRUPO REGIA - Izquierda */}
+            <div className="flex-shrink-0 w-32">
               <Image
                 src="/assets/logo-grupo-regia.png"
                 alt="Grupo Regia"
@@ -224,8 +224,8 @@ export default function HomePage() {
               />
             </div>
 
-            {/* Navegación Izquierda con espacio */}
-            <nav className="hidden lg:flex items-center gap-8 ml-12">
+            {/* Navegación Completa - Centrada con espaciado uniforme */}
+            <nav className="hidden lg:flex items-center justify-center flex-1 gap-16">
               <a
                 href="#eventos"
                 className="flex items-center gap-2 text-regia-cream/90 hover:text-regia-gold-bright transition-all duration-300 text-sm font-medium uppercase tracking-wider hover:scale-105"
@@ -241,21 +241,18 @@ export default function HomePage() {
                 <Music className="w-4 h-4" />
                 <span>Mis Boletos</span>
               </button>
-            </nav>
 
-            {/* Estrella decorativa - Centro Absoluto */}
-            <div className="hidden md:flex absolute left-1/2 -translate-x-1/2">
-              <Image 
-                src="/assets/estrella.png" 
-                alt="Estrella" 
-                width={60} 
-                height={60} 
-                className="animate-pulse opacity-90" 
-              />
-            </div>
+              {/* Estrella en el centro de la navegación */}
+              <div className="flex items-center">
+                <Image 
+                  src="/assets/estrella.png" 
+                  alt="Estrella" 
+                  width={56} 
+                  height={56} 
+                  className="animate-pulse opacity-90" 
+                />
+              </div>
 
-            {/* Navegación Derecha con espacio */}
-            <nav className="hidden lg:flex items-center gap-8 mr-12">
               {userRole === "ADMIN" && (
                 <button
                   onClick={() => router.push("/admin")}
@@ -295,8 +292,8 @@ export default function HomePage() {
               )}
             </nav>
 
-            {/* Logo RICO O MUERTO - Extremo Derecho */}
-            <div className="flex-shrink-0 text-right">
+            {/* Logo RICO O MUERTO - Derecha */}
+            <div className="flex-shrink-0 w-32 text-right">
               <h2 className="text-regia-gold-old font-bold text-xs sm:text-sm tracking-[0.3em] uppercase leading-tight">
                 RICO O<br/>MUERTO
               </h2>
