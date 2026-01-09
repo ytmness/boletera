@@ -71,6 +71,7 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-archivo)', 'system-ui', 'sans-serif'],
         display: ['var(--font-anton)', 'Arial Black', 'Impact', 'sans-serif'],
+        gothic: ['var(--font-cinzel)', 'serif'],
       },
       borderRadius: {
         lg: "var(--radius)",

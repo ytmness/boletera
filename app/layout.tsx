@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Archivo, Anton } from "next/font/google";
+import { Archivo, Anton, Cinzel } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Toaster } from "sonner";
@@ -17,6 +17,14 @@ const anton = Anton({
   subsets: ["latin"],
   weight: ["400"],
   variable: "--font-anton",
+  display: "swap",
+});
+
+// Fuente gótica/vintage para hero dramático
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  weight: ["400", "700", "900"],
+  variable: "--font-cinzel",
   display: "swap",
 });
 
@@ -38,7 +46,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`${archivo.variable} ${anton.variable}`} suppressHydrationWarning>
+    <html lang="es" className={`${archivo.variable} ${anton.variable} ${cinzel.variable}`} suppressHydrationWarning>
       <body className={`${archivo.className} antialiased`}>
         <Providers>
           {children}

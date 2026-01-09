@@ -2,11 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Mail, Info } from "lucide-react";
+import Image from "next/image";
+import { Calendar, MapPin, Clock, Music, Users, Sparkles } from "lucide-react";
 import { toast } from "sonner";
-import { Header } from "@/components/eventos/Header";
-import { HeroCarousel } from "@/components/eventos/HeroCarousel";
-import { ConcertCarousel } from "@/components/eventos/ConcertCarousel";
 import { Cart } from "@/components/eventos/Cart";
 import { CartItem, Concert } from "@/components/eventos/types";
 
@@ -19,10 +17,7 @@ function convertEventToConcert(event: any): Concert {
     year: "numeric",
   });
 
-  // Verificar que tenga tipos de boletos
   if (!event.ticketTypes || event.ticketTypes.length === 0) {
-    console.warn(`Evento ${event.name} no tiene tipos de boletos`);
-    // Retornar un evento con sección vacía para evitar errores
     return {
       id: event.id,
       artist: event.artist,
@@ -36,18 +31,16 @@ function convertEventToConcert(event: any): Concert {
     };
   }
 
-  // Calcular precio mínimo (convertir Decimal a número)
   const minPrice = event.ticketTypes.length > 0
     ? Math.min(...event.ticketTypes.map((tt: any) => Number(tt.price)))
     : 0;
 
-  // Convertir ticketTypes a sections
   const sections = event.ticketTypes.map((tt: any) => ({
     id: tt.id,
     name: tt.name,
     description: tt.description || "",
-    price: Number(tt.price), // Convertir Decimal a número
-    available: Math.max(0, tt.maxQuantity - (tt.soldQuantity || 0)), // Asegurar que no sea negativo
+    price: Number(tt.price),
+    available: Math.max(0, tt.maxQuantity - (tt.soldQuantity || 0)),
   }));
 
   return {
@@ -79,17 +72,11 @@ export default function HomePage() {
         const data = await response.json();
 
         if (data.success && data.data) {
-          console.log("Eventos recibidos de la API:", data.data.length);
-          
-          // Filtrar eventos activos que tengan tipos de boletos
-          // Comparar solo la fecha (sin hora) para evitar problemas de zona horaria
           const now = new Date();
-          // Obtener fecha de hoy en UTC para comparar correctamente
           const todayUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
           
           const activeEvents = data.data.filter((event: any) => {
             const eventDateUTC = new Date(event.eventDate);
-            // Obtener solo la fecha en UTC (sin hora)
             const eventDateOnly = new Date(Date.UTC(
               eventDateUTC.getUTCFullYear(),
               eventDateUTC.getUTCMonth(),
@@ -97,37 +84,13 @@ export default function HomePage() {
             ));
             
             const hasTicketTypes = event.ticketTypes && event.ticketTypes.length > 0;
-            // Permitir eventos de hoy o futuros
-            const isTodayOrFuture = eventDateOnly >= todayUTC;
-            
-            // Temporalmente mostrar todos los eventos activos para debug
-            // TODO: Restaurar filtro de fecha después de verificar
-            const result = event.isActive && hasTicketTypes; // && isTodayOrFuture;
-            
-            console.log(`Evento ${event.name}:`, {
-              isActive: event.isActive,
-              hasTicketTypes,
-              ticketTypesCount: event.ticketTypes?.length || 0,
-              eventDate: event.eventDate,
-              eventDateOnly: eventDateOnly.toISOString(),
-              todayUTC: todayUTC.toISOString(),
-              isTodayOrFuture,
-              comparison: `${eventDateOnly.getTime()} >= ${todayUTC.getTime()} = ${eventDateOnly.getTime() >= todayUTC.getTime()}`,
-              willShow: result,
-              fechaActual: new Date().toISOString(),
-            });
+            const result = event.isActive && hasTicketTypes;
             
             return result;
           });
 
-          console.log("Eventos activos después del filtro:", activeEvents.length);
-
-          // Convertir eventos al formato Concert
           const convertedConcerts = activeEvents.map(convertEventToConcert);
-          console.log("Conciertos convertidos:", convertedConcerts.length);
           setConcerts(convertedConcerts);
-        } else {
-          console.error("Error en la respuesta de la API:", data);
         }
       } catch (error) {
         console.error("Error al cargar eventos:", error);
@@ -140,21 +103,17 @@ export default function HomePage() {
   }, []);
 
   const handleSelectConcert = async (concert: Concert) => {
-    // Verificar si el evento tiene mesas configuradas
     try {
       const response = await fetch(`/api/events/${concert.id}`);
       const data = await response.json();
       
       if (data.success && data.data) {
         const event = data.data;
-        // Verificar si tiene algún ticketType con isTable = true
         const hasTables = event.ticketTypes?.some((tt: any) => tt.isTable === true);
         
         if (hasTables) {
-          // Si tiene mesas, redirigir a la página de mesas
           router.push(`/eventos/${concert.id}/mesas`);
         } else {
-          // Si no tiene mesas, mostrar un mensaje o redirigir a otra página
           toast.error("Este evento no tiene mesas configuradas. Próximamente podrás comprar boletos generales.");
         }
       } else {
@@ -164,10 +123,6 @@ export default function HomePage() {
       console.error("Error al verificar evento:", error);
       toast.error("Error al verificar el evento");
     }
-  };
-
-  const handleAddToCart = (items: CartItem[]) => {
-    setCartItems((prev) => [...prev, ...items]);
   };
 
   const handleRemoveItem = (index: number) => {
@@ -188,155 +143,404 @@ export default function HomePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen regia-bg-textured">
-        <Header
-          cartItemsCount={cartItems.reduce((sum, item) => sum + item.quantity, 0)}
-          onCartClick={() => setShowCart(true)}
-        />
-        <main className="w-full py-8">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center py-20">
-              <p className="regia-text-body text-xl">Cargando eventos...</p>
-            </div>
-          </div>
-        </main>
+      <div className="min-h-screen regia-bg-main flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-regia-gold-bright border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="regia-text-body text-xl">Cargando eventos...</p>
+        </div>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen regia-bg-textured">
-      <Header
-        cartItemsCount={cartItems.reduce((sum, item) => sum + item.quantity, 0)}
-        onCartClick={() => setShowCart(true)}
-      />
+  // Obtener el primer evento destacado
+  const featuredEvent = concerts.length > 0 ? concerts[0] : null;
 
-      <main className="w-full py-8">
-        {concerts.length === 0 ? (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center py-20">
-              <h1 className="regia-title-main mb-4 text-4xl">No hay eventos disponibles</h1>
-              <p className="regia-text-body max-w-2xl mx-auto">
-                Pronto tendremos nuevos eventos disponibles. ¡Vuelve pronto!
-              </p>
+  return (
+    <div className="min-h-screen regia-bg-main">
+      {/* HERO SECTION - Estilo Flyer Cuernavaca */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Imagen de fondo con silueta dramática */}
+        {featuredEvent && (
+          <div className="absolute inset-0 z-0">
+            <Image
+              src={featuredEvent.image}
+              alt={featuredEvent.artist}
+              fill
+              className="object-cover"
+              priority
+            />
+            {/* Overlay oscuro con gradiente */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/70 to-black/95" />
+            
+            {/* Efecto de neblina dorada (simulado con gradientes radiales) */}
+            <div className="absolute inset-0 opacity-30">
+              <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-regia-gold-bright/20 rounded-full blur-[120px]" />
+              <div className="absolute top-1/2 left-1/3 w-[400px] h-[400px] bg-regia-gold-old/15 rounded-full blur-[100px]" />
+              <div className="absolute top-1/2 right-1/3 w-[400px] h-[400px] bg-regia-gold-old/15 rounded-full blur-[100px]" />
             </div>
           </div>
-        ) : (
-          <>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
-              <HeroCarousel
-                concerts={concerts.slice(0, 4)}
-                onSelectConcert={handleSelectConcert}
+        )}
+
+        {/* Header flotante con logos */}
+        <header className="absolute top-0 left-0 right-0 z-30 px-4 sm:px-6 lg:px-8 py-6">
+          <div className="max-w-7xl mx-auto flex items-start justify-between">
+            {/* Logo GRUPO REGIA - Izquierda */}
+            <div className="flex-shrink-0">
+              <Image
+                src="/assets/logo.png"
+                alt="Grupo Regia"
+                width={120}
+                height={60}
+                className="opacity-90"
               />
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="text-center mb-12" id="eventos">
-                <h1 className="regia-title-main mb-4 text-4xl">Próximos Conciertos</h1>
-                <p className="regia-text-body max-w-2xl mx-auto">
-                  Descubre los mejores eventos en vivo. Compra tus boletos de manera segura.
-                </p>
-              </div>
+            {/* Elemento decorativo central - 3 cruces */}
+            <div className="hidden md:flex items-center gap-3 absolute left-1/2 -translate-x-1/2">
+              <Sparkles className="w-8 h-8 text-regia-gold-old animate-pulse" />
+              <Sparkles className="w-10 h-10 text-regia-gold-bright animate-pulse" style={{ animationDelay: '0.3s' }} />
+              <Sparkles className="w-8 h-8 text-regia-gold-old animate-pulse" style={{ animationDelay: '0.6s' }} />
             </div>
 
-            {concerts.length > 0 && (
-              <div className="max-w-6xl mx-auto mb-16">
-                <h2 className="regia-title-secondary text-xl mb-6 px-4">
-                  Eventos Destacados
-                </h2>
-                <ConcertCarousel
-                  concerts={concerts.slice(0, 4)}
-                  onSelectConcert={handleSelectConcert}
-                />
-              </div>
-            )}
+            {/* Logo secundario - Derecha (usando logo principal temporalmente) */}
+            <div className="flex-shrink-0 text-right">
+              <h2 className="text-regia-gold-old font-bold text-xs sm:text-sm tracking-[0.3em] uppercase">
+                RICO O<br/>MUERTO
+              </h2>
+            </div>
+          </div>
+        </header>
 
-            {concerts.length > 4 && (
-              <div className="max-w-6xl mx-auto mb-12">
-                <h2 className="regia-title-secondary text-xl mb-6 px-4">
-                  Más Eventos
-                </h2>
-                <ConcertCarousel
-                  concerts={concerts.slice(4)}
-                  onSelectConcert={handleSelectConcert}
-                />
-              </div>
-            )}
-          </>
-        )}
+        {/* Contenido principal centrado */}
+        <div className="relative z-20 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+          {featuredEvent ? (
+            <>
+              {/* Nombre del evento - Tipografía gótica/vintage */}
+              <h1 
+                className="font-display text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black uppercase mb-8"
+                style={{
+                  background: 'linear-gradient(135deg, #F4D03F 0%, #C5A059 50%, #8B7355 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  textShadow: '0 0 80px rgba(244, 208, 63, 0.3)',
+                  letterSpacing: '0.05em',
+                  lineHeight: '0.9',
+                }}
+              >
+                {featuredEvent.artist}
+              </h1>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16" id="nosotros">
-          <div className="regia-ticket-card">
-            <h2 className="regia-title-main text-center mb-4 text-3xl">
-              ¿Por qué comprar con Grupo Regia?
+              {/* Fecha - Tipografía elegante */}
+              <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-regia-gold-old mb-8 tracking-[0.2em] uppercase">
+                {featuredEvent.date}
+              </p>
+
+              {/* Botón CTA principal */}
+              <button
+                onClick={() => handleSelectConcert(featuredEvent)}
+                className="group relative inline-flex items-center gap-3 px-12 py-5 text-lg font-bold uppercase tracking-widest overflow-hidden transition-all duration-300 hover:-translate-y-1"
+                style={{
+                  background: 'linear-gradient(135deg, #C5A059 0%, #F4D03F 100%)',
+                  color: '#0A0A0A',
+                  borderRadius: '50px',
+                  boxShadow: '0 8px 32px rgba(244, 208, 63, 0.4)',
+                }}
+              >
+                <Sparkles className="w-5 h-5" />
+                Comprar Boletos
+                <Sparkles className="w-5 h-5" />
+              </button>
+
+              {/* Info adicional debajo del botón */}
+              <div className="mt-12 flex flex-col items-center gap-4">
+                <div className="flex items-center gap-2 text-regia-cream/80 text-sm">
+                  <MapPin className="w-4 h-4 text-regia-gold-old" />
+                  <span>{featuredEvent.venue}</span>
+                </div>
+                {featuredEvent.time && (
+                  <div className="flex items-center gap-2 text-regia-cream/80 text-sm">
+                    <Clock className="w-4 h-4 text-regia-gold-old" />
+                    <span>{featuredEvent.time}</span>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="text-center">
+              <h1 className="text-6xl mb-6 font-black text-regia-gold-bright">
+                Próximamente
+              </h1>
+              <p className="regia-text-body text-xl">
+                Nuevos eventos muy pronto
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 animate-bounce">
+          <div className="w-6 h-10 border-2 border-regia-gold-old rounded-full flex justify-center p-1">
+            <div className="w-1 h-3 bg-regia-gold-bright rounded-full animate-pulse" />
+          </div>
+        </div>
+      </section>
+
+      {/* SECCIÓN: INFORMACIÓN DEL EVENTO */}
+      {featuredEvent && (
+        <section className="relative py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black via-regia-metallic-gray/30 to-black">
+          <div className="max-w-5xl mx-auto">
+            <h2 className="regia-title-main text-4xl md:text-5xl text-center mb-16">
+              Información del Evento
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-              <div className="text-center">
-                <div className="w-16 h-16 regia-gold-gradient rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-regia-black text-2xl">✓</span>
-                </div>
-                <h4 className="regia-title-secondary mb-2">Boletos Garantizados</h4>
-                <p className="regia-text-body text-sm">
-                  Todos nuestros boletos son 100% auténticos
-                </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Fecha */}
+              <div className="text-center p-8 regia-ticket-card">
+                <Calendar className="w-12 h-12 text-regia-gold-bright mx-auto mb-4" />
+                <h3 className="regia-title-secondary text-xl mb-2">Fecha</h3>
+                <p className="regia-text-body">{featuredEvent.date}</p>
+                {featuredEvent.time && (
+                  <p className="text-regia-gold-old text-sm mt-2">{featuredEvent.time}</p>
+                )}
               </div>
-              <div className="text-center">
-                <div className="w-16 h-16 regia-gold-gradient rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-regia-black text-2xl">★</span>
-                </div>
-                <h4 className="regia-title-secondary mb-2">Mejor Precio</h4>
-                <p className="regia-text-body text-sm">
-                  Precios competitivos sin comisiones ocultas
-                </p>
+
+              {/* Ubicación */}
+              <div className="text-center p-8 regia-ticket-card">
+                <MapPin className="w-12 h-12 text-regia-gold-bright mx-auto mb-4" />
+                <h3 className="regia-title-secondary text-xl mb-2">Ubicación</h3>
+                <p className="regia-text-body">{featuredEvent.venue}</p>
               </div>
-              <div className="text-center">
-                <div className="w-16 h-16 regia-gold-gradient rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-regia-black text-2xl">♥</span>
-                </div>
-                <h4 className="regia-title-secondary mb-2">Soporte 24/7</h4>
-                <p className="regia-text-body text-sm">
-                  Estamos aquí para ayudarte
-                </p>
+
+              {/* Artista */}
+              <div className="text-center p-8 regia-ticket-card">
+                <Music className="w-12 h-12 text-regia-gold-bright mx-auto mb-4" />
+                <h3 className="regia-title-secondary text-xl mb-2">Artista</h3>
+                <p className="regia-text-body">{featuredEvent.artist}</p>
               </div>
             </div>
           </div>
-        </div>
+        </section>
+      )}
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16" id="contacto">
-          <div className="regia-ticket-card">
-            <h2 className="regia-title-main text-center mb-6 text-3xl">
-              Contáctanos
+      {/* SECCIÓN: TIPOS DE BOLETOS */}
+      {featuredEvent && featuredEvent.sections.length > 0 && (
+        <section className="relative py-24 px-4 sm:px-6 lg:px-8 regia-bg-main">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="regia-title-main text-4xl md:text-5xl text-center mb-4">
+              Tipos de Boletos
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-              <div className="text-center">
-                <Mail className="w-12 h-12 text-regia-gold-old mx-auto mb-4" />
-                <h4 className="regia-title-secondary mb-2 text-xl">Email</h4>
-                <p className="regia-text-body">
-                  contacto@grupoRegia.com
-                </p>
+            <p className="regia-text-body text-center mb-16 max-w-2xl mx-auto">
+              Selecciona tu experiencia y asegura tu lugar en este evento exclusivo
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {featuredEvent.sections.map((section) => (
+                <div 
+                  key={section.id}
+                  className="regia-ticket-card group hover:scale-105 transition-all duration-300"
+                  style={{
+                    boxShadow: '0 4px 24px rgba(197, 160, 89, 0.2)',
+                  }}
+                >
+                  <div className="flex items-center gap-3 mb-6">
+                    <Users className="w-8 h-8 text-regia-gold-bright" />
+                    <h3 className="regia-title-secondary text-2xl uppercase">
+                      {section.name}
+                    </h3>
+                  </div>
+
+                  {section.description && (
+                    <p className="regia-text-body text-sm mb-6 leading-relaxed">
+                      {section.description}
+                    </p>
+                  )}
+
+                  <div className="mb-6 pb-6 border-b border-regia-gold-old/30">
+                    <p className="text-regia-gold-bright text-3xl font-bold">
+                      ${section.price.toLocaleString('es-MX')}
+                      <span className="text-regia-cream/60 text-sm font-normal ml-2">MXN</span>
+                    </p>
+                    <p className="text-regia-cream/60 text-xs mt-1">
+                      {section.available > 0 
+                        ? `${section.available} disponibles` 
+                        : 'Agotado'}
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => handleSelectConcert(featuredEvent)}
+                    disabled={section.available === 0}
+                    className="regia-btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {section.available > 0 ? 'Seleccionar' : 'Agotado'}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* SECCIÓN: TODOS LOS EVENTOS (si hay más de uno) */}
+      {concerts.length > 1 && (
+        <section className="relative py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black via-regia-metallic-gray/20 to-black">
+          <div className="max-w-7xl mx-auto">
+            <h2 className="regia-title-main text-4xl md:text-5xl text-center mb-16">
+              Más Eventos
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {concerts.slice(1).map((concert) => (
+                <div
+                  key={concert.id}
+                  className="regia-card-glow group cursor-pointer"
+                  onClick={() => handleSelectConcert(concert)}
+                >
+                  <div className="relative h-80 overflow-hidden rounded-t-2xl">
+                    <Image
+                      src={concert.image}
+                      alt={concert.artist}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+                    
+                    <div className="absolute bottom-0 left-0 right-0 p-6">
+                      <h3 className="text-3xl font-bold text-regia-gold-bright mb-2">
+                        {concert.artist}
+                      </h3>
+                      <p className="text-regia-cream text-sm">{concert.date}</p>
+                    </div>
+                  </div>
+
+                  <div className="p-6">
+                    <div className="flex items-center gap-2 text-regia-cream/80 text-sm mb-4">
+                      <MapPin className="w-4 h-4 text-regia-gold-old" />
+                      <span>{concert.venue}</span>
+                    </div>
+
+                    {concert.minPrice > 0 && (
+                      <p className="text-regia-gold-bright text-xl font-bold mb-4">
+                        Desde ${concert.minPrice.toLocaleString('es-MX')} MXN
+                      </p>
+                    )}
+
+                    <button className="regia-btn-secondary w-full">
+                      Ver Boletos
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* SECCIÓN: POR QUÉ COMPRAR CON NOSOTROS */}
+      <section className="relative py-24 px-4 sm:px-6 lg:px-8 regia-bg-main">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="regia-title-main text-4xl md:text-5xl text-center mb-16">
+            ¿Por qué Grupo Regia?
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center p-8">
+              <div className="w-20 h-20 regia-gold-gradient rounded-full flex items-center justify-center mx-auto mb-6 glow-gold-strong">
+                <span className="text-regia-black text-3xl font-bold">✓</span>
               </div>
-              <div className="text-center">
-                <Info className="w-12 h-12 text-regia-gold-old mx-auto mb-4" />
-                <h4 className="regia-title-secondary mb-2 text-xl">Horario de Atención</h4>
-                <p className="regia-text-body">
-                  Lunes a Viernes: 9:00 AM - 8:00 PM<br />
-                  Sábados: 10:00 AM - 6:00 PM
-                </p>
+              <h3 className="regia-title-secondary text-xl mb-3">Boletos Garantizados</h3>
+              <p className="regia-text-body text-sm">
+                Todos nuestros boletos son 100% auténticos y verificados
+              </p>
+            </div>
+
+            <div className="text-center p-8">
+              <div className="w-20 h-20 regia-gold-gradient rounded-full flex items-center justify-center mx-auto mb-6 glow-gold-strong">
+                <span className="text-regia-black text-3xl font-bold">★</span>
               </div>
+              <h3 className="regia-title-secondary text-xl mb-3">Mejor Precio</h3>
+              <p className="regia-text-body text-sm">
+                Precios competitivos sin comisiones ocultas
+              </p>
+            </div>
+
+            <div className="text-center p-8">
+              <div className="w-20 h-20 regia-gold-gradient rounded-full flex items-center justify-center mx-auto mb-6 glow-gold-strong">
+                <span className="text-regia-black text-3xl font-bold">♥</span>
+              </div>
+              <h3 className="regia-title-secondary text-xl mb-3">Soporte 24/7</h3>
+              <p className="regia-text-body text-sm">
+                Estamos aquí para ayudarte en cualquier momento
+              </p>
             </div>
           </div>
         </div>
-      </main>
+      </section>
 
-      <footer className="regia-footer mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <p className="regia-footer-text">
-            © 2025 Grupo Regia. Todos los derechos reservados.
-          </p>
+      {/* FOOTER MINIMALISTA */}
+      <footer className="regia-footer">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            {/* Columna 1: Logo y descripción */}
+            <div>
+              <h3 className="text-regia-gold-old font-bold text-lg mb-4 tracking-wider">
+                GRUPO REGIA
+              </h3>
+              <p className="regia-text-body text-sm">
+                Tu plataforma de confianza para eventos en vivo exclusivos
+              </p>
+            </div>
+
+            {/* Columna 2: Enlaces */}
+            <div>
+              <h4 className="regia-title-secondary text-base mb-4">Enlaces</h4>
+              <ul className="space-y-2">
+                <li>
+                  <a href="#eventos" className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors">
+                    Eventos
+                  </a>
+                </li>
+                <li>
+                  <a href="#nosotros" className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors">
+                    Nosotros
+                  </a>
+                </li>
+                <li>
+                  <a href="#contacto" className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors">
+                    Contacto
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Columna 3: Contacto */}
+            <div>
+              <h4 className="regia-title-secondary text-base mb-4">Contacto</h4>
+              <p className="regia-text-body text-sm mb-2">
+                contacto@grupoRegia.com
+              </p>
+              <p className="text-regia-gold-old text-xs font-semibold tracking-wider mt-4">
+                RICO O MUERTO
+              </p>
+            </div>
+          </div>
+
+          {/* Copyright y créditos */}
+          <div className="border-t border-regia-gold-old/20 pt-8 pb-6">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <p className="regia-footer-text">
+                © {new Date().getFullYear()} Grupo Regia. Todos los derechos reservados.
+              </p>
+              <p className="regia-footer-text text-xs">
+                PRODUCTION BY: <span className="text-regia-gold-old font-semibold tracking-wider">ECHO VISIONS</span>
+              </p>
+            </div>
+          </div>
         </div>
       </footer>
 
-
+      {/* Cart */}
       {showCart && (
         <Cart
           items={cartItems}
