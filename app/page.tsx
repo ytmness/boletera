@@ -411,21 +411,7 @@ export default function HomePage() {
                   boxShadow: '0 8px 32px rgba(244, 208, 63, 0.4)',
                 }}
               >
-                <Image 
-                  src="/assets/estrella.png" 
-                  alt="" 
-                  width={28} 
-                  height={28} 
-                  className="opacity-80"
-                />
                 Comprar Boletos
-                <Image 
-                  src="/assets/estrella.png" 
-                  alt="" 
-                  width={28} 
-                  height={28} 
-                  className="opacity-80"
-                />
               </button>
 
               {/* Info adicional debajo del botón */}
@@ -454,8 +440,8 @@ export default function HomePage() {
                 <Image 
                   src="/assets/estrella.png" 
                   alt="Scroll" 
-                  width={48} 
-                  height={48} 
+                  width={96} 
+                  height={96} 
                   className="opacity-90" 
                 />
               </button>
