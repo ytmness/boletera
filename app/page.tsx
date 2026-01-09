@@ -82,44 +82,36 @@ export default function HomePage() {
     video.volume = 0;
     video.defaultMuted = true;
     
+    // Flag para evitar múltiples llamadas simultáneas
+    let isPlaying = false;
+    
     const attemptPlay = async () => {
+      if (isPlaying) return;
+      isPlaying = true;
+      
       try {
-        video.muted = true; // Re-asegurar antes de reproducir
+        video.muted = true;
         video.volume = 0;
         await video.play();
         console.log("✅ Video reproduciéndose automáticamente");
         return true;
       } catch (error) {
         console.log("⏸️ Autoplay bloqueado:", error);
+        isPlaying = false;
         return false;
       }
     };
 
-    // Múltiples eventos para asegurar reproducción inmediata
-    const handleLoadedData = () => {
-      console.log("📹 Video data loaded");
-      attemptPlay();
-    };
-    
+    // Solo usar el evento más confiable
     const handleCanPlay = () => {
-      console.log("▶️ Video can play");
+      console.log("▶️ Video listo para reproducir");
       attemptPlay();
     };
 
-    video.addEventListener('loadeddata', handleLoadedData);
     video.addEventListener('canplay', handleCanPlay);
-    video.addEventListener('canplaythrough', handleCanPlay);
-
-    // Intentos con intervalos cortos
-    const timer1 = setTimeout(attemptPlay, 100);
-    const timer2 = setTimeout(attemptPlay, 500);
     
     return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      video.removeEventListener('loadeddata', handleLoadedData);
       video.removeEventListener('canplay', handleCanPlay);
-      video.removeEventListener('canplaythrough', handleCanPlay);
     };
   }, []);
 
@@ -246,7 +238,7 @@ export default function HomePage() {
               loop
               muted
               playsInline
-              preload="auto"
+              preload="metadata"
               className="hidden lg:block w-full h-full object-cover hero-video-no-controls"
               webkit-playsinline="true"
               x5-playsinline="true"
