@@ -17,6 +17,12 @@ function convertEventToConcert(event: any): Concert {
     year: "numeric",
   });
 
+  // Usar la imagen del flyer como imagen de fondo heroica
+  // Si el evento tiene una imagen específica, se usará; si no, se usa el flyer
+  const heroImage = event.imageUrl && !event.imageUrl.includes('unsplash') 
+    ? event.imageUrl 
+    : "/assets/hero-cuernavaca.jpg";
+
   if (!event.ticketTypes || event.ticketTypes.length === 0) {
     return {
       id: event.id,
@@ -25,7 +31,7 @@ function convertEventToConcert(event: any): Concert {
       date: formattedDate,
       time: event.eventTime,
       venue: event.venue,
-      image: event.imageUrl || "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=1200",
+      image: heroImage,
       minPrice: 0,
       sections: [],
     };
@@ -50,7 +56,7 @@ function convertEventToConcert(event: any): Concert {
     date: formattedDate,
     time: event.eventTime,
     venue: event.venue,
-    image: event.imageUrl || "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=1200",
+    image: heroImage,
     minPrice,
     sections,
   };
