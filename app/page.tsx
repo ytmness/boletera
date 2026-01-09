@@ -211,17 +211,9 @@ export default function HomePage() {
 
         {/* Header flotante con logos y navegación integrada */}
         <header className="absolute top-0 left-0 right-0 z-30 px-8 sm:px-12 lg:px-16 py-6">
-          <div className="w-full flex items-center" ref={(el) => {
-            // #region agent log
-            if (el) fetch('http://127.0.0.1:7242/ingest/6f7cf1b8-da52-4f10-8dc4-55c6d7610fa4',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'page.tsx:header-container',message:'Header container width',data:{width:el.offsetWidth,clientWidth:el.clientWidth},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1,H5'})}).catch(()=>{});
-            // #endregion
-          }}>
+          <div className="w-full flex items-center justify-between relative">
             {/* Logo GRUPO REGIA - Izquierda */}
-            <div className="flex-shrink-0 w-32" ref={(el) => {
-              // #region agent log
-              if (el) fetch('http://127.0.0.1:7242/ingest/6f7cf1b8-da52-4f10-8dc4-55c6d7610fa4',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'page.tsx:logo-left',message:'Logo left dimensions',data:{width:el.offsetWidth,height:el.offsetHeight},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H3,H5'})}).catch(()=>{});
-              // #endregion
-            }}>
+            <div className="flex-shrink-0">
               <Image
                 src="/assets/logo-grupo-regia.png"
                 alt="Grupo Regia"
@@ -232,20 +224,11 @@ export default function HomePage() {
               />
             </div>
 
-            {/* Navegación Completa - Centrada con espaciado uniforme */}
-            <nav className="hidden lg:flex items-center justify-center flex-1 gap-16" ref={(el) => {
-              // #region agent log
-              if (el) fetch('http://127.0.0.1:7242/ingest/6f7cf1b8-da52-4f10-8dc4-55c6d7610fa4',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'page.tsx:nav-container',message:'Nav container dimensions and computed styles',data:{width:el.offsetWidth,computedGap:window.getComputedStyle(el).gap,computedJustify:window.getComputedStyle(el).justifyContent,childrenCount:el.children.length},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1,H2,H4'})}).catch(()=>{});
-              // #endregion
-            }}>
+            {/* Navegación Izquierda */}
+            <nav className="hidden lg:flex items-center gap-12 ml-auto mr-auto">
               <a
                 href="#eventos"
                 className="flex items-center gap-2 text-regia-cream/90 hover:text-regia-gold-bright transition-all duration-300 text-sm font-medium uppercase tracking-wider hover:scale-105"
-                ref={(el) => {
-                  // #region agent log
-                  if (el) fetch('http://127.0.0.1:7242/ingest/6f7cf1b8-da52-4f10-8dc4-55c6d7610fa4',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'page.tsx:eventos-link',message:'Eventos link position',data:{offsetLeft:el.offsetLeft,width:el.offsetWidth},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2'})}).catch(()=>{});
-                  // #endregion
-                }}
               >
                 <Calendar className="w-4 h-4" />
                 <span>Eventos</span>
@@ -259,20 +242,8 @@ export default function HomePage() {
                 <span>Mis Boletos</span>
               </button>
 
-              {/* Estrella en el centro de la navegación */}
-              <div className="flex items-center" ref={(el) => {
-                // #region agent log
-                if (el) fetch('http://127.0.0.1:7242/ingest/6f7cf1b8-da52-4f10-8dc4-55c6d7610fa4',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'page.tsx:star-container',message:'Star position and parent nav',data:{offsetLeft:el.offsetLeft,offsetParent:el.offsetParent?.tagName,parentWidth:el.parentElement?.offsetWidth},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H4'})}).catch(()=>{});
-                // #endregion
-              }}>
-                <Image 
-                  src="/assets/estrella.png" 
-                  alt="Estrella" 
-                  width={56} 
-                  height={56} 
-                  className="animate-pulse opacity-90" 
-                />
-              </div>
+              {/* Espacio para la estrella - usando padding invisible */}
+              <div style={{ width: '80px' }}></div>
 
               {userRole === "ADMIN" && (
                 <button
@@ -313,12 +284,19 @@ export default function HomePage() {
               )}
             </nav>
 
+            {/* Estrella decorativa - Centro Absoluto */}
+            <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
+              <Image 
+                src="/assets/estrella.png" 
+                alt="Estrella" 
+                width={60} 
+                height={60} 
+                className="animate-pulse opacity-90" 
+              />
+            </div>
+
             {/* Logo RICO O MUERTO - Derecha */}
-            <div className="flex-shrink-0 w-32 text-right" ref={(el) => {
-              // #region agent log
-              if (el) fetch('http://127.0.0.1:7242/ingest/6f7cf1b8-da52-4f10-8dc4-55c6d7610fa4',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'page.tsx:logo-right',message:'Logo right dimensions',data:{width:el.offsetWidth,height:el.offsetHeight,offsetLeft:el.offsetLeft},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H3,H5'})}).catch(()=>{});
-              // #endregion
-            }}>
+            <div className="flex-shrink-0 text-right">
               <h2 className="text-regia-gold-old font-bold text-xs sm:text-sm tracking-[0.3em] uppercase leading-tight">
                 RICO O<br/>MUERTO
               </h2>
