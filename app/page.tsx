@@ -536,9 +536,18 @@ export default function HomePage() {
       {featuredEvent && (
         <section id="info-evento" className="relative py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black via-regia-metallic-gray/30 to-black">
           <div className="max-w-5xl mx-auto">
-            <h2 className="regia-title-main text-4xl md:text-5xl text-center mb-16">
-              Información del Evento
-            </h2>
+            <div className="flex justify-center mb-16">
+              <Image
+                src="/assets/info-evento-titulo.png"
+                alt="Información del Evento"
+                width={1456}
+                height={244}
+                className="w-full max-w-3xl h-auto"
+                style={{ 
+                  filter: 'drop-shadow(0 0 15px rgba(244, 208, 63, 0.4))'
+                }}
+              />
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {/* Fecha */}
@@ -686,9 +695,18 @@ export default function HomePage() {
       {/* SECCIÓN: POR QUÉ COMPRAR CON NOSOTROS */}
       <section className="relative py-24 px-4 sm:px-6 lg:px-8 regia-bg-main">
         <div className="max-w-6xl mx-auto">
-          <h2 className="regia-title-main text-4xl md:text-5xl text-center mb-16">
-            ¿Por qué Grupo Regia?
-          </h2>
+          <div className="flex justify-center mb-16">
+            <Image
+              src="/assets/porque-grupo-regia-titulo.png"
+              alt="¿Por qué Grupo Regia?"
+              width={1456}
+              height={271}
+              className="w-full max-w-3xl h-auto"
+              style={{ 
+                filter: 'drop-shadow(0 0 15px rgba(244, 208, 63, 0.4))'
+              }}
+            />
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center p-8">
