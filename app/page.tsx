@@ -439,13 +439,13 @@ export default function HomePage() {
           {featuredEvent ? (
             <>
               {/* Nombre del evento - Victor Mendivil (MÁS GRANDE) */}
-              <div className="w-full max-w-5xl mb-6">
+              <div className="w-full flex justify-center mb-6">
                 <Image
                   src="/assets/victor-mendivil-title.png"
                   alt={featuredEvent.artist}
                   width={1689}
                   height={689}
-                  className="w-full h-auto"
+                  className="w-full max-w-5xl h-auto"
                   style={{ 
                     filter: 'drop-shadow(0 0 20px rgba(244, 208, 63, 0.6))'
                   }}
@@ -454,13 +454,13 @@ export default function HomePage() {
               </div>
 
               {/* Fecha - 28 de marzo */}
-              <div className="w-full max-w-lg mb-8">
+              <div className="w-full flex justify-center mb-8">
                 <Image
                   src="/assets/fecha-evento.png"
                   alt="28 de marzo de 2026"
                   width={1689}
                   height={202}
-                  className="w-full h-auto"
+                  className="w-full max-w-lg h-auto"
                   style={{ 
                     filter: 'drop-shadow(0 0 15px rgba(244, 208, 63, 0.5))'
                   }}
