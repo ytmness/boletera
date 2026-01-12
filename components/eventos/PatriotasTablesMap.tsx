@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { X, ZoomIn, ZoomOut, Info } from "lucide-react";
+import { X, ZoomIn, ZoomOut, Info, Move } from "lucide-react";
 import Image from "next/image";
 import {
   VIP_TABLES_162,
@@ -49,8 +49,14 @@ export function PatriotasTablesMap({
   const [hoveredTable, setHoveredTable] = useState<number | null>(null);
   const [hoveredSection, setHoveredSection] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const [zoom, setZoom] = useState(0.5); // Zoom inicial más pequeño
+  const [zoom, setZoom] = useState(0.6); // Zoom inicial
   const [showLegend, setShowLegend] = useState(true);
+  
+  // Controles de ajuste manual
+  const [debugMode, setDebugMode] = useState(false);
+  const [offsetX, setOffsetX] = useState(0);
+  const [offsetY, setOffsetY] = useState(0);
+  const [scale, setScale] = useState(1);
 
   const stats = useMemo(() => {
     const available = tables.filter((t) => t.status === "available").length;
@@ -101,8 +107,8 @@ export function PatriotasTablesMap({
   const getTableColor = (table: IndividualTable) => {
     if (table.status === "sold") return "#666";
     if (table.status === "reserved") return "#ff9800";
-    if (selectedTable?.id === table.id) return "#c4a905";
-    if (hoveredTable === table.number) return "#d4b815";
+    if (selectedTable?.id === table.id) return "#FFD700";
+    if (hoveredTable === table.number) return "#FFA500";
 
     // Color por zona (9 filas: 1-3 frontal, 4-6 media, 7-9 trasera)
     if (table.row <= 3) return "#c4a905"; // Frontal
@@ -115,7 +121,7 @@ export function PatriotasTablesMap({
     if (table.status === "reserved") return 0.5;
     if (hoveredTable === table.number || selectedTable?.id === table.id)
       return 1;
-    return 0.85;
+    return 0.9;
   };
 
   return (
@@ -150,7 +156,7 @@ export function PatriotasTablesMap({
 
       {/* Controles */}
       <div className="mb-4 flex items-center justify-between flex-wrap gap-4">
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Button
             size="sm"
             variant="outline"
@@ -170,7 +176,7 @@ export function PatriotasTablesMap({
           <Button
             size="sm"
             variant="outline"
-            onClick={() => setZoom(0.5)}
+            onClick={() => setZoom(0.6)}
             className="border-[#c4a905]/50 text-white bg-transparent hover:bg-white/10"
           >
             Reset
@@ -184,6 +190,15 @@ export function PatriotasTablesMap({
             <Info className="w-4 h-4 mr-2" />
             {showLegend ? "Ocultar" : "Mostrar"} Leyenda
           </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setDebugMode(!debugMode)}
+            className="border-[#c4a905]/50 text-white bg-transparent hover:bg-white/10"
+          >
+            <Move className="w-4 h-4 mr-2" />
+            {debugMode ? "Ocultar" : "Ajustar"} Posición
+          </Button>
         </div>
 
         <div className="text-white/70 text-sm">
@@ -191,8 +206,54 @@ export function PatriotasTablesMap({
         </div>
       </div>
 
+      {/* Panel de ajuste manual */}
+      {debugMode && (
+        <div className="mb-4 p-4 bg-[#c4a905]/10 border border-[#c4a905]/30 rounded-lg">
+          <h3 className="text-white font-bold mb-3">Ajuste Manual de Posición</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="text-white/70 text-sm block mb-1">Offset X: {offsetX}px</label>
+              <input
+                type="range"
+                min="-500"
+                max="500"
+                value={offsetX}
+                onChange={(e) => setOffsetX(parseInt(e.target.value))}
+                className="w-full"
+              />
+            </div>
+            <div>
+              <label className="text-white/70 text-sm block mb-1">Offset Y: {offsetY}px</label>
+              <input
+                type="range"
+                min="-500"
+                max="500"
+                value={offsetY}
+                onChange={(e) => setOffsetY(parseInt(e.target.value))}
+                className="w-full"
+              />
+            </div>
+            <div>
+              <label className="text-white/70 text-sm block mb-1">Escala: {scale.toFixed(2)}</label>
+              <input
+                type="range"
+                min="0.5"
+                max="2"
+                step="0.01"
+                value={scale}
+                onChange={(e) => setScale(parseFloat(e.target.value))}
+                className="w-full"
+              />
+            </div>
+          </div>
+          <div className="mt-2 text-white/60 text-xs">
+            💡 Usa estos controles para alinear las mesas con la imagen de fondo
+          </div>
+        </div>
+      )}
+
       {/* Mapa con imagen de fondo y overlay SVG */}
-      <div className="relative bg-[#2a2c30] rounded-xl border border-[#c4a905]/20 overflow-auto">
+      <div className="relative bg-[#1a1a1a] rounded-xl border border-[#c4a905]/20 overflow-auto">
         <div 
           style={{ 
             transform: `scale(${zoom})`, 
@@ -221,7 +282,7 @@ export function PatriotasTablesMap({
             className="absolute top-0 left-0 w-full h-full"
             style={{ pointerEvents: "none" }}
           >
-            {/* Secciones GENERAL, PREFERENTE A y B - clickeables */}
+            {/* Secciones GENERAL, PREFERENTE A y B - más visibles */}
             {sections.map((section) => {
               if (!section.x || !section.y || !section.width || !section.height) return null;
               const isSelected = selectedSection?.id === section.id;
@@ -229,61 +290,79 @@ export function PatriotasTablesMap({
               const isClickable = section.type !== "PROTECCION";
 
               return (
-                <rect
-                  key={section.id}
-                  x={section.x}
-                  y={section.y}
-                  width={section.width}
-                  height={section.height}
-                  fill={isSelected ? "#c4a905" : isHovered ? "#d4b815" : section.color}
-                  stroke="#f9fbf6"
-                  strokeWidth={isSelected ? 4 : 2}
-                  opacity={isHovered || isSelected ? 0.7 : 0.3}
-                  className={isClickable ? "cursor-pointer transition-all" : ""}
-                  style={{ pointerEvents: isClickable ? "all" : "none" }}
-                  onMouseEnter={() => isClickable && setHoveredSection(section.id)}
-                  onMouseLeave={() => isClickable && setHoveredSection(null)}
-                  onClick={() => isClickable && handleSectionClick(section)}
-                />
+                <g key={section.id}>
+                  <rect
+                    x={section.x}
+                    y={section.y}
+                    width={section.width}
+                    height={section.height}
+                    fill={isSelected ? "#FFD700" : isHovered ? "#FFA500" : "#c4a905"}
+                    stroke="#FFD700"
+                    strokeWidth={isSelected ? 6 : isHovered ? 4 : 2}
+                    opacity={isHovered || isSelected ? 0.6 : 0.2}
+                    className={isClickable ? "cursor-pointer transition-all" : ""}
+                    style={{ pointerEvents: isClickable ? "all" : "none" }}
+                    onMouseEnter={() => isClickable && setHoveredSection(section.id)}
+                    onMouseLeave={() => isClickable && setHoveredSection(null)}
+                    onClick={() => isClickable && handleSectionClick(section)}
+                  />
+                  {(isHovered || isSelected) && (
+                    <text
+                      x={section.x + section.width / 2}
+                      y={section.y + section.height / 2}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fill="#fff"
+                      fontSize="40"
+                      fontWeight="bold"
+                      pointerEvents="none"
+                    >
+                      {section.name}
+                    </text>
+                  )}
+                </g>
               );
             })}
 
-            {/* Renderizar las 162 mesas */}
-            {tables.map((table) => (
-              <g key={table.id}>
-                <circle
-                  cx={table.x + table.width / 2}
-                  cy={table.y + table.height / 2}
-                  r={table.width / 2}
-                  fill={getTableColor(table)}
-                  stroke="#fff"
-                  strokeWidth={selectedTable?.id === table.id ? 3 : 1}
-                  opacity={getTableOpacity(table)}
-                  className={
-                    table.status === "available"
-                      ? "cursor-pointer transition-all hover:stroke-white hover:stroke-2"
-                      : "cursor-not-allowed"
-                  }
-                  style={{ pointerEvents: "all" }}
-                  onMouseEnter={() => setHoveredTable(table.number)}
-                  onMouseLeave={() => setHoveredTable(null)}
-                  onClick={() => handleTableClick(table)}
-                />
-                <text
-                  x={table.x + table.width / 2}
-                  y={table.y + table.height / 2}
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  fill="#fff"
-                  fontSize="11"
-                  fontWeight="bold"
-                  pointerEvents="none"
-                  opacity={getTableOpacity(table)}
-                >
-                  {table.number}
-                </text>
-              </g>
-            ))}
+            {/* Grupo de mesas con transformación aplicada */}
+            <g transform={`translate(${offsetX}, ${offsetY}) scale(${scale})`}>
+              {/* Renderizar las 162 mesas */}
+              {tables.map((table) => (
+                <g key={table.id}>
+                  <circle
+                    cx={table.x + table.width / 2}
+                    cy={table.y + table.height / 2}
+                    r={table.width / 2}
+                    fill={getTableColor(table)}
+                    stroke="#fff"
+                    strokeWidth={selectedTable?.id === table.id ? 4 : 2}
+                    opacity={getTableOpacity(table)}
+                    className={
+                      table.status === "available"
+                        ? "cursor-pointer transition-all hover:stroke-[#FFD700] hover:stroke-4"
+                        : "cursor-not-allowed"
+                    }
+                    style={{ pointerEvents: "all" }}
+                    onMouseEnter={() => setHoveredTable(table.number)}
+                    onMouseLeave={() => setHoveredTable(null)}
+                    onClick={() => handleTableClick(table)}
+                  />
+                  <text
+                    x={table.x + table.width / 2}
+                    y={table.y + table.height / 2}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fill="#000"
+                    fontSize="14"
+                    fontWeight="bold"
+                    pointerEvents="none"
+                    opacity={getTableOpacity(table) * 1.2}
+                  >
+                    {table.number}
+                  </text>
+                </g>
+              ))}
+            </g>
           </svg>
         </div>
       </div>
@@ -292,7 +371,7 @@ export function PatriotasTablesMap({
       {showLegend && (
         <div className="mt-6 bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-[#c4a905]/20">
           <h3 className="text-white font-bold mb-3">Leyenda</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 rounded-full bg-[#c4a905]"></div>
               <span className="text-white/70 text-sm">Disponible (Frontal)</span>
@@ -308,6 +387,10 @@ export function PatriotasTablesMap({
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 rounded-full bg-[#666]"></div>
               <span className="text-white/70 text-sm">Vendida</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded bg-[#c4a905]" style={{ opacity: 0.3 }}></div>
+              <span className="text-white/70 text-sm">Secciones (hover)</span>
             </div>
           </div>
           <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
@@ -326,7 +409,7 @@ export function PatriotasTablesMap({
 
       {/* Panel de selección de mesa */}
       {selectedTable && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-[#2a2c30] border border-[#c4a905] rounded-lg shadow-2xl p-6 z-50 w-full max-w-md mx-4">
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-[#2a2c30] border-2 border-[#c4a905] rounded-lg shadow-2xl p-6 z-50 w-full max-w-md mx-4">
           <div className="flex items-start justify-between mb-4">
             <div>
               <h3 className="text-white font-bold text-xl mb-1">
@@ -373,7 +456,7 @@ export function PatriotasTablesMap({
 
       {/* Panel de selección de sección */}
       {selectedSection && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-[#2a2c30] border border-[#c4a905] rounded-lg shadow-2xl p-6 z-50 w-full max-w-md mx-4">
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-[#2a2c30] border-2 border-[#c4a905] rounded-lg shadow-2xl p-6 z-50 w-full max-w-md mx-4">
           <div className="flex items-start justify-between mb-4">
             <div>
               <h3 className="text-white font-bold text-xl mb-1">
