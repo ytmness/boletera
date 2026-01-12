@@ -52,11 +52,11 @@ export function PatriotasTablesMap({
   const [zoom, setZoom] = useState(0.6); // Zoom inicial
   const [showLegend, setShowLegend] = useState(true);
   
-  // Controles de ajuste manual
+  // Controles de ajuste manual - Valores calibrados para PATRIOTASDORADO.png
   const [debugMode, setDebugMode] = useState(false);
-  const [offsetX, setOffsetX] = useState(0);
-  const [offsetY, setOffsetY] = useState(0);
-  const [scale, setScale] = useState(1);
+  const [offsetX, setOffsetX] = useState(441);
+  const [offsetY, setOffsetY] = useState(-517);
+  const [scale, setScale] = useState(1.84);
 
   const stats = useMemo(() => {
     const available = tables.filter((t) => t.status === "available").length;
@@ -249,13 +249,13 @@ export function PatriotasTablesMap({
           <div className="mt-4 flex gap-4">
             <button
               onClick={() => {
-                setOffsetX(0);
-                setOffsetY(0);
-                setScale(1);
+                setOffsetX(441);
+                setOffsetY(-517);
+                setScale(1.84);
               }}
               className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-sm transition"
             >
-              Resetear
+              Resetear a Calibrado
             </button>
             <button
               onClick={() => {
