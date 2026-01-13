@@ -535,7 +535,7 @@ export default function HomePage() {
       {/* SECCIÓN: INFORMACIÓN DEL EVENTO */}
       {featuredEvent && (
         <section id="info-evento" className="relative py-24 px-4 sm:px-6 lg:px-8 regia-bg-main">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-6xl mx-auto pl-0 md:pl-8 lg:pl-12">
             <div className="flex justify-center mb-16">
               <Image
                 src="/assets/info-evento-titulo.png"
