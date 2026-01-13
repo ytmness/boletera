@@ -501,7 +501,7 @@ export default function HomePage() {
                 </div>
 
                 {/* Scroll indicator - Estrella */}
-                <div className="mt-4 animate-bounce cursor-pointer hover:scale-110 transition-transform duration-300">
+                <div className="mt-8 ml-8 animate-bounce cursor-pointer hover:scale-110 transition-transform duration-300">
                   <Image 
                     src="/assets/estrella.png" 
                     alt="Scroll" 
