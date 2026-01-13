@@ -593,7 +593,7 @@ export default function HomePage() {
       {featuredEvent && (
         <section id="info-evento" className="relative py-24 px-4 sm:px-6 lg:px-8 regia-bg-main">
           <div className="max-w-6xl mx-auto pl-0 md:pl-8 lg:pl-12">
-            <div className="flex justify-start mb-16">
+            <div className="flex justify-center mb-16">
               <Image
                 src="/assets/info-evento-titulo.png"
                 alt="Información del Evento"
@@ -714,7 +714,7 @@ export default function HomePage() {
                 alt="Más Eventos"
                 width={1456}
                 height={244}
-                className="w-full max-w-2xl h-auto"
+                className="w-full max-w-xl h-auto"
                 style={{ 
                   filter: 'drop-shadow(0 0 15px rgba(244, 208, 63, 0.4))'
                 }}
@@ -793,7 +793,7 @@ export default function HomePage() {
       {/* SECCIÓN: POR QUÉ COMPRAR CON NOSOTROS */}
       <section className="relative py-24 px-4 sm:px-6 lg:px-8 regia-bg-main">
         <div className="max-w-6xl mx-auto pl-0 md:pl-8 lg:pl-12">
-          <div className="flex justify-start mb-16">
+          <div className="flex justify-center mb-16">
             <Image
               src="/assets/porque-grupo-regia-titulo.png"
               alt="¿Por qué Grupo Regia?"
