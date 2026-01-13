@@ -356,23 +356,6 @@ export function PatriotasTablesMap({
                       onMouseLeave={() => isClickable && setHoveredSection(null)}
                       onClick={() => isClickable && handleSectionClick(section)}
                     />
-                    {/* Texto del nombre de la sección - siempre visible */}
-                    <text
-                      x={section.x + section.width / 2}
-                      y={section.y + section.height / 2}
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      fill={isSelected ? "#FFD700" : isHovered ? "#FFD700" : "#c4a905"}
-                      fontSize="60"
-                      fontWeight="bold"
-                      pointerEvents="none"
-                      opacity={isSelected ? 1 : isHovered ? 0.9 : 0.6}
-                      style={{
-                        textShadow: "0 0 10px rgba(0,0,0,0.8)"
-                      }}
-                    >
-                      {section.name}
-                    </text>
                   </g>
                 );
               })}
