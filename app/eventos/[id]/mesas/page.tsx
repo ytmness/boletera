@@ -7,7 +7,7 @@ import { IndividualTable, VIP_TABLES_162, NON_VIP_SECTIONS_162 } from "@/lib/pat
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Trash2, ArrowLeft, MapPin, Users, CreditCard, Ticket, Info, X } from "lucide-react";
 import { toast } from "sonner";
-import { Header } from "@/components/eventos/Header";
+import { NavbarMockup, FooterMockup } from "@/components/NavbarFooter";
 
 interface Section {
   id: string;
@@ -222,8 +222,8 @@ export default function EventMesasPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#2a2c30] to-[#49484e]">
-        <Header
+      <div className="min-h-screen flex flex-col regia-bg-textured">
+        <NavbarMockup
           cartItemsCount={cartItems.reduce((sum, item) => {
           if (item.table) return sum + 1;
           if (item.section && item.quantity) return sum + item.quantity;
@@ -231,13 +231,14 @@ export default function EventMesasPage() {
         }, 0)}
           onCartClick={() => setShowCart(true)}
         />
-        <main className="w-full py-8">
+        <main className="flex-grow w-full py-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center py-20">
-              <p className="text-white/70 text-xl">Cargando evento...</p>
+              <p className="text-regia-cream/70 text-xl">Cargando evento...</p>
             </div>
           </div>
         </main>
+        <FooterMockup />
       </div>
     );
   }
@@ -255,8 +256,8 @@ export default function EventMesasPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#2a2c30] to-[#49484e]">
-      <Header
+    <div className="min-h-screen flex flex-col regia-bg-textured">
+      <NavbarMockup
         cartItemsCount={cartItems.reduce((sum, item) => {
           if (item.table) return sum + 1;
           if (item.section && item.quantity) return sum + item.quantity;
@@ -265,13 +266,13 @@ export default function EventMesasPage() {
         onCartClick={() => setShowCart(true)}
       />
       
-      <main className="w-full py-8">
+      <main className="flex-grow w-full py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Botón volver */}
         <Button
           onClick={() => router.push("/")}
           variant="outline"
-          className="mb-6 border-white/30 text-white bg-transparent hover:bg-white/10"
+          className="mb-6 border-regia-gold-old/50 text-regia-cream bg-transparent hover:bg-regia-gold-old/10"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Volver a Eventos
@@ -280,42 +281,42 @@ export default function EventMesasPage() {
         {/* Header con info del evento */}
         <div className="mb-8">
           <div className="mb-4">
-            <h1 className="text-4xl font-bold text-white mb-2">
+            <h1 className="regia-title-main text-4xl md:text-5xl mb-2">
               {event.name}
             </h1>
-            <p className="text-white/70">
+            <p className="regia-text-body text-lg">
               {formattedDate} • {event.eventTime}
             </p>
-            <p className="text-white/60 text-sm">
+            <p className="regia-text-muted text-sm">
               {event.venue}
             </p>
           </div>
 
           {/* Info rápida */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-[#c4a905]/20">
-              <p className="text-white/70 text-sm mb-1">Total Mesas VIP</p>
-              <p className="text-2xl font-bold text-white">162</p>
+            <div className="regia-card-gold p-4">
+              <p className="regia-text-muted text-sm mb-1">Total Mesas VIP</p>
+              <p className="text-2xl font-bold text-regia-cream">162</p>
             </div>
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-[#c4a905]/20">
-              <p className="text-white/70 text-sm mb-1">Precio por Mesa</p>
-              <p className="text-2xl font-bold text-[#c4a905]">$2,500</p>
+            <div className="regia-card-gold p-4">
+              <p className="regia-text-muted text-sm mb-1">Precio por Mesa</p>
+              <p className="text-2xl font-bold text-regia-gold-bright">$2,500</p>
             </div>
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-[#c4a905]/20">
-              <p className="text-white/70 text-sm mb-1">Personas por Mesa</p>
-              <p className="text-2xl font-bold text-white">4</p>
+            <div className="regia-card-gold p-4">
+              <p className="regia-text-muted text-sm mb-1">Personas por Mesa</p>
+              <p className="text-2xl font-bold text-regia-cream">4</p>
             </div>
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-[#c4a905]/20">
-              <p className="text-white/70 text-sm mb-1">Capacidad Total</p>
-              <p className="text-2xl font-bold text-white">648</p>
+            <div className="regia-card-gold p-4">
+              <p className="regia-text-muted text-sm mb-1">Capacidad Total</p>
+              <p className="text-2xl font-bold text-regia-cream">648</p>
             </div>
           </div>
         </div>
 
         {/* Instrucciones */}
-        <div className="mb-6 p-4 bg-[#c4a905]/10 border border-[#c4a905]/30 rounded-lg">
-          <p className="text-white text-sm">
-            💡 <strong>Instrucciones:</strong> Haz click en cualquier mesa
+        <div className="mb-6 p-4 bg-regia-gold-old/10 border border-regia-gold-old/30 rounded-lg">
+          <p className="regia-text-body text-sm">
+            💡 <strong className="text-regia-gold-bright">Instrucciones:</strong> Haz click en cualquier mesa
             disponible (dorada) para agregarla al carrito. También puedes seleccionar
             las secciones GENERAL, PREFERENTE A o PREFERENTE B. Las mesas
             vendidas aparecen en gris.
@@ -334,78 +335,78 @@ export default function EventMesasPage() {
 
         {/* Info adicional */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-[#c4a905]/20">
+          <div className="regia-card-gold p-6">
             <div className="flex items-center gap-3 mb-4">
-              <MapPin className="w-6 h-6 text-[#c4a905]" />
-              <h3 className="text-white font-bold text-lg">
+              <MapPin className="w-6 h-6 text-regia-gold-bright" />
+              <h3 className="regia-title-secondary text-lg">
                 Distribución de Mesas
               </h3>
             </div>
-            <ul className="text-white/70 text-sm space-y-2">
+            <ul className="regia-text-body text-sm space-y-2">
               <li className="flex items-start gap-2">
-                <span className="text-[#c4a905] mt-1">•</span>
-                <span><strong>Zona Frontal</strong> (Filas 1-3): Vista directa</span>
+                <span className="text-regia-gold-bright mt-1">•</span>
+                <span><strong className="text-regia-cream">Zona Frontal</strong> (Filas 1-3): Vista directa</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#c4a905] mt-1">•</span>
-                <span><strong>Zona Media</strong> (Filas 4-6): Vista lateral</span>
+                <span className="text-regia-gold-bright mt-1">•</span>
+                <span><strong className="text-regia-cream">Zona Media</strong> (Filas 4-6): Vista lateral</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#c4a905] mt-1">•</span>
-                <span><strong>Zona Trasera</strong> (Filas 7-9): Vista completa</span>
+                <span className="text-regia-gold-bright mt-1">•</span>
+                <span><strong className="text-regia-cream">Zona Trasera</strong> (Filas 7-9): Vista completa</span>
               </li>
             </ul>
           </div>
 
-          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-[#c4a905]/20">
+          <div className="regia-card-gold p-6">
             <div className="flex items-center gap-3 mb-4">
-              <Ticket className="w-6 h-6 text-[#c4a905]" />
-              <h3 className="text-white font-bold text-lg">
+              <Ticket className="w-6 h-6 text-regia-gold-bright" />
+              <h3 className="regia-title-secondary text-lg">
                 ¿Qué Incluye Cada Mesa?
               </h3>
             </div>
-            <ul className="text-white/70 text-sm space-y-2">
+            <ul className="regia-text-body text-sm space-y-2">
               <li className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-[#c4a905]" />
+                <Users className="w-4 h-4 text-regia-gold-bright" />
                 <span>Acceso para 4 personas</span>
               </li>
               <li className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-[#c4a905]" />
+                <Users className="w-4 h-4 text-regia-gold-bright" />
                 <span>Mesa privada VIP</span>
               </li>
               <li className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-[#c4a905]" />
+                <Users className="w-4 h-4 text-regia-gold-bright" />
                 <span>Servicio preferente</span>
               </li>
               <li className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-[#c4a905]" />
+                <Users className="w-4 h-4 text-regia-gold-bright" />
                 <span>Vista al escenario</span>
               </li>
             </ul>
           </div>
 
-          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-[#c4a905]/20">
+          <div className="regia-card-gold p-6">
             <div className="flex items-center gap-3 mb-4">
-              <CreditCard className="w-6 h-6 text-[#c4a905]" />
-              <h3 className="text-white font-bold text-lg">
+              <CreditCard className="w-6 h-6 text-regia-gold-bright" />
+              <h3 className="regia-title-secondary text-lg">
                 Métodos de Pago
               </h3>
             </div>
-            <ul className="text-white/70 text-sm space-y-2">
+            <ul className="regia-text-body text-sm space-y-2">
               <li className="flex items-center gap-2">
-                <CreditCard className="w-4 h-4 text-[#c4a905]" />
+                <CreditCard className="w-4 h-4 text-regia-gold-bright" />
                 <span>Efectivo</span>
               </li>
               <li className="flex items-center gap-2">
-                <CreditCard className="w-4 h-4 text-[#c4a905]" />
+                <CreditCard className="w-4 h-4 text-regia-gold-bright" />
                 <span>Tarjeta (crédito/débito)</span>
               </li>
               <li className="flex items-center gap-2">
-                <CreditCard className="w-4 h-4 text-[#c4a905]" />
+                <CreditCard className="w-4 h-4 text-regia-gold-bright" />
                 <span>Transferencia bancaria</span>
               </li>
               <li className="flex items-center gap-2">
-                <CreditCard className="w-4 h-4 text-[#c4a905]" />
+                <CreditCard className="w-4 h-4 text-regia-gold-bright" />
                 <span>Stripe/PayPal</span>
               </li>
             </ul>
@@ -414,16 +415,16 @@ export default function EventMesasPage() {
 
         {/* Panel de carrito lateral */}
         {showCart && (
-          <div className="fixed top-0 right-0 h-full w-full md:w-96 bg-[#2a2c30] border-l border-[#c4a905]/20 shadow-2xl z-50 overflow-y-auto">
+          <div className="fixed top-0 right-0 h-full w-full md:w-96 bg-regia-black border-l border-regia-gold-old/20 shadow-2xl z-50 overflow-y-auto">
             <div className="p-6">
               {/* Header del carrito */}
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-white">
+                <h2 className="text-2xl font-bold text-regia-cream">
                   Tu Carrito ({cartItems.length})
                 </h2>
                 <button
                   onClick={() => setShowCart(false)}
-                  className="text-white/70 hover:text-white"
+                  className="text-regia-cream/70 hover:text-regia-cream"
                 >
                   ✕
                 </button>
@@ -431,9 +432,9 @@ export default function EventMesasPage() {
 
               {cartItems.length === 0 ? (
                 <div className="text-center py-12">
-                  <ShoppingCart className="w-16 h-16 text-white/30 mx-auto mb-4" />
-                  <p className="text-white/60">Tu carrito está vacío</p>
-                  <p className="text-white/40 text-sm mt-2">
+                  <ShoppingCart className="w-16 h-16 text-regia-cream/30 mx-auto mb-4" />
+                  <p className="regia-text-body">Tu carrito está vacío</p>
+                  <p className="regia-text-muted text-sm mt-2">
                     Selecciona mesas en el mapa
                   </p>
                 </div>
@@ -444,25 +445,25 @@ export default function EventMesasPage() {
                     {cartItems.map((item, index) => (
                       <div
                         key={index}
-                        className="bg-white/5 rounded-lg p-4 border border-white/10"
+                        className="bg-regia-cream/5 rounded-lg p-4 border border-regia-gold-old/10"
                       >
                         <div className="flex items-start justify-between mb-2">
                           <div className="flex-1">
                             {item.table ? (
                               <>
-                                <h3 className="text-white font-bold text-lg">
+                                <h3 className="text-regia-cream font-bold text-lg">
                                   Mesa #{item.table.number}
                                 </h3>
-                                <p className="text-white/60 text-sm">
+                                <p className="regia-text-muted text-sm">
                                   Fila {item.table.row} • Columna {item.table.column}
                                 </p>
                               </>
                             ) : item.section ? (
                               <>
-                                <h3 className="text-white font-bold text-lg">
+                                <h3 className="text-regia-cream font-bold text-lg">
                                   {item.section.name}
                                 </h3>
-                                <p className="text-white/60 text-sm">
+                                <p className="regia-text-muted text-sm">
                                   {item.quantity} boleto(s)
                                 </p>
                               </>
@@ -476,14 +477,14 @@ export default function EventMesasPage() {
                           </button>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-white/70 text-sm">
+                          <span className="regia-text-body text-sm">
                             {item.table
                               ? `${item.table.seatsPerTable} personas`
                               : item.section
                               ? item.section.description
                               : ""}
                           </span>
-                          <span className="text-[#c4a905] font-bold">
+                          <span className="text-regia-gold-bright font-bold">
                             {item.table
                               ? `$${item.table.price.toLocaleString()}`
                               : item.section && item.quantity
@@ -496,31 +497,31 @@ export default function EventMesasPage() {
                   </div>
 
                   {/* Resumen */}
-                  <div className="bg-white/5 rounded-lg p-4 mb-6">
+                  <div className="bg-regia-cream/5 rounded-lg p-4 mb-6">
                     <div className="flex justify-between mb-2">
-                      <span className="text-white/70">
+                      <span className="regia-text-body">
                         {cartItems.length} item(s)
                       </span>
-                      <span className="text-white/70">
+                      <span className="regia-text-body">
                         {getTotalPersons()} persona(s)
                       </span>
                     </div>
                     <div className="flex justify-between mb-2">
-                      <span className="text-white/70">Subtotal:</span>
-                      <span className="text-white font-bold">
+                      <span className="regia-text-body">Subtotal:</span>
+                      <span className="text-regia-cream font-bold">
                         ${getSubtotal().toLocaleString()}
                       </span>
                     </div>
                     <div className="flex justify-between mb-3">
-                      <span className="text-white/70">IVA (16%):</span>
-                      <span className="text-white font-bold">
+                      <span className="regia-text-body">IVA (16%):</span>
+                      <span className="text-regia-cream font-bold">
                         ${getTax().toLocaleString()}
                       </span>
                     </div>
-                    <div className="border-t border-white/10 pt-3">
+                    <div className="border-t border-regia-gold-old/10 pt-3">
                       <div className="flex justify-between items-center">
-                        <span className="text-white font-bold text-lg">Total:</span>
-                        <span className="text-[#c4a905] font-bold text-2xl">
+                        <span className="text-regia-cream font-bold text-lg">Total:</span>
+                        <span className="text-regia-gold-bright font-bold text-2xl">
                           ${getTotal().toLocaleString()}
                         </span>
                       </div>
@@ -531,7 +532,7 @@ export default function EventMesasPage() {
                   <div className="space-y-3">
                     <Button
                       onClick={() => setShowCheckoutModal(true)}
-                      className="w-full bg-[#c4a905] text-white hover:bg-[#d4b815] h-12 text-lg"
+                      className="regia-btn-primary w-full h-12 text-lg"
                       disabled={isProcessingCheckout}
                     >
                       {isProcessingCheckout ? "Procesando..." : "Proceder al Pago"}
@@ -539,7 +540,7 @@ export default function EventMesasPage() {
                     <Button
                       onClick={() => setCartItems([])}
                       variant="outline"
-                      className="w-full border-white/30 text-white bg-transparent hover:bg-white/10"
+                      className="w-full border-regia-gold-old/50 text-regia-cream bg-transparent hover:bg-regia-gold-old/10"
                     >
                       Vaciar Carrito
                     </Button>
@@ -552,13 +553,13 @@ export default function EventMesasPage() {
 
         {/* Modal de Checkout */}
         {showCheckoutModal && (
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-[#2a2c30] rounded-xl border border-[#c4a905]/30 max-w-md w-full p-6">
+          <div className="fixed inset-0 bg-regia-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-regia-black rounded-xl border border-regia-gold-old/30 max-w-md w-full p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold text-white">Información de Compra</h3>
+                <h3 className="regia-title-main text-2xl">Información de Compra</h3>
                 <button
                   onClick={() => setShowCheckoutModal(false)}
-                  className="text-white/70 hover:text-white"
+                  className="text-regia-cream/70 hover:text-regia-cream"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -566,7 +567,7 @@ export default function EventMesasPage() {
 
               <div className="space-y-4 mb-6">
                 <div>
-                  <label className="block text-white/90 font-medium mb-2">
+                  <label className="block text-regia-cream/90 font-medium mb-2">
                     Nombre completo *
                   </label>
                   <input
@@ -575,14 +576,14 @@ export default function EventMesasPage() {
                     onChange={(e) =>
                       setCheckoutData({ ...checkoutData, buyerName: e.target.value })
                     }
-                    className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:border-[#c4a905]"
+                    className="w-full px-4 py-2 rounded-lg bg-regia-cream/10 border border-regia-gold-old/20 text-regia-cream focus:outline-none focus:border-regia-gold-bright"
                     placeholder="Juan Pérez"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-white/90 font-medium mb-2">
+                  <label className="block text-regia-cream/90 font-medium mb-2">
                     Email *
                   </label>
                   <input
@@ -591,14 +592,14 @@ export default function EventMesasPage() {
                     onChange={(e) =>
                       setCheckoutData({ ...checkoutData, buyerEmail: e.target.value })
                     }
-                    className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:border-[#c4a905]"
+                    className="w-full px-4 py-2 rounded-lg bg-regia-cream/10 border border-regia-gold-old/20 text-regia-cream focus:outline-none focus:border-regia-gold-bright"
                     placeholder="juan@ejemplo.com"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-white/90 font-medium mb-2">
+                  <label className="block text-regia-cream/90 font-medium mb-2">
                     Teléfono (opcional)
                   </label>
                   <input
@@ -607,19 +608,19 @@ export default function EventMesasPage() {
                     onChange={(e) =>
                       setCheckoutData({ ...checkoutData, buyerPhone: e.target.value })
                     }
-                    className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:border-[#c4a905]"
+                    className="w-full px-4 py-2 rounded-lg bg-regia-cream/10 border border-regia-gold-old/20 text-regia-cream focus:outline-none focus:border-regia-gold-bright"
                     placeholder="+52 123 456 7890"
                   />
                 </div>
 
-                <div className="bg-white/5 rounded-lg p-4 mt-4">
+                <div className="bg-regia-cream/5 rounded-lg p-4 mt-4">
                   <div className="flex justify-between mb-2">
-                    <span className="text-white/70">Total:</span>
-                    <span className="text-[#c4a905] font-bold text-xl">
+                    <span className="regia-text-body">Total:</span>
+                    <span className="text-regia-gold-bright font-bold text-xl">
                       ${getTotal().toLocaleString()} MXN
                     </span>
                   </div>
-                  <p className="text-white/60 text-xs mt-2">
+                  <p className="regia-text-muted text-xs mt-2">
                     * Pago simulado - En producción se integrará con pasarela de pago
                   </p>
                 </div>
@@ -629,14 +630,14 @@ export default function EventMesasPage() {
                 <Button
                   onClick={() => setShowCheckoutModal(false)}
                   variant="outline"
-                  className="flex-1 border-white/30 text-white bg-transparent hover:bg-white/10"
+                  className="flex-1 border-regia-gold-old/50 text-regia-cream bg-transparent hover:bg-regia-gold-old/10"
                   disabled={isProcessingCheckout}
                 >
                   Cancelar
                 </Button>
                 <Button
                   onClick={handleCheckout}
-                  className="flex-1 bg-[#c4a905] text-white hover:bg-[#d4b815]"
+                  className="flex-1 regia-btn-primary"
                   disabled={isProcessingCheckout}
                 >
                   {isProcessingCheckout ? "Procesando..." : "Confirmar Compra"}
@@ -647,6 +648,7 @@ export default function EventMesasPage() {
         )}
         </div>
       </main>
+      <FooterMockup />
     </div>
   );
 }
