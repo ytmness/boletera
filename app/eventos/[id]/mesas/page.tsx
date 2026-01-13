@@ -436,16 +436,6 @@ export default function EventMesasPage() {
       
       <main className="flex-grow w-full py-8 pt-64 lg:pt-72">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Botón volver */}
-        <Button
-          onClick={() => router.push("/")}
-          variant="outline"
-          className="mb-6 border-regia-gold-old/50 text-regia-cream bg-transparent hover:bg-regia-gold-old/10"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Volver a Eventos
-        </Button>
-
         {/* Header con info del evento */}
         <div className="mb-8">
           <div className="mb-4">
