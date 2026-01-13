@@ -492,17 +492,17 @@ export default function HomePage() {
         </header>
 
         {/* Contenido principal - flujo vertical normal */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-full max-w-6xl flex flex-col items-center justify-center px-4 pt-24">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-full max-w-6xl flex flex-col items-center justify-center px-2 sm:px-4 pt-16 sm:pt-20 md:pt-24">
           {featuredEvent ? (
             <>
               {/* Nombre del evento - Victor Mendivil */}
-              <div className="w-full flex justify-center mb-4 sm:mb-6">
+              <div className="w-full flex justify-center mb-3 sm:mb-4 md:mb-5 lg:mb-6 px-2 sm:px-4">
                 <Image
                   src="/assets/victor-mendivil-title.png"
                   alt={featuredEvent.artist}
                   width={1689}
                   height={689}
-                  className="w-full max-w-[90%] sm:max-w-md md:max-w-2xl lg:max-w-6xl h-auto"
+                  className="w-full max-w-[75%] xs:max-w-[80%] sm:max-w-[85%] md:max-w-md lg:max-w-2xl xl:max-w-4xl 2xl:max-w-6xl h-auto"
                   style={{ 
                     filter: 'drop-shadow(0 0 20px rgba(244, 208, 63, 0.6))'
                   }}
@@ -558,13 +558,13 @@ export default function HomePage() {
                 </div>
 
                 {/* Scroll indicator - Estrella */}
-                <div className="mt-8 ml-2 animate-bounce cursor-pointer hover:scale-110 transition-transform duration-300">
+                <div className="mt-4 sm:mt-6 md:mt-8 ml-2 animate-bounce cursor-pointer hover:scale-110 transition-transform duration-300">
                   <Image 
                     src="/assets/estrella.png" 
                     alt="Scroll" 
                     width={80} 
                     height={80} 
-                    className="opacity-90"
+                    className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 opacity-90"
                     style={{ 
                       filter: 'drop-shadow(0 0 15px rgba(244, 208, 63, 0.6))'
                     }}
