@@ -453,8 +453,8 @@ export default function HomePage() {
                 />
               </div>
 
-              {/* Contenedor para fecha, botón, info y estrella - centrado */}
-              <div className="w-full flex flex-col items-center">
+              {/* Contenedor para fecha, botón, info y estrella - ligeramente a la derecha */}
+              <div className="w-full flex flex-col items-center pl-0 md:pl-12 lg:pl-16">
                 {/* Fecha - 28 de marzo */}
                 <div className="w-full flex justify-center mb-8">
                   <Image
