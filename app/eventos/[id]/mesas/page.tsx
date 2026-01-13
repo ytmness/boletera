@@ -460,10 +460,10 @@ export default function EventMesasPage() {
         </div>
       </header>
       
-      <main className="flex-grow w-full py-8 pt-64 lg:pt-72">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <main className="flex-grow w-full py-4 sm:py-6 lg:py-8 pt-48 sm:pt-56 lg:pt-64 xl:pt-72">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
         {/* Header con info del evento */}
-        <div className="mb-8">
+        <div className="mb-4 sm:mb-6 lg:mb-8">
           <div className="mb-4">
             {event.artist === 'Víctor Mendivil' ? (
               <div className="flex justify-center mb-2">
@@ -472,7 +472,7 @@ export default function EventMesasPage() {
                   alt={event.name}
                   width={1456}
                   height={244}
-                  className="w-full max-w-5xl h-auto"
+                  className="w-full max-w-[90%] sm:max-w-md md:max-w-2xl lg:max-w-5xl h-auto"
                   style={{ 
                     filter: 'drop-shadow(0 0 20px rgba(244, 208, 63, 0.6))'
                   }}
@@ -480,7 +480,7 @@ export default function EventMesasPage() {
                 />
               </div>
             ) : (
-              <h1 className="regia-title-main text-4xl md:text-5xl mb-2">
+              <h1 className="regia-title-main text-3xl sm:text-4xl md:text-5xl mb-2">
                 {event.name}
               </h1>
             )}
@@ -490,29 +490,29 @@ export default function EventMesasPage() {
           </div>
 
           {/* Info rápida */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="regia-card-gold p-4">
-              <p className="text-regia-cream text-sm mb-1">Total Mesas VIP</p>
-              <p className="text-2xl font-bold text-regia-cream">162</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+            <div className="regia-card-gold p-2 sm:p-3 md:p-4">
+              <p className="text-regia-cream text-xs sm:text-sm mb-1">Total Mesas VIP</p>
+              <p className="text-lg sm:text-xl md:text-2xl font-bold text-regia-cream">162</p>
             </div>
-            <div className="regia-card-gold p-4">
-              <p className="text-regia-cream text-sm mb-1">Precio por Mesa</p>
-              <p className="text-2xl font-bold text-regia-gold-bright">$2,500</p>
+            <div className="regia-card-gold p-2 sm:p-3 md:p-4">
+              <p className="text-regia-cream text-xs sm:text-sm mb-1">Precio por Mesa</p>
+              <p className="text-lg sm:text-xl md:text-2xl font-bold text-regia-gold-bright">$2,500</p>
             </div>
-            <div className="regia-card-gold p-4">
-              <p className="text-regia-cream text-sm mb-1">Personas por Mesa</p>
-              <p className="text-2xl font-bold text-regia-cream">4</p>
+            <div className="regia-card-gold p-2 sm:p-3 md:p-4">
+              <p className="text-regia-cream text-xs sm:text-sm mb-1">Personas por Mesa</p>
+              <p className="text-lg sm:text-xl md:text-2xl font-bold text-regia-cream">4</p>
             </div>
-            <div className="regia-card-gold p-4">
-              <p className="text-regia-cream text-sm mb-1">Capacidad Total</p>
-              <p className="text-2xl font-bold text-regia-cream">648</p>
+            <div className="regia-card-gold p-2 sm:p-3 md:p-4">
+              <p className="text-regia-cream text-xs sm:text-sm mb-1">Capacidad Total</p>
+              <p className="text-lg sm:text-xl md:text-2xl font-bold text-regia-cream">648</p>
             </div>
           </div>
         </div>
 
         {/* Instrucciones */}
-        <div className="mb-6 p-4 bg-regia-gold-old/10 border border-regia-gold-old/30 rounded-lg">
-          <p className="regia-text-body text-sm">
+        <div className="mb-4 sm:mb-5 lg:mb-6 p-3 sm:p-4 bg-regia-gold-old/10 border border-regia-gold-old/30 rounded-lg">
+          <p className="regia-text-body text-xs sm:text-sm">
             💡 <strong className="text-regia-gold-bright">Instrucciones:</strong> Haz click en cualquier mesa
             disponible (dorada) para agregarla al carrito. También puedes seleccionar
             las secciones GENERAL, PREFERENTE A o PREFERENTE B. Las mesas
@@ -531,15 +531,15 @@ export default function EventMesasPage() {
         />
 
         {/* Info adicional */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="regia-card-gold p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <MapPin className="w-6 h-6 text-regia-gold-bright" />
-              <h3 className="regia-title-secondary text-lg">
+        <div className="mt-4 sm:mt-6 lg:mt-8 grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+          <div className="regia-card-gold p-4 sm:p-5 lg:p-6">
+            <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+              <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-regia-gold-bright" />
+              <h3 className="regia-title-secondary text-base sm:text-lg">
                 Distribución de Mesas
               </h3>
             </div>
-            <ul className="regia-text-body text-sm space-y-2">
+            <ul className="regia-text-body text-xs sm:text-sm space-y-1.5 sm:space-y-2">
               <li className="flex items-start gap-2">
                 <span className="text-regia-gold-bright mt-1">•</span>
                 <span><strong className="text-regia-cream">Zona Frontal</strong> (Filas 1-3): Vista directa</span>
@@ -555,14 +555,14 @@ export default function EventMesasPage() {
             </ul>
           </div>
 
-          <div className="regia-card-gold p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <Ticket className="w-6 h-6 text-regia-gold-bright" />
-              <h3 className="regia-title-secondary text-lg">
+          <div className="regia-card-gold p-4 sm:p-5 lg:p-6">
+            <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+              <Ticket className="w-5 h-5 sm:w-6 sm:h-6 text-regia-gold-bright" />
+              <h3 className="regia-title-secondary text-base sm:text-lg">
                 ¿Qué Incluye Cada Mesa?
               </h3>
             </div>
-            <ul className="regia-text-body text-sm space-y-2">
+            <ul className="regia-text-body text-xs sm:text-sm space-y-1.5 sm:space-y-2">
               <li className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-regia-gold-bright" />
                 <span>Acceso para 4 personas</span>
@@ -582,14 +582,14 @@ export default function EventMesasPage() {
             </ul>
           </div>
 
-          <div className="regia-card-gold p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <CreditCard className="w-6 h-6 text-regia-gold-bright" />
-              <h3 className="regia-title-secondary text-lg">
+          <div className="regia-card-gold p-4 sm:p-5 lg:p-6">
+            <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+              <CreditCard className="w-5 h-5 sm:w-6 sm:h-6 text-regia-gold-bright" />
+              <h3 className="regia-title-secondary text-base sm:text-lg">
                 Métodos de Pago
               </h3>
             </div>
-            <ul className="regia-text-body text-sm space-y-2">
+            <ul className="regia-text-body text-xs sm:text-sm space-y-1.5 sm:space-y-2">
               <li className="flex items-center gap-2">
                 <CreditCard className="w-4 h-4 text-regia-gold-bright" />
                 <span>Efectivo</span>

@@ -496,13 +496,13 @@ export default function HomePage() {
           {featuredEvent ? (
             <>
               {/* Nombre del evento - Victor Mendivil */}
-              <div className="w-full flex justify-center mb-6">
+              <div className="w-full flex justify-center mb-4 sm:mb-6">
                 <Image
                   src="/assets/victor-mendivil-title.png"
                   alt={featuredEvent.artist}
                   width={1689}
                   height={689}
-                  className="w-full max-w-6xl h-auto"
+                  className="w-full max-w-[90%] sm:max-w-md md:max-w-2xl lg:max-w-6xl h-auto"
                   style={{ 
                     filter: 'drop-shadow(0 0 20px rgba(244, 208, 63, 0.6))'
                   }}
@@ -513,13 +513,13 @@ export default function HomePage() {
               {/* Contenedor para fecha, botón, info y estrella - ligeramente a la derecha */}
               <div className="w-full flex flex-col items-center pl-0 md:pl-12 lg:pl-16">
                 {/* Fecha - 28 de marzo */}
-                <div className="w-full flex justify-center mb-8">
+                <div className="w-full flex justify-center mb-4 sm:mb-6 lg:mb-8">
                   <Image
                     src="/assets/fecha-evento.png"
                     alt="28 de marzo de 2026"
                     width={1689}
                     height={202}
-                    className="w-full max-w-lg h-auto"
+                    className="w-full max-w-[85%] sm:max-w-sm md:max-w-md lg:max-w-lg h-auto"
                     style={{ 
                       filter: 'drop-shadow(0 0 15px rgba(244, 208, 63, 0.5))'
                     }}
@@ -593,13 +593,13 @@ export default function HomePage() {
       {featuredEvent && (
         <section id="info-evento" className="relative py-24 px-4 sm:px-6 lg:px-8 regia-bg-main">
           <div className="max-w-6xl mx-auto pl-0 md:pl-8 lg:pl-12">
-            <div className="flex justify-center mb-16">
+            <div className="flex justify-center mb-8 sm:mb-12 lg:mb-16">
               <Image
                 src="/assets/info-evento-titulo.png"
                 alt="Información del Evento"
                 width={1456}
                 height={244}
-                className="w-full max-w-3xl h-auto"
+                className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-3xl h-auto"
                 style={{ 
                   filter: 'drop-shadow(0 0 15px rgba(244, 208, 63, 0.4))'
                 }}
@@ -639,13 +639,13 @@ export default function HomePage() {
       {featuredEvent && featuredEvent.sections.length > 0 && (
         <section className="relative py-24 px-4 sm:px-6 lg:px-8 regia-bg-main">
           <div className="max-w-6xl mx-auto pl-0 md:pl-8 lg:pl-12">
-            <div className="flex justify-center mb-16">
+            <div className="flex justify-center mb-8 sm:mb-12 lg:mb-16">
               <Image
                 src="/assets/tipos-de-boletos-titulo.png"
                 alt="Tipos de Boletos"
                 width={1456}
                 height={244}
-                className="w-full max-w-2xl h-auto"
+                className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-2xl h-auto"
                 style={{ 
                   filter: 'drop-shadow(0 0 15px rgba(244, 208, 63, 0.4))'
                 }}
@@ -708,13 +708,13 @@ export default function HomePage() {
       {concerts.length > 1 && (
         <section className="relative py-24 px-4 sm:px-6 lg:px-8 regia-bg-main">
           <div className="max-w-6xl mx-auto pl-0 md:pl-8 lg:pl-12">
-            <div className="flex justify-center mb-16">
+            <div className="flex justify-center mb-8 sm:mb-12 lg:mb-16">
               <Image
                 src="/assets/mas-eventos-titulo.png"
                 alt="Más Eventos"
                 width={1456}
                 height={244}
-                className="w-full max-w-xl h-auto"
+                className="w-full max-w-[280px] sm:max-w-sm md:max-w-md lg:max-w-xl h-auto"
                 style={{ 
                   filter: 'drop-shadow(0 0 15px rgba(244, 208, 63, 0.4))'
                 }}
@@ -793,13 +793,13 @@ export default function HomePage() {
       {/* SECCIÓN: POR QUÉ COMPRAR CON NOSOTROS */}
       <section className="relative py-24 px-4 sm:px-6 lg:px-8 regia-bg-main">
         <div className="max-w-6xl mx-auto pl-0 md:pl-8 lg:pl-12">
-          <div className="flex justify-center mb-16">
+          <div className="flex justify-center mb-8 sm:mb-12 lg:mb-16">
             <Image
               src="/assets/porque-grupo-regia-titulo.png"
               alt="¿Por qué Grupo Regia?"
               width={1456}
               height={244}
-              className="w-full max-w-3xl h-auto"
+              className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-3xl h-auto"
               style={{ 
                 filter: 'drop-shadow(0 0 15px rgba(244, 208, 63, 0.4))'
               }}
