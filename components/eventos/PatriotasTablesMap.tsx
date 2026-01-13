@@ -326,6 +326,18 @@ export function PatriotasTablesMap({
                 const isHovered = hoveredSection === section.id;
                 const isClickable = section.type !== "PROTECCION";
 
+                // Debug: log de las coordenadas transformadas
+                if (debugMode) {
+                  console.log(`Sección ${section.name}:`, {
+                    x: section.x,
+                    y: section.y,
+                    width: section.width,
+                    height: section.height,
+                    transformedX: section.x * scale + offsetX,
+                    transformedY: section.y * scale + offsetY
+                  });
+                }
+
                 return (
                   <g key={section.id}>
                     {/* Área clickeable de la sección */}
@@ -334,10 +346,10 @@ export function PatriotasTablesMap({
                       y={section.y}
                       width={section.width}
                       height={section.height}
-                      fill={isSelected ? "#FFD700" : isHovered ? "#FFA500" : "#c4a905"}
-                      stroke="#FFD700"
-                      strokeWidth={isSelected ? 8 : isHovered ? 6 : 3}
-                      opacity={isHovered || isSelected ? 0.7 : 0.35}
+                      fill={isSelected ? "#FFD700" : isHovered ? "#FFA500" : "#FF0000"}
+                      stroke="#00FF00"
+                      strokeWidth={isSelected ? 8 : isHovered ? 6 : 5}
+                      opacity={0.8}
                       className={isClickable ? "cursor-pointer transition-all" : ""}
                       style={{ pointerEvents: isClickable ? "all" : "none" }}
                       onMouseEnter={() => isClickable && setHoveredSection(section.id)}
@@ -350,13 +362,12 @@ export function PatriotasTablesMap({
                       y={section.y + section.height / 2}
                       textAnchor="middle"
                       dominantBaseline="middle"
-                      fill={isHovered || isSelected ? "#fff" : "#FFD700"}
-                      fontSize={isHovered || isSelected ? "50" : "35"}
+                      fill="#FFFFFF"
+                      fontSize="60"
                       fontWeight="bold"
                       pointerEvents="none"
-                      opacity={isHovered || isSelected ? 1 : 0.8}
                       style={{
-                        textShadow: "0 0 10px rgba(0,0,0,0.8), 0 0 20px rgba(255,215,0,0.5)"
+                        textShadow: "0 0 10px rgba(0,0,0,1)"
                       }}
                     >
                       {section.name}
