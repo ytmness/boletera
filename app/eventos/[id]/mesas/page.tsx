@@ -8,7 +8,6 @@ import { IndividualTable, VIP_TABLES_162, NON_VIP_SECTIONS_162 } from "@/lib/pat
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Trash2, ArrowLeft, MapPin, Users, CreditCard, Ticket, Info, X, Calendar, Music, LogIn, User, Shield, Scan } from "lucide-react";
 import { toast } from "sonner";
-import { FooterMockup } from "@/components/NavbarFooter";
 
 interface Section {
   id: string;
@@ -806,7 +805,63 @@ export default function EventMesasPage() {
         )}
         </div>
       </main>
-      <FooterMockup />
+
+      {/* FOOTER MINIMALISTA */}
+      <footer className="regia-footer">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            {/* Columna 1: Logo y descripción */}
+            <div>
+              <h3 className="text-regia-gold-old font-bold text-lg mb-4 tracking-wider">
+                GRUPO REGIA
+              </h3>
+              <p className="regia-text-body text-sm">
+                Tu plataforma de confianza para eventos en vivo exclusivos
+              </p>
+            </div>
+
+            {/* Columna 2: Enlaces */}
+            <div>
+              <h4 className="regia-title-secondary text-base mb-4">Enlaces</h4>
+              <ul className="space-y-2">
+                <li>
+                  <a href="/#eventos" className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors">
+                    Eventos
+                  </a>
+                </li>
+                <li>
+                  <button onClick={() => router.push("/mis-boletos")} className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors text-left">
+                    Mis Boletos
+                  </button>
+                </li>
+                <li>
+                  <a href="/#contacto" className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors">
+                    Contacto
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Columna 3: Contacto */}
+            <div>
+              <h4 className="regia-title-secondary text-base mb-4">Contacto</h4>
+              <p className="regia-text-body text-sm mb-2">
+                contacto@grupoRegia.com
+              </p>
+              <p className="text-regia-gold-old text-xs font-semibold tracking-wider mt-4">
+                RICO O MUERTO
+              </p>
+            </div>
+          </div>
+
+          {/* Copyright */}
+          <div className="border-t border-regia-gold-old/20 pt-8 pb-6 text-center">
+            <p className="regia-footer-text">
+              © {new Date().getFullYear()} Grupo Regia. Todos los derechos reservados.
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

@@ -790,16 +790,11 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Copyright y créditos */}
-          <div className="border-t border-regia-gold-old/20 pt-8 pb-6">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <p className="regia-footer-text">
-                © {new Date().getFullYear()} Grupo Regia. Todos los derechos reservados.
-              </p>
-              <p className="regia-footer-text text-xs">
-                PRODUCTION BY: <span className="text-regia-gold-old font-semibold tracking-wider">ECHO VISIONS</span>
-              </p>
-            </div>
+          {/* Copyright */}
+          <div className="border-t border-regia-gold-old/20 pt-8 pb-6 text-center">
+            <p className="regia-footer-text">
+              © {new Date().getFullYear()} Grupo Regia. Todos los derechos reservados.
+            </p>
           </div>
         </div>
       </footer>
