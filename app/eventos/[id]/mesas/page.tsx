@@ -479,19 +479,19 @@ export default function EventMesasPage() {
           {/* Info rápida */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="regia-card-gold p-4">
-              <p className="regia-text-muted text-sm mb-1">Total Mesas VIP</p>
+              <p className="text-regia-cream text-sm mb-1">Total Mesas VIP</p>
               <p className="text-2xl font-bold text-regia-cream">162</p>
             </div>
             <div className="regia-card-gold p-4">
-              <p className="regia-text-muted text-sm mb-1">Precio por Mesa</p>
+              <p className="text-regia-cream text-sm mb-1">Precio por Mesa</p>
               <p className="text-2xl font-bold text-regia-gold-bright">$2,500</p>
             </div>
             <div className="regia-card-gold p-4">
-              <p className="regia-text-muted text-sm mb-1">Personas por Mesa</p>
+              <p className="text-regia-cream text-sm mb-1">Personas por Mesa</p>
               <p className="text-2xl font-bold text-regia-cream">4</p>
             </div>
             <div className="regia-card-gold p-4">
-              <p className="regia-text-muted text-sm mb-1">Capacidad Total</p>
+              <p className="text-regia-cream text-sm mb-1">Capacidad Total</p>
               <p className="text-2xl font-bold text-regia-cream">648</p>
             </div>
           </div>
