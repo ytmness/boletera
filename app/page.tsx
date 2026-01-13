@@ -638,8 +638,15 @@ export default function HomePage() {
                 Ubicación del Evento
               </h3>
               <div className="w-full h-64 sm:h-80 md:h-96 rounded-lg overflow-hidden">
+                {/* 
+                  Para obtener el enlace de embed correcto:
+                  1. Abre el enlace compartido: https://share.google/omZwNBAJjCGmplpV2
+                  2. En Google Maps, haz clic en los tres puntos (⋮) > "Compartir o insertar mapa"
+                  3. Selecciona la pestaña "Insertar un mapa"
+                  4. Copia el código HTML del iframe y reemplaza la URL del src aquí
+                */}
                 <iframe
-                  src={`https://www.google.com/maps?q=${encodeURIComponent(featuredEvent.venue)}&output=embed`}
+                  src={`https://www.google.com/maps?q=${encodeURIComponent(featuredEvent.venue || 'Campo La Unión Patriotas')}&output=embed`}
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
@@ -652,6 +659,16 @@ export default function HomePage() {
               <p className="regia-text-body text-sm text-center mt-4">
                 {featuredEvent.venue}
               </p>
+              <div className="text-center mt-2">
+                <a
+                  href="https://share.google/omZwNBAJjCGmplpV2"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-regia-gold-bright hover:text-regia-gold-old text-sm underline transition-colors"
+                >
+                  Ver ubicación completa en Google Maps
+                </a>
+              </div>
             </div>
           </div>
         </section>
