@@ -183,17 +183,20 @@ export async function GET(
       });
     }
 
-    // Buscar sección PREFERENTE en BD (la dividiremos en A y B)
-    const preferenteTicketType = sectionTicketTypes.find(tt => tt.category === "PREFERENTE");
-    if (preferenteTicketType) {
-      // PREFERENTE A
+    // Buscar secciones PREFERENTE A y B en BD (si existen por separado)
+    const preferenteA = sectionTicketTypes.find(tt => tt.category === "PREFERENTE" && tt.name.toLowerCase().includes("a"));
+    const preferenteB = sectionTicketTypes.find(tt => tt.category === "PREFERENTE" && tt.name.toLowerCase().includes("b"));
+    const preferenteGeneric = sectionTicketTypes.find(tt => tt.category === "PREFERENTE" && !tt.name.toLowerCase().includes("a") && !tt.name.toLowerCase().includes("b"));
+
+    // Si existen Preferente A y B por separado, usarlos directamente
+    if (preferenteA && preferenteB) {
       sections.push({
-        id: `${preferenteTicketType.id}-a`,
+        id: preferenteA.id,
         name: "PREFERENTE A",
         type: "PREFERENTE",
-        price: Number(preferenteTicketType.price),
-        capacity: Math.floor(preferenteTicketType.maxQuantity / 2),
-        sold: Math.floor(preferenteTicketType.soldQuantity / 2),
+        price: Number(preferenteA.price),
+        capacity: preferenteA.maxQuantity,
+        sold: preferenteA.soldQuantity,
         color: "#C5A059",
         description: "Zona preferente izquierda",
         x: 859,
@@ -202,14 +205,45 @@ export async function GET(
         height: 151,
       });
 
-      // PREFERENTE B
       sections.push({
-        id: `${preferenteTicketType.id}-b`,
+        id: preferenteB.id,
         name: "PREFERENTE B",
         type: "PREFERENTE",
-        price: Number(preferenteTicketType.price),
-        capacity: Math.ceil(preferenteTicketType.maxQuantity / 2),
-        sold: Math.ceil(preferenteTicketType.soldQuantity / 2),
+        price: Number(preferenteB.price),
+        capacity: preferenteB.maxQuantity,
+        sold: preferenteB.soldQuantity,
+        color: "#C5A059",
+        description: "Zona preferente derecha",
+        x: 1375,
+        y: 756,
+        width: 486,
+        height: 152,
+      });
+    } 
+    // Si solo existe un "Preferente" genérico, dividirlo en A y B
+    else if (preferenteGeneric) {
+      sections.push({
+        id: `${preferenteGeneric.id}-a`,
+        name: "PREFERENTE A",
+        type: "PREFERENTE",
+        price: Number(preferenteGeneric.price),
+        capacity: Math.floor(preferenteGeneric.maxQuantity / 2),
+        sold: Math.floor(preferenteGeneric.soldQuantity / 2),
+        color: "#C5A059",
+        description: "Zona preferente izquierda",
+        x: 859,
+        y: 754,
+        width: 483,
+        height: 151,
+      });
+
+      sections.push({
+        id: `${preferenteGeneric.id}-b`,
+        name: "PREFERENTE B",
+        type: "PREFERENTE",
+        price: Number(preferenteGeneric.price),
+        capacity: Math.ceil(preferenteGeneric.maxQuantity / 2),
+        sold: Math.ceil(preferenteGeneric.soldQuantity / 2),
         color: "#C5A059",
         description: "Zona preferente derecha",
         x: 1375,
