@@ -639,9 +639,19 @@ export default function HomePage() {
       {featuredEvent && featuredEvent.sections.length > 0 && (
         <section className="relative py-24 px-4 sm:px-6 lg:px-8 regia-bg-main">
           <div className="max-w-6xl mx-auto pl-0 md:pl-8 lg:pl-12">
-            <h2 className="regia-title-main text-4xl md:text-5xl text-center mb-4">
-              Tipos de Boletos
-            </h2>
+            <div className="flex justify-center mb-16">
+              <Image
+                src="/assets/tipos-de-boletos-titulo.png"
+                alt="Tipos de Boletos"
+                width={1456}
+                height={244}
+                className="w-full max-w-4xl h-auto"
+                style={{ 
+                  filter: 'drop-shadow(0 0 15px rgba(244, 208, 63, 0.4))'
+                }}
+                priority
+              />
+            </div>
             <p className="regia-text-body text-center mb-16 max-w-2xl mx-auto">
               Selecciona tu experiencia y asegura tu lugar en este evento exclusivo
             </p>
@@ -698,9 +708,19 @@ export default function HomePage() {
       {concerts.length > 1 && (
         <section className="relative py-24 px-4 sm:px-6 lg:px-8 regia-bg-main">
           <div className="max-w-6xl mx-auto pl-0 md:pl-8 lg:pl-12">
-            <h2 className="regia-title-main text-4xl md:text-5xl text-center mb-16">
-              Más Eventos
-            </h2>
+            <div className="flex justify-center mb-16">
+              <Image
+                src="/assets/mas-eventos-titulo.png"
+                alt="Más Eventos"
+                width={1456}
+                height={244}
+                className="w-full max-w-4xl h-auto"
+                style={{ 
+                  filter: 'drop-shadow(0 0 15px rgba(244, 208, 63, 0.4))'
+                }}
+                priority
+              />
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {concerts.slice(1).map((concert) => {
