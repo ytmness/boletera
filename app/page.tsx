@@ -438,14 +438,14 @@ export default function HomePage() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-full max-w-6xl flex flex-col items-center justify-center px-4 pt-24">
           {featuredEvent ? (
             <>
-              {/* Nombre del evento - Victor Mendivil (MÁS GRANDE) */}
+              {/* Nombre del evento - Victor Mendivil */}
               <div className="w-full flex justify-center mb-6">
                 <Image
                   src="/assets/victor-mendivil-title.png"
                   alt={featuredEvent.artist}
                   width={1689}
                   height={689}
-                  className="w-full max-w-5xl h-auto"
+                  className="w-full max-w-6xl h-auto"
                   style={{ 
                     filter: 'drop-shadow(0 0 20px rgba(244, 208, 63, 0.6))'
                   }}
@@ -453,8 +453,8 @@ export default function HomePage() {
                 />
               </div>
 
-              {/* Contenedor para fecha, botón, info y estrella - desplazado a la derecha */}
-              <div className="w-full flex flex-col items-center" style={{ paddingLeft: '5%' }}>
+              {/* Contenedor para fecha, botón, info y estrella */}
+              <div className="w-full flex flex-col items-center">
                 {/* Fecha - 28 de marzo */}
                 <div className="w-full flex justify-center mb-8">
                   <Image
@@ -542,7 +542,7 @@ export default function HomePage() {
                 alt="Información del Evento"
                 width={1456}
                 height={244}
-                className="w-full max-w-3xl h-auto"
+                className="w-full max-w-4xl h-auto"
                 style={{ 
                   filter: 'drop-shadow(0 0 15px rgba(244, 208, 63, 0.4))'
                 }}
@@ -701,7 +701,7 @@ export default function HomePage() {
               alt="¿Por qué Grupo Regia?"
               width={1456}
               height={271}
-              className="w-full max-w-3xl h-auto"
+              className="w-full max-w-4xl h-auto"
               style={{ 
                 filter: 'drop-shadow(0 0 15px rgba(244, 208, 63, 0.4))'
               }}
