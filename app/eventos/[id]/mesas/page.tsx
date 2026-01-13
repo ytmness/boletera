@@ -465,9 +465,25 @@ export default function EventMesasPage() {
         {/* Header con info del evento */}
         <div className="mb-8">
           <div className="mb-4">
-            <h1 className="regia-title-main text-4xl md:text-5xl mb-2">
-              {event.name}
-            </h1>
+            {event.artist === 'Víctor Mendivil' ? (
+              <div className="flex justify-center mb-2">
+                <Image
+                  src="/assets/victor-mendivil-en-concierto-titulo.png"
+                  alt={event.name}
+                  width={1456}
+                  height={244}
+                  className="w-full max-w-5xl h-auto"
+                  style={{ 
+                    filter: 'drop-shadow(0 0 20px rgba(244, 208, 63, 0.6))'
+                  }}
+                  priority
+                />
+              </div>
+            ) : (
+              <h1 className="regia-title-main text-4xl md:text-5xl mb-2">
+                {event.name}
+              </h1>
+            )}
             <p className="regia-text-body text-lg">
               {formattedDate} • {event.eventTime}
             </p>
