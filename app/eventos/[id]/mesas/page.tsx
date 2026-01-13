@@ -303,7 +303,7 @@ export default function EventMesasPage() {
           </div>
         </header>
 
-        <main className="flex-grow w-full py-8 pt-32 lg:pt-36">
+        <main className="flex-grow w-full py-8 pt-64 lg:pt-72">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center py-20">
               <p className="text-regia-cream/70 text-xl">Cargando evento...</p>
@@ -434,7 +434,7 @@ export default function EventMesasPage() {
         </div>
       </header>
       
-      <main className="flex-grow w-full py-8 pt-32 lg:pt-36">
+      <main className="flex-grow w-full py-8 pt-64 lg:pt-72">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Botón volver */}
         <Button
