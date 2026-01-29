@@ -224,34 +224,15 @@ export default function EventMesasPage() {
 
       const { saleId } = checkoutResult.data;
 
-      // Paso 2: Crear link de pago en Clip
-      const paymentResponse = await fetch("/api/payments/clip/create-link", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ saleId }),
-      });
-
-      const paymentData = await paymentResponse.json();
-
-      if (!paymentResponse.ok) {
-        throw new Error(paymentData.error || "Error al crear link de pago");
-      }
-
-      // Paso 3: Redirigir al usuario a Clip para completar el pago
-      const { paymentUrl } = paymentData.data;
+      // Paso 2: Redirigir a la página de checkout transparente
+      // Limpiar carrito antes de redirigir
+      setCartItems([]);
+      setShowCart(false);
+      setShowCheckoutModal(false);
+      setCheckoutData({ buyerName: "", buyerEmail: "", buyerPhone: "" });
       
-      if (paymentUrl) {
-        // Limpiar carrito antes de redirigir
-        setCartItems([]);
-        setShowCart(false);
-        setShowCheckoutModal(false);
-        setCheckoutData({ buyerName: "", buyerEmail: "", buyerPhone: "" });
-        
-        // Redirigir a Clip
-        window.location.href = paymentUrl;
-      } else {
-        throw new Error("No se recibió URL de pago");
-      }
+      // Redirigir a la página de checkout transparente
+      router.push(`/checkout/${saleId}`);
     } catch (error: any) {
       toast.error(error.message || "Error al procesar la orden");
       setIsProcessingCheckout(false);

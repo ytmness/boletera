@@ -199,6 +199,98 @@ export class ClipClient {
         : new Error("Error desconocido al verificar estado de pago en Clip");
     }
   }
+
+  /**
+   * Crea un cargo usando Checkout Transparente (token generado por el SDK)
+   * POST https://api.clip.mx/v2/charges
+   * 
+   * Referencia: https://developer.clip.mx/reference/crearunnuevocharge
+   * 
+   * IMPORTANTE: Requiere certificación PCI-DSS Nivel 1 y permisos de Clip
+   */
+  async createCharge(params: {
+    amount: number; // Monto en centavos (MXN)
+    currency: string; // "MXN"
+    token: string; // Token generado por el SDK de Clip
+    description: string; // Descripción del pago
+    reference: string; // Referencia única (saleId)
+  }): Promise<{
+    id: string;
+    status: string;
+    amount: number;
+    currency: string;
+    paid: boolean;
+    raw?: any;
+  }> {
+    try {
+      const url = `${this.baseUrl}/${CLIP_API_VERSION}/charges`;
+
+      const payload = {
+        amount: params.amount,
+        currency: params.currency,
+        token: params.token,
+        description: params.description,
+        reference: params.reference,
+      };
+
+      console.log("Clip API Create Charge Request:", {
+        url,
+        payload: { ...payload, token: `${params.token.substring(0, 10)}...` },
+        authToken: this.authToken ? `${this.authToken.substring(0, 10)}...` : "MISSING",
+      });
+
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${this.authToken}`,
+      };
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        let errorData: any = {};
+        let errorText = "";
+        try {
+          errorText = await response.text();
+          errorData = JSON.parse(errorText);
+        } catch (e) {
+          errorData = { raw: errorText };
+        }
+        
+        console.error("Clip API Create Charge Error:", {
+          status: response.status,
+          statusText: response.statusText,
+          url,
+          payload: { ...payload, token: `${params.token.substring(0, 10)}...` },
+          errorData,
+          errorText,
+        });
+        
+        throw new Error(
+          `Clip API error: ${response.status} - ${errorData.message || errorData.error || response.statusText || "Unknown error"}`
+        );
+      }
+
+      const data = await response.json();
+
+      return {
+        id: data.id || data.charge_id || "",
+        status: data.status || "unknown",
+        amount: data.amount || params.amount,
+        currency: data.currency || params.currency,
+        paid: data.status === "paid" || data.status === "approved" || data.paid === true,
+        raw: data,
+      };
+    } catch (error) {
+      console.error("Error creating Clip charge:", error);
+      throw error instanceof Error
+        ? error
+        : new Error("Error desconocido al crear cargo en Clip");
+    }
+  }
 }
 
 /**
@@ -221,4 +313,25 @@ export async function createClipCheckoutLink(
 ): Promise<CreateCheckoutLinkResponse> {
   const client = getClipClient();
   return client.createCheckoutLink(params);
+}
+
+/**
+ * Helper para crear un cargo con token (Checkout Transparente)
+ */
+export async function createClipCharge(params: {
+  amount: number;
+  currency: string;
+  token: string;
+  description: string;
+  reference: string;
+}): Promise<{
+  id: string;
+  status: string;
+  amount: number;
+  currency: string;
+  paid: boolean;
+  raw?: any;
+}> {
+  const client = getClipClient();
+  return client.createCharge(params);
 }
