@@ -243,6 +243,14 @@ export function ClipCheckoutForm({
 
   return (
     <div className="w-full">
+      {/* CSS para ajustar el iframe de Clip */}
+      <style jsx global>{`
+        #checkout iframe {
+          width: 100% !important;
+          max-width: 100% !important;
+        }
+      `}</style>
+
       {error && (
         <div className="mb-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg backdrop-blur-sm">
           <div className="flex items-start">
@@ -273,8 +281,12 @@ export function ClipCheckoutForm({
         {/* Contenedor donde se montará el formulario de Clip */}
         <div
           id="checkout"
-          className="clip-checkout-form mb-6 bg-white rounded-lg p-6 shadow-xl"
-          style={{ minHeight: "350px" }}
+          className="clip-checkout-form mb-6 bg-white rounded-lg p-4 shadow-xl"
+          style={{ 
+            minHeight: "280px",
+            width: "100%",
+            maxWidth: "100%"
+          }}
         />
 
         {/* Botón de pago */}
