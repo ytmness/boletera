@@ -243,25 +243,63 @@ export function ClipCheckoutForm({
 
   return (
     <div className="w-full">
+      {/* CSS personalizado para el formulario de Clip */}
+      <style jsx global>{`
+        /* Estilo del iframe de Clip para que se vea acorde con el diseño */
+        #checkout iframe {
+          border-radius: 8px;
+          background: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        /* Mejorar legibilidad del texto en el formulario de Clip */
+        #checkout input,
+        #checkout label,
+        #checkout select,
+        #checkout .clip-label,
+        #checkout .clip-input {
+          color: #f5f5f5 !important;
+          font-size: 14px !important;
+        }
+
+        #checkout input::placeholder {
+          color: #999 !important;
+        }
+
+        /* Asegurar que los campos sean visibles */
+        #checkout .clip-card-element,
+        #checkout .clip-field {
+          background: rgba(255, 255, 255, 0.08) !important;
+          border: 1px solid rgba(212, 175, 55, 0.3) !important;
+          border-radius: 6px !important;
+          padding: 12px !important;
+        }
+
+        #checkout .clip-card-element:focus,
+        #checkout .clip-field:focus {
+          border-color: rgba(212, 175, 55, 0.6) !important;
+          outline: none !important;
+        }
+      `}</style>
+
       {error && (
-        <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+        <div className="mb-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg backdrop-blur-sm">
           <div className="flex items-start">
-            <AlertCircle className="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" />
+            <AlertCircle className="w-5 h-5 text-red-400 mr-2 mt-0.5 flex-shrink-0" />
             <div>
-              <p className="text-sm font-medium text-red-800 dark:text-red-200">
+              <p className="text-sm font-medium regia-text-title">
                 Error en el pago
               </p>
-              <p className="text-sm text-red-600 dark:text-red-300 mt-1">{error}</p>
+              <p className="text-sm regia-text-body mt-1">{error}</p>
             </div>
           </div>
         </div>
       )}
 
       {isProcessing && (
-        <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+        <div className="mb-4 p-4 bg-regia-gold/10 border border-regia-gold/30 rounded-lg backdrop-blur-sm">
           <div className="flex items-center">
-            <Loader2 className="w-5 h-5 text-blue-500 mr-2 animate-spin" />
-            <p className="text-sm text-blue-800 dark:text-blue-200">
+            <Loader2 className="w-5 h-5 text-regia-gold mr-2 animate-spin" />
+            <p className="text-sm regia-text-body">
               Procesando tu pago...
             </p>
           </div>
@@ -273,7 +311,7 @@ export function ClipCheckoutForm({
         {/* Contenedor donde se montará el formulario de Clip */}
         <div
           id="checkout"
-          className="clip-checkout-form mb-4"
+          className="clip-checkout-form mb-4 bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-regia-gold-old/20"
           style={{ minHeight: "300px" }}
         />
 
@@ -300,8 +338,8 @@ export function ClipCheckoutForm({
         </button>
       </form>
 
-      <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-        <p className="text-xs text-gray-600 dark:text-gray-400 text-center">
+      <div className="mt-4 p-4 bg-regia-gold-old/10 backdrop-blur-sm rounded-lg border border-regia-gold-old/20">
+        <p className="text-xs regia-text-body text-center">
           🔒 Tus datos de pago están protegidos y encriptados por Clip. No almacenamos información de tu tarjeta.
         </p>
       </div>

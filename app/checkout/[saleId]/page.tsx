@@ -148,7 +148,7 @@ export default function CheckoutPage() {
     );
   }
 
-  const totalAmount = Math.round(Number(sale.total) * 100); // Convertir a centavos
+  const totalAmount = Math.round((Number(sale.total) + 2) * 100); // Convertir a centavos (incluye cargo de servicio de $2)
   const clipApiKey = process.env.NEXT_PUBLIC_CLIP_API_KEY || "";
 
   if (!clipApiKey) {
@@ -243,11 +243,29 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              <div className="border-t border-white/20 pt-4">
-                <div className="flex justify-between items-center">
+              <div className="border-t border-white/20 pt-4 space-y-2">
+                <div className="flex justify-between items-center regia-text-body text-sm">
+                  <span>Subtotal:</span>
+                  <span>
+                    ${sale.total.toLocaleString("es-MX", {
+                      minimumFractionDigits: 2,
+                    })}{" "}
+                    {sale.currency}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center regia-text-body text-sm">
+                  <span>Cargo de servicio:</span>
+                  <span>
+                    ${(2).toLocaleString("es-MX", {
+                      minimumFractionDigits: 2,
+                    })}{" "}
+                    {sale.currency}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center pt-2 border-t border-white/10">
                   <span className="text-lg font-bold regia-text-title">Total:</span>
                   <span className="text-xl font-bold regia-text-title">
-                    ${sale.total.toLocaleString("es-MX", {
+                    ${(sale.total + 2).toLocaleString("es-MX", {
                       minimumFractionDigits: 2,
                     })}{" "}
                     {sale.currency}
