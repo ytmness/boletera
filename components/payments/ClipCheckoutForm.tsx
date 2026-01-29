@@ -91,11 +91,25 @@ export function ClipCheckoutForm({
 
       // Crear el elemento Card con configuración
       const card = clip.element.create("Card", {
-        theme: "light",
+        theme: "dark", // Cambiar a tema oscuro
         locale: "es",
         paymentAmount: amount / 100, // Convertir de centavos a pesos
         terms: {
           enabled: amount >= 30000, // Habilitar MSI solo si el monto es >= $300 MXN
+        },
+        style: {
+          // Personalizar colores (si el SDK lo soporta)
+          base: {
+            color: "#f5f5f5",
+            fontSize: "14px",
+            fontFamily: "system-ui, -apple-system, sans-serif",
+            "::placeholder": {
+              color: "#999999",
+            },
+          },
+          invalid: {
+            color: "#ef4444",
+          },
         },
       });
 
