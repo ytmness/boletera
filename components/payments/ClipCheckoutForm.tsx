@@ -243,44 +243,6 @@ export function ClipCheckoutForm({
 
   return (
     <div className="w-full">
-      {/* CSS personalizado para el formulario de Clip */}
-      <style jsx global>{`
-        /* Estilo del iframe de Clip para que se vea acorde con el diseño */
-        #checkout iframe {
-          border-radius: 8px;
-          background: rgba(255, 255, 255, 0.05) !important;
-        }
-
-        /* Mejorar legibilidad del texto en el formulario de Clip */
-        #checkout input,
-        #checkout label,
-        #checkout select,
-        #checkout .clip-label,
-        #checkout .clip-input {
-          color: #f5f5f5 !important;
-          font-size: 14px !important;
-        }
-
-        #checkout input::placeholder {
-          color: #999 !important;
-        }
-
-        /* Asegurar que los campos sean visibles */
-        #checkout .clip-card-element,
-        #checkout .clip-field {
-          background: rgba(255, 255, 255, 0.08) !important;
-          border: 1px solid rgba(212, 175, 55, 0.3) !important;
-          border-radius: 6px !important;
-          padding: 12px !important;
-        }
-
-        #checkout .clip-card-element:focus,
-        #checkout .clip-field:focus {
-          border-color: rgba(212, 175, 55, 0.6) !important;
-          outline: none !important;
-        }
-      `}</style>
-
       {error && (
         <div className="mb-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg backdrop-blur-sm">
           <div className="flex items-start">
@@ -311,7 +273,7 @@ export function ClipCheckoutForm({
         {/* Contenedor donde se montará el formulario de Clip */}
         <div
           id="checkout"
-          className="clip-checkout-form mb-4 bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-regia-gold-old/20"
+          className="clip-checkout-form mb-4 bg-white rounded-lg p-6 shadow-xl"
           style={{ minHeight: "300px" }}
         />
 
