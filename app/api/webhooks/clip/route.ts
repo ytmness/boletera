@@ -109,7 +109,8 @@ export async function POST(request: NextRequest) {
     // Procesar según el estado del pago
     if (paymentStatus === "paid" || paymentStatus === "approved" || eventType === "payment.paid") {
       // PAGO APROBADO: Crear tickets y actualizar inventario
-      await prisma.$transaction(async (tx) => {
+      await prisma.$transaction(
+        async (tx) => {
         // 1. Actualizar Sale
         await tx.sale.update({
           where: { id: sale.id },
@@ -135,13 +136,16 @@ export async function POST(request: NextRequest) {
             ticketsToCreate = saleItem.quantity;
           }
 
+          // Obtener el count inicial UNA VEZ antes del loop (optimización crítica)
+          let ticketCount = await tx.ticket.count({
+            where: { ticketTypeId: saleItem.ticketTypeId },
+          });
+
           // Crear cada ticket
           for (let i = 0; i < ticketsToCreate; i++) {
-            // Generar número de boleto único
-            const ticketCount = await tx.ticket.count({
-              where: { ticketTypeId: saleItem.ticketTypeId },
-            });
-            const ticketNumber = `${sale.event.name.substring(0, 3).toUpperCase()}-${ticketType.name.substring(0, 3).toUpperCase()}-${String(ticketCount + 1).padStart(6, "0")}`;
+            // Incrementar contador local (más rápido que hacer count() cada vez)
+            ticketCount += 1;
+            const ticketNumber = `${sale.event.name.substring(0, 3).toUpperCase()}-${ticketType.name.substring(0, 3).toUpperCase()}-${String(ticketCount).padStart(6, "0")}`;
 
             // Crear ticket primero para obtener el ID
             const ticket = await tx.ticket.create({
@@ -178,7 +182,12 @@ export async function POST(request: NextRequest) {
             },
           });
         }
-      });
+      },
+      {
+        timeout: 20000, // 20 segundos de timeout
+        maxWait: 20000, // Esperar hasta 20 segundos para obtener el lock
+      }
+    );
 
       console.log(`Pago aprobado para Sale ${sale.id}, tickets creados`);
       return NextResponse.json({ success: true, message: "Payment processed" });
