@@ -244,7 +244,7 @@ export class ClipClient {
 
       const headers: Record<string, string> = {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${this.authToken}`,
+        "Authorization": `Bearer ${this.authToken}`, // API Key con prefijo Bearer según documentación
       };
 
       const response = await fetch(url, {
