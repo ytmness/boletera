@@ -20,16 +20,19 @@ export async function GET(request: NextRequest) {
     // #endregion
 
     if (!user) {
-      return NextResponse.json({ user: null }, { status: 200 });
+      return NextResponse.json({ success: false, data: null }, { status: 200 });
     }
 
-    return NextResponse.json({ user });
+    return NextResponse.json({ 
+      success: true, 
+      data: { user } 
+    });
   } catch (error) {
     console.error("Get session error:", error);
     // #region agent log
     fetch('http://127.0.0.1:7242/ingest/0a40da1d-54df-4a70-9c53-c9c9e8cfa786',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/api/auth/session/route.ts:20',message:'Session check error',data:{errorMessage:error instanceof Error?error.message:'unknown'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
     // #endregion
-    return NextResponse.json({ user: null }, { status: 200 });
+    return NextResponse.json({ success: false, data: null }, { status: 200 });
   }
 }
 
