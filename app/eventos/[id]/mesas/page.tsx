@@ -217,14 +217,30 @@ export default function EventMesasPage() {
   });
   const [isProcessingCheckout, setIsProcessingCheckout] = useState(false);
 
-  const handleCheckout = async () => {
+  // Función para iniciar el checkout (con o sin modal según si está logueado)
+  const handleStartCheckout = () => {
     if (cartItems.length === 0) {
       toast.error("El carrito está vacío");
       return;
     }
 
+    // Si el usuario está logueado, usar sus datos automáticamente
+    if (user) {
+      handleCheckout(user.name, user.email, "");
+    } else {
+      // Si no está logueado, mostrar modal para capturar datos
+      setShowCheckoutModal(true);
+    }
+  };
+
+  const handleCheckout = async (buyerName?: string, buyerEmail?: string, buyerPhone?: string) => {
+    // Usar datos del formulario o parámetros
+    const finalBuyerName = buyerName || checkoutData.buyerName;
+    const finalBuyerEmail = buyerEmail || checkoutData.buyerEmail;
+    const finalBuyerPhone = buyerPhone || checkoutData.buyerPhone;
+
     // Validar datos del comprador
-    if (!checkoutData.buyerName || !checkoutData.buyerEmail) {
+    if (!finalBuyerName || !finalBuyerEmail) {
       toast.error("Por favor completa todos los campos requeridos");
       return;
     }
@@ -239,9 +255,9 @@ export default function EventMesasPage() {
         body: JSON.stringify({
           eventId,
           items: cartItems,
-          buyerName: checkoutData.buyerName,
-          buyerEmail: checkoutData.buyerEmail,
-          buyerPhone: checkoutData.buyerPhone,
+          buyerName: finalBuyerName,
+          buyerEmail: finalBuyerEmail,
+          buyerPhone: finalBuyerPhone,
         }),
       });
 
@@ -757,7 +773,7 @@ export default function EventMesasPage() {
                   {/* Botones */}
                   <div className="space-y-3">
                     <Button
-                      onClick={() => setShowCheckoutModal(true)}
+                      onClick={handleStartCheckout}
                       className="regia-btn-primary w-full h-12 text-lg"
                       disabled={isProcessingCheckout}
                     >
@@ -867,7 +883,7 @@ export default function EventMesasPage() {
                   Cancelar
                 </Button>
                 <Button
-                  onClick={handleCheckout}
+                  onClick={() => handleCheckout()}
                   className="flex-1 regia-btn-primary"
                   disabled={isProcessingCheckout}
                 >
