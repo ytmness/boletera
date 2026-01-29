@@ -22,7 +22,7 @@ function VerificarEmailContent() {
   const [user, setUser] = useState<any>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
 
-  // Cargar sesión del usuario
+  // Cargar sesión del usuario y redirigir si ya está logueado
   useEffect(() => {
     const loadSession = async () => {
       try {
@@ -31,13 +31,22 @@ function VerificarEmailContent() {
         if (data.success && data.data) {
           setUser(data.data.user);
           setUserRole(data.data.user?.role || null);
+          
+          // Si ya tiene sesión activa, redirigir según rol
+          const redirectPath = data.data.user?.role === "ADMIN" ? "/admin" 
+            : data.data.user?.role === "VENDEDOR" ? "/vendedor"
+            : data.data.user?.role === "SUPERVISOR" ? "/supervisor"
+            : data.data.user?.role === "ACCESOS" ? "/accesos"
+            : "/";
+          
+          router.push(redirectPath);
         }
       } catch (error) {
         console.error("Error al cargar sesión:", error);
       }
     };
     loadSession();
-  }, []);
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
