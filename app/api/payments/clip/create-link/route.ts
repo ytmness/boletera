@@ -6,9 +6,20 @@ export const dynamic = 'force-dynamic';
 
 /**
  * POST /api/payments/clip/create-link
- * Crea un link de pago en Clip para una venta existente
+ * DEPRECATED: Este endpoint ya no se usa. El nuevo flujo usa Checkout Transparente.
+ * Redirige a /checkout/[saleId] en lugar de crear un link de pago.
  */
 export async function POST(request: NextRequest) {
+  // Este endpoint está deprecado - el nuevo flujo usa Checkout Transparente
+  return NextResponse.json(
+    {
+      error: "Este endpoint está deprecado. Por favor usa el flujo de Checkout Transparente en /checkout/[saleId]",
+      deprecated: true,
+    },
+    { status: 410 } // 410 Gone - indica que el recurso ya no está disponible
+  );
+
+  /* CÓDIGO ANTIGUO - NO SE EJECUTA
   try {
     const body = await request.json();
     const { saleId } = body;
@@ -122,4 +133,5 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+  */
 }
