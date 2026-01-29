@@ -91,7 +91,7 @@ export async function GET(
         buyerEmail: sale.buyerEmail,
         buyerPhone: sale.buyerPhone,
         event: sale.event,
-        items: sale.saleItems,
+        saleItems: sale.saleItems, // Cambiar items → saleItems
         tickets: sale.tickets,
         createdAt: sale.createdAt,
         updatedAt: sale.updatedAt,
