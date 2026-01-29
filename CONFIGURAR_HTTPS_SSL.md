@@ -13,22 +13,19 @@ Los navegadores móviles (Chrome, Safari, etc.) **requieren HTTPS** para acceder
 Esta es la solución profesional y permanente.
 
 #### Requisitos:
-- Un dominio (ej: `boletera-regia.com` o `midominio.com`)
-- Servidor con IP pública (ya lo tienes: `216.128.139.41`)
+- Dominio configurado: `scenario.com.mx`
+- Servidor con IP pública: `216.128.139.41`
+- DNS ya configurado (registros A para @ y www apuntando a 216.128.139.41)
 
 #### Pasos:
 
-**1. Apuntar tu dominio al servidor**
+**1. Verificar DNS (Ya completado)**
 
-En tu proveedor de dominio (GoDaddy, Namecheap, etc.), crea un registro A:
-```
-Tipo: A
-Host: @ (o el que quieras, ej: app)
-Valor: 216.128.139.41
-TTL: 3600 (o automático)
-```
+Los registros DNS ya están configurados:
+- Registro A para `@` → `216.128.139.41`
+- Registro A para `www` → `216.128.139.41`
 
-Espera 5-30 minutos para que se propague el DNS.
+Espera 5-30 minutos para que se propague el DNS si acabas de configurarlo.
 
 **2. Instalar Certbot (Let's Encrypt)**
 
@@ -40,8 +37,8 @@ ssh root@216.128.139.41
 apt update
 apt install -y certbot python3-certbot-nginx
 
-# Obtener certificado SSL
-certbot --nginx -d tudominio.com -d www.tudominio.com
+# Obtener certificado SSL para scenario.com.mx
+certbot --nginx -d scenario.com.mx -d www.scenario.com.mx
 
 # Seguir las instrucciones:
 # - Ingresa tu email
@@ -52,13 +49,13 @@ certbot --nginx -d tudominio.com -d www.tudominio.com
 **3. Actualizar variables de entorno**
 
 ```bash
-cd ~/boletera
+cd /var/www/boletera
 nano .env
 ```
 
 Cambia:
 ```env
-NEXT_PUBLIC_APP_URL="https://tudominio.com"
+NEXT_PUBLIC_APP_URL="https://scenario.com.mx"
 ```
 
 **4. Rebuild y reiniciar**
@@ -165,19 +162,19 @@ Una vez que tengas HTTPS funcionando:
 
 1. **Actualiza tu .env**:
    ```env
-   NEXT_PUBLIC_APP_URL="https://tudominio.com"
+   NEXT_PUBLIC_APP_URL="https://scenario.com.mx"
    ```
 
 2. **Rebuild**:
    ```bash
-   cd ~/boletera
+   cd /var/www/boletera
    npm run build
    pm2 restart boletera
    ```
 
 3. **Accede desde tu móvil**:
    ```
-   https://tudominio.com/accesos
+   https://scenario.com.mx/accesos
    ```
 
 4. **El navegador te pedirá permiso de cámara** ✅
@@ -191,7 +188,7 @@ Después de usar Certbot, tu configuración de Nginx se verá así:
 ```nginx
 server {
     listen 80;
-    server_name tudominio.com www.tudominio.com;
+    server_name scenario.com.mx www.scenario.com.mx;
     
     # Redirigir HTTP a HTTPS
     return 301 https://$server_name$request_uri;
@@ -199,11 +196,11 @@ server {
 
 server {
     listen 443 ssl http2;
-    server_name tudominio.com www.tudominio.com;
+    server_name scenario.com.mx www.scenario.com.mx;
 
     # Certificados SSL (Certbot los configura automáticamente)
-    ssl_certificate /etc/letsencrypt/live/tudominio.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/tudominio.com/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/scenario.com.mx/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/scenario.com.mx/privkey.pem;
     include /etc/letsencrypt/options-ssl-nginx.conf;
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
@@ -227,10 +224,10 @@ server {
 
 ```bash
 # Test SSL
-curl -I https://tudominio.com
+curl -I https://scenario.com.mx
 
 # Ver certificado
-openssl s_client -connect tudominio.com:443 -servername tudominio.com
+openssl s_client -connect scenario.com.mx:443 -servername scenario.com.mx
 ```
 
 ---

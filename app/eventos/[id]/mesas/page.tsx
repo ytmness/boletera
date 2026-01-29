@@ -203,7 +203,8 @@ export default function EventMesasPage() {
     setIsProcessingCheckout(true);
 
     try {
-      const response = await fetch("/api/checkout", {
+      // Paso 1: Crear reserva temporal
+      const checkoutResponse = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -212,29 +213,47 @@ export default function EventMesasPage() {
           buyerName: checkoutData.buyerName,
           buyerEmail: checkoutData.buyerEmail,
           buyerPhone: checkoutData.buyerPhone,
-          paymentMethod: "simulado", // Por ahora simulado
         }),
       });
 
-      const data = await response.json();
+      const checkoutResult = await checkoutResponse.json();
 
-      if (!response.ok) {
-        throw new Error(data.error || "Error al procesar la orden");
+      if (!checkoutResponse.ok) {
+        throw new Error(checkoutResult.error || "Error al crear la reserva");
       }
 
-      toast.success("¡Orden creada exitosamente! Te enviaremos un correo con tus boletos.");
-      
-      // Limpiar carrito
-      setCartItems([]);
-      setShowCart(false);
-      setShowCheckoutModal(false);
-      setCheckoutData({ buyerName: "", buyerEmail: "", buyerPhone: "" });
+      const { saleId } = checkoutResult.data;
 
-      // Recargar mesas para actualizar estado desde BD
-      await loadTables();
+      // Paso 2: Crear link de pago en Clip
+      const paymentResponse = await fetch("/api/payments/clip/create-link", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ saleId }),
+      });
+
+      const paymentData = await paymentResponse.json();
+
+      if (!paymentResponse.ok) {
+        throw new Error(paymentData.error || "Error al crear link de pago");
+      }
+
+      // Paso 3: Redirigir al usuario a Clip para completar el pago
+      const { paymentUrl } = paymentData.data;
+      
+      if (paymentUrl) {
+        // Limpiar carrito antes de redirigir
+        setCartItems([]);
+        setShowCart(false);
+        setShowCheckoutModal(false);
+        setCheckoutData({ buyerName: "", buyerEmail: "", buyerPhone: "" });
+        
+        // Redirigir a Clip
+        window.location.href = paymentUrl;
+      } else {
+        throw new Error("No se recibió URL de pago");
+      }
     } catch (error: any) {
       toast.error(error.message || "Error al procesar la orden");
-    } finally {
       setIsProcessingCheckout(false);
     }
   };
@@ -817,9 +836,14 @@ export default function EventMesasPage() {
                       ${getTotal().toLocaleString()} MXN
                     </span>
                   </div>
-                  <p className="regia-text-muted text-xs mt-2">
-                    * Pago simulado - En producción se integrará con pasarela de pago
-                  </p>
+                  <div className="mt-3 pt-3 border-t border-regia-gold-old/10">
+                    <p className="regia-text-muted text-xs mb-2">
+                      💳 Pago seguro con Clip
+                    </p>
+                    <p className="regia-text-muted text-xs">
+                      Serás redirigido a Clip para ingresar los datos de tu tarjeta de forma segura
+                    </p>
+                  </div>
                 </div>
               </div>
 

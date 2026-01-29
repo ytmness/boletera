@@ -176,7 +176,11 @@ Pega esta configuración:
 ```nginx
 server {
     listen 80;
-    server_name 216.128.139.41;
+    server_name scenario.com.mx www.scenario.com.mx 216.128.139.41;
+
+    # Redirigir HTTP a HTTPS (después de configurar SSL)
+    # Descomenta estas líneas después de instalar SSL:
+    # return 301 https://$server_name$request_uri;
 
     location / {
         proxy_pass http://localhost:3000;
@@ -190,6 +194,29 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
+
+# Configuración HTTPS (se agregará automáticamente después de ejecutar certbot)
+# server {
+#     listen 443 ssl http2;
+#     server_name scenario.com.mx www.scenario.com.mx;
+#
+#     ssl_certificate /etc/letsencrypt/live/scenario.com.mx/fullchain.pem;
+#     ssl_certificate_key /etc/letsencrypt/live/scenario.com.mx/privkey.pem;
+#     include /etc/letsencrypt/options-ssl-nginx.conf;
+#     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+#
+#     location / {
+#         proxy_pass http://localhost:3000;
+#         proxy_http_version 1.1;
+#         proxy_set_header Upgrade $http_upgrade;
+#         proxy_set_header Connection 'upgrade';
+#         proxy_set_header Host $host;
+#         proxy_cache_bypass $http_upgrade;
+#         proxy_set_header X-Real-IP $remote_addr;
+#         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#         proxy_set_header X-Forwarded-Proto $scheme;
+#     }
+# }
 ```
 
 **Guardar**: `CTRL + O`, `ENTER`, `CTRL + X`
@@ -328,13 +355,13 @@ Sigue las instrucciones para establecer una nueva contraseña segura.
 
 ---
 
-## 🌍 PASO 15 (Opcional): Configurar Dominio
+## 🌍 PASO 15: Configurar Dominio scenario.com.mx
 
-Si tienes un dominio (ejemplo: `boletera-regia.com`):
+**Dominio configurado**: `scenario.com.mx`
 
-1. **En tu proveedor de dominio**, agrega un registro A:
-   - Host: `@` o tu subdominio
-   - Apunta a: `216.128.139.41`
+1. **Configuración DNS (Ya completada)**:
+   - Registro A para `@` apunta a: `216.128.139.41`
+   - Registro A para `www` apunta a: `216.128.139.41`
 
 2. **Edita la configuración de Nginx**:
    ```bash
@@ -343,13 +370,13 @@ Si tienes un dominio (ejemplo: `boletera-regia.com`):
    
    Cambia:
    ```nginx
-   server_name tu-dominio.com www.tu-dominio.com;
+   server_name scenario.com.mx www.scenario.com.mx;
    ```
 
 3. **Instalar SSL con Let's Encrypt**:
    ```bash
    apt install -y certbot python3-certbot-nginx
-   certbot --nginx -d tu-dominio.com -d www.tu-dominio.com
+   certbot --nginx -d scenario.com.mx -d www.scenario.com.mx
    ```
 
 4. **Actualizar .env**:
@@ -359,7 +386,7 @@ Si tienes un dominio (ejemplo: `boletera-regia.com`):
    
    Cambiar:
    ```env
-   NEXT_PUBLIC_APP_URL="https://tu-dominio.com"
+   NEXT_PUBLIC_APP_URL="https://scenario.com.mx"
    ```
 
 5. **Rebuild y reiniciar**:

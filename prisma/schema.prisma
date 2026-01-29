@@ -111,6 +111,7 @@ model TicketType {
   // Relaciones
   event         Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
   tickets       Ticket[]
+  saleItems     SaleItem[]
 
   @@index([eventId])
   @@index([category])
@@ -133,6 +134,14 @@ enum SaleStatus {
   REFUNDED   // Reembolsada
 }
 
+enum PaymentStatus {
+  PENDING    // Pendiente de pago
+  PAID       // Pagado y confirmado
+  FAILED     // Pago fallido
+  CANCELED   // Cancelado por el usuario
+  EXPIRED    // Reserva expirada
+}
+
 model Sale {
   id            String      @id @default(uuid())
   eventId       String
@@ -143,6 +152,8 @@ model Sale {
   subtotal      Decimal     @db.Decimal(10, 2)
   tax           Decimal     @db.Decimal(10, 2) // IVA
   total         Decimal     @db.Decimal(10, 2)
+  totalAmount   Int?        // Total en centavos (para pagos)
+  currency      String      @default("MXN")
   
   // Info del comprador
   buyerName     String
@@ -152,6 +163,10 @@ model Sale {
   // Pago
   paymentMethod String?     // "efectivo", "tarjeta", "stripe", etc
   paymentId     String?     // ID de pago externo (Stripe, MercadoPago)
+  paymentProvider String?   // "CLIP", "STRIPE", "MERCADOPAGO", etc
+  paymentStatus PaymentStatus? @default(PENDING)
+  paymentReference String?  @unique // ID del link de pago / payment_request_code de Clip
+  expiresAt     DateTime?   // Expiración de la reserva temporal
   paidAt        DateTime?
   
   createdAt     DateTime    @default(now())
@@ -161,11 +176,38 @@ model Sale {
   event         Event       @relation(fields: [eventId], references: [id])
   user          User?       @relation(fields: [userId], references: [id])
   tickets       Ticket[]
+  saleItems     SaleItem[]
 
   @@index([eventId])
   @@index([status])
   @@index([createdAt])
   @@index([buyerEmail])
+  @@index([paymentStatus])
+  @@index([paymentReference])
+  @@index([expiresAt])
+}
+
+// =====================================================
+// ITEMS DE VENTA (LÍNEAS DEL CARRITO)
+// =====================================================
+
+model SaleItem {
+  id            String      @id @default(uuid())
+  saleId        String
+  ticketTypeId  String
+  quantity      Int         // Cantidad de boletos o mesas
+  isTable       Boolean     @default(false)
+  seatsPerTable Int?        // Si isTable=true, número de asientos por mesa
+  tableNumber   Int?        // Número de mesa (si aplica)
+  
+  createdAt     DateTime    @default(now())
+
+  // Relaciones
+  sale          Sale        @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  ticketType    TicketType  @relation(fields: [ticketTypeId], references: [id])
+
+  @@index([saleId])
+  @@index([ticketTypeId])
 }
 
 // =====================================================

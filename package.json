@@ -9,6 +9,7 @@
     "lint": "next lint",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
+    "db:migrate": "prisma generate && prisma db push",
     "db:studio": "prisma studio",
     "db:update-quantities": "tsx scripts/update-ticket-quantities.ts"
   },
