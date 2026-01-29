@@ -80,6 +80,12 @@ export class ClipClient {
         payload.expires_at = params.expiresAt.toISOString();
       }
 
+      console.log("Clip API Request:", {
+        url,
+        payload,
+        authToken: this.authToken ? `${this.authToken.substring(0, 10)}...` : "MISSING",
+      });
+
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -91,9 +97,26 @@ export class ClipClient {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        let errorData: any = {};
+        let errorText = "";
+        try {
+          errorText = await response.text();
+          errorData = JSON.parse(errorText);
+        } catch (e) {
+          errorData = { raw: errorText };
+        }
+        
+        console.error("Clip API Error Details:", {
+          status: response.status,
+          statusText: response.statusText,
+          url,
+          payload,
+          errorData,
+          errorText,
+        });
+        
         throw new Error(
-          `Clip API error: ${response.status} - ${errorData.message || response.statusText}`
+          `Clip API error: ${response.status} - ${errorData.message || errorData.error || response.statusText || "Unknown error"}`
         );
       }
 
