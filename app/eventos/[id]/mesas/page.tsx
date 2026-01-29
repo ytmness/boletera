@@ -822,7 +822,7 @@ export default function EventMesasPage() {
                       💳 Pago seguro con Clip
                     </p>
                     <p className="regia-text-muted text-xs">
-                      Serás redirigido a Clip para ingresar los datos de tu tarjeta de forma segura
+                      Ingresa los datos de tu tarjeta de forma segura directamente en esta página
                     </p>
                   </div>
                 </div>
