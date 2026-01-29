@@ -1,0 +1,9 @@
+cd /var/www/boletera
+pm2 delete boletera
+git pull origin main
+rm -rf .next node_modules/.cache
+./node_modules/.bin/prisma generate
+npm run build
+pm2 start ecosystem.config.js
+pm2 save
+pm2 logs boletera --lines 30
