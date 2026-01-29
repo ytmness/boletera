@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { createClipCharge } from "@/lib/payments/clip";
+import { generateQRHash } from "@/lib/services/qr-generator";
 
 export const dynamic = 'force-dynamic';
 
@@ -95,38 +96,74 @@ export async function POST(request: NextRequest) {
 
     // Si el pago fue aprobado inmediatamente, procesar los tickets
     if (chargeResponse.paid) {
-      // Crear tickets a partir de los saleItems
-      const tickets = [];
-      for (const saleItem of sale.saleItems) {
-        for (let i = 0; i < saleItem.quantity; i++) {
-          tickets.push({
-            saleId: sale.id,
-            ticketTypeId: saleItem.ticketTypeId,
-            seatNumber: saleItem.isTable && saleItem.seatsPerTable 
-              ? (saleItem.tableNumber || 0) * 100 + (i + 1)
-              : null,
-            tableNumber: saleItem.isTable ? saleItem.tableNumber : null,
-            qrCode: `TICKET-${sale.id}-${saleItem.id}-${i}`,
-          });
+      // Usar transacción para crear tickets de forma segura
+      await prisma.$transaction(
+        async (tx) => {
+          // Crear tickets a partir de los saleItems
+          for (const saleItem of sale.saleItems) {
+            const ticketType = saleItem.ticketType;
+            
+            // Determinar cuántos tickets crear
+            let ticketsToCreate: number;
+            if (saleItem.isTable) {
+              // Para mesas: crear tickets por asientos (seatsPerTable)
+              ticketsToCreate = saleItem.seatsPerTable || 4;
+            } else {
+              // Para boletos normales: crear según quantity
+              ticketsToCreate = saleItem.quantity;
+            }
+
+            // Obtener el count inicial UNA VEZ antes del loop
+            let ticketCount = await tx.ticket.count({
+              where: { ticketTypeId: saleItem.ticketTypeId },
+            });
+
+            // Crear cada ticket
+            for (let i = 0; i < ticketsToCreate; i++) {
+              // Incrementar contador local
+              ticketCount += 1;
+              const ticketNumber = `${sale.event.name.substring(0, 3).toUpperCase()}-${ticketType.name.substring(0, 3).toUpperCase()}-${String(ticketCount).padStart(6, "0")}`;
+
+              // Crear ticket primero para obtener el ID
+              const ticket = await tx.ticket.create({
+                data: {
+                  saleId: sale.id,
+                  ticketTypeId: saleItem.ticketTypeId,
+                  ticketNumber,
+                  qrCode: "TEMP", // Temporal, se actualizará después
+                  tableNumber: saleItem.tableNumber ? `Mesa ${saleItem.tableNumber}` : null,
+                  seatNumber: saleItem.isTable ? i + 1 : null, // Para mesas: 1, 2, 3, 4
+                },
+              });
+
+              // Generar QR único con hash SHA-256
+              const qrHash = generateQRHash(ticket.id);
+              
+              // Actualizar ticket con el QR real
+              await tx.ticket.update({
+                where: { id: ticket.id },
+                data: { qrCode: qrHash },
+              });
+            }
+
+            // Incrementar soldQuantity del TicketType
+            // Para mesas: incrementar por cantidad de mesas (quantity)
+            // Para boletos normales: incrementar por cantidad de boletos (quantity)
+            await tx.ticketType.update({
+              where: { id: saleItem.ticketTypeId },
+              data: {
+                soldQuantity: {
+                  increment: saleItem.quantity,
+                },
+              },
+            });
+          }
+        },
+        {
+          timeout: 20000, // 20 segundos de timeout
+          maxWait: 20000, // Esperar hasta 20 segundos para obtener el lock
         }
-      }
-
-      // Crear tickets en batch
-      await prisma.ticket.createMany({
-        data: tickets,
-      });
-
-      // Incrementar soldQuantity de cada ticketType
-      for (const saleItem of sale.saleItems) {
-        await prisma.ticketType.update({
-          where: { id: saleItem.ticketTypeId },
-          data: {
-            soldQuantity: {
-              increment: saleItem.quantity,
-            },
-          },
-        });
-      }
+      );
     }
 
     return NextResponse.json({
