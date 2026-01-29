@@ -7,7 +7,8 @@
  */
 
 const CLIP_API_BASE_URL = "https://api.payclip.com";
-const CLIP_API_VERSION = "v2";
+const CLIP_API_VERSION = "v2"; // Para endpoints legacy
+const CLIP_PAYMENTS_API_URL = "https://api.payclip.com"; // Para Checkout Transparente
 
 interface CreateCheckoutLinkParams {
   amount: number; // Monto en centavos (MXN)
@@ -201,12 +202,13 @@ export class ClipClient {
   }
 
   /**
-   * Crea un cargo usando Checkout Transparente (token generado por el SDK)
-   * POST https://api.clip.mx/v2/charges
+   * Crea un pago usando Checkout Transparente (token generado por el SDK)
+   * POST https://api.payclip.com/payments
    * 
-   * Referencia: https://developer.clip.mx/reference/crearunnuevocharge
+   * Referencia: Documentación oficial de Clip Checkout Transparente
    * 
-   * IMPORTANTE: Requiere certificación PCI-DSS Nivel 1 y permisos de Clip
+   * IMPORTANTE: NO requiere certificación PCI-DSS ya que Clip maneja el formulario
+   * Necesitas verificar tu identidad con Clip y obtener una API Key
    */
   async createCharge(params: {
     amount: number; // Monto en centavos (MXN)
@@ -223,7 +225,8 @@ export class ClipClient {
     raw?: any;
   }> {
     try {
-      const url = `${this.baseUrl}/${CLIP_API_VERSION}/charges`;
+      // Usar el endpoint de payments según documentación oficial
+      const url = `${CLIP_PAYMENTS_API_URL}/payments`;
 
       const payload = {
         amount: params.amount,

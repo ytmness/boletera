@@ -17,7 +17,8 @@ interface ClipCheckoutFormProps {
 /**
  * Componente para el formulario de pago de Clip usando Checkout Transparente
  * 
- * IMPORTANTE: Requiere certificación PCI-DSS Nivel 1 y permisos de Clip
+ * IMPORTANTE: NO requiere certificación PCI-DSS ya que Clip maneja el formulario
+ * Necesitas verificar tu identidad con Clip y obtener una API Key
  * 
  * Documentación: https://developer.clip.mx/docs/api/checkout-transparente/sdk/inicio
  */

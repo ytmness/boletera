@@ -4,24 +4,22 @@ Esta guía explica cómo configurar y usar el SDK de Checkout Transparente de Cl
 
 ## ⚠️ Requisitos Importantes
 
-### Certificación PCI-DSS Nivel 1
+### Verificación de Identidad con Clip
 
-**CRÍTICO**: Para usar Checkout Transparente, debes contar con:
+**IMPORTANTE**: Para usar Checkout Transparente, necesitas:
 
-- ✅ **Attestation of Compliance (AoC) PCI-DSS Nivel 1** válida
-- ✅ **Permisos desde Clip**: Contacta a soporte de Clip para:
-  - Activar el modo "checkout transparente"
-  - Obtener las credenciales adecuadas (API Key pública)
+- ✅ **Verificar tu identidad con Clip** (no requiere certificación PCI-DSS)
+- ✅ **Obtener una API Key** desde el Panel de Desarrolladores de Clip
+- ✅ **El SDK NO requiere certificación PCI-DSS** ya que Clip maneja el formulario de tarjeta
 
-**Si no tienes certificación PCI-DSS Nivel 1, NO puedes usar este método por cumplimiento legal.**
+**Nota**: A diferencia del método de redirección, el Checkout Transparente NO requiere certificación PCI-DSS porque Clip maneja directamente el formulario de captura de tarjeta en tu sitio.
 
-### Alternativas sin PCI-DSS Nivel 1
+### Ventajas del Checkout Transparente
 
-Si no cumples con los requisitos PCI-DSS Nivel 1, puedes usar:
-
-1. **Checkout Redireccionado** (modo actual): Menor alcance PCI, solo rediriges al usuario
-2. **Openpay o Conekta**: Ofrecen iframes tokenizados en frontend
-3. **Stripe Elements**: Tokeniza en frontend con cumplimiento PCI más flexible (SAQ-A)
+- ✅ **NO requiere certificación PCI-DSS** (Clip maneja el formulario)
+- ✅ **Control total de la experiencia** (el usuario no sale de tu sitio)
+- ✅ **Formulario seguro** proporcionado por Clip
+- ✅ **Tokenización automática** de los datos de tarjeta
 
 ## 🔧 Configuración
 
@@ -62,7 +60,8 @@ NEXT_PUBLIC_CLIP_API_KEY=tu_api_key_publica_clip_aqui
 5. **Usuario ingresa datos de tarjeta** → En el formulario de Clip
 6. **SDK genera token** → `onTokenCreated` callback
 7. **Enviar token al backend** → `POST /api/payments/clip/create-charge`
-   - El backend crea el cargo en Clip usando el token
+   - El backend hace `POST https://api.payclip.com/payments` con el token
+   - Autenticación: `Authorization: Bearer {API_KEY}`
    - Si el pago es aprobado inmediatamente:
      - Actualiza `Sale` a `COMPLETED` y `PAID`
      - Crea `Ticket`s a partir de `SaleItem`s
@@ -75,6 +74,8 @@ NEXT_PUBLIC_CLIP_API_KEY=tu_api_key_publica_clip_aqui
 
 - **`lib/payments/clip.ts`**: 
   - Método `createCharge()` agregado para procesar tokens
+  - Usa endpoint `POST https://api.payclip.com/payments`
+  - Autenticación con `Bearer {API_KEY}`
   - Helper `createClipCharge()` exportado
 
 - **`app/api/payments/clip/create-charge/route.ts`**: 
@@ -160,8 +161,9 @@ Debes cumplir con:
 ## 📚 Documentación de Referencia
 
 - **Clip SDK Transparente**: https://developer.clip.mx/docs/api/checkout-transparente/sdk/inicio
-- **Requisitos PCI Clip**: https://developer.clip.mx/docs/api/checkout-transparente/requisitos
-- **Endpoint de pago**: https://developer.clip.mx/reference/crearunnuevocharge
+- **Endpoint de pago**: `POST https://api.payclip.com/payments`
+- **Autenticación**: `Authorization: Bearer {API_KEY}`
+- **Verificación de identidad**: Requerida para obtener API Key
 
 ## 🔄 Migración desde Checkout Redireccionado
 

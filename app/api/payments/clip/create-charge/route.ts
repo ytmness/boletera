@@ -7,9 +7,10 @@ export const dynamic = 'force-dynamic';
 
 /**
  * POST /api/payments/clip/create-charge
- * Crea un cargo en Clip usando Checkout Transparente (token del SDK)
+ * Crea un pago en Clip usando Checkout Transparente (token del SDK)
  * 
- * IMPORTANTE: Requiere certificación PCI-DSS Nivel 1 y permisos de Clip
+ * IMPORTANTE: NO requiere certificación PCI-DSS ya que Clip maneja el formulario
+ * Necesitas verificar tu identidad con Clip y obtener una API Key
  */
 export async function POST(request: NextRequest) {
   try {
