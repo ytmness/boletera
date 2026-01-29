@@ -103,6 +103,35 @@ export async function GET(
 
     console.log(`[Tables API] Evento ${params.id}: ${soldTableNumbers.size} mesas vendidas`, Array.from(soldTableNumbers));
 
+    // Obtener mesas RESERVADAS (ventas PENDING no expiradas)
+    const now = new Date();
+    const reservedSaleItems = await prisma.saleItem.findMany({
+      where: {
+        ticketTypeId: tableTicketType.id,
+        isTable: true,
+        sale: {
+          status: "PENDING",
+          OR: [
+            { expiresAt: { gt: now } }, // No expiradas
+            { expiresAt: null },
+          ],
+        },
+      },
+      select: {
+        tableNumber: true,
+      },
+    });
+
+    // Crear Set de mesas reservadas
+    const reservedTableNumbers = new Set<string>();
+    reservedSaleItems.forEach((item) => {
+      if (item.tableNumber) {
+        reservedTableNumbers.add(String(item.tableNumber));
+      }
+    });
+
+    console.log(`[Tables API] Evento ${params.id}: ${reservedTableNumbers.size} mesas reservadas (PENDING)`, Array.from(reservedTableNumbers));
+
     // Generar las 162 mesas base (estructura fija del plano: 9 filas × 18 columnas)
     // Esto debería venir de la configuración del evento, pero por ahora usamos la estructura estándar
     const ROWS = 9;
@@ -124,6 +153,15 @@ export async function GET(
         const y = START_Y + row * (TABLE_HEIGHT + SPACING_Y);
 
         const isSold = soldTableNumbers.has(String(tableNumber));
+        const isReserved = reservedTableNumbers.has(String(tableNumber));
+
+        // Determinar estado: sold > reserved > available
+        let status: "sold" | "reserved" | "available" = "available";
+        if (isSold) {
+          status = "sold";
+        } else if (isReserved) {
+          status = "reserved";
+        }
 
         tables.push({
           id: `mesa-${tableNumber}`,
@@ -136,7 +174,7 @@ export async function GET(
           height: TABLE_HEIGHT,
           price: Number(tableTicketType.price),
           seatsPerTable: (tableTicketType.seatsPerTable || 4) as 4,
-          status: isSold ? "sold" : "available",
+          status,
         });
 
         tableNumber++;

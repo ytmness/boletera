@@ -91,6 +91,17 @@ export default function EventMesasPage() {
     checkSession();
   }, []);
 
+  // Auto-refresh: Recargar mesas cada 5 segundos para mostrar reservas en tiempo real
+  useEffect(() => {
+    if (!eventId) return;
+
+    const interval = setInterval(() => {
+      loadTables(); // Recargar estado de mesas silenciosamente
+    }, 5000); // 5 segundos
+
+    return () => clearInterval(interval);
+  }, [eventId]);
+
   // Cargar evento y mesas desde la BD
   useEffect(() => {
     const loadEvent = async () => {
