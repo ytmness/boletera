@@ -26,22 +26,31 @@ echo "=== PASO 1: Detener PM2 si está corriendo ==="
 pm2 delete boletera 2>/dev/null || echo "PM2 no tenía proceso boletera corriendo"
 
 echo ""
-echo "=== PASO 2: Crear archivo de configuración PM2 ==="
+echo "=== PASO 2: Crear script wrapper para cargar .env ==="
+cat > start-app.sh << 'WRAPPER_EOF'
+#!/bin/bash
+set -a
+source .env
+set +a
+exec npm start
+WRAPPER_EOF
+
+chmod +x start-app.sh
+echo "✅ Script wrapper start-app.sh creado"
+
+echo ""
+echo "=== PASO 3: Crear archivo de configuración PM2 ==="
 cat > ecosystem.config.js << 'EOF'
 module.exports = {
   apps: [{
     name: 'boletera',
-    script: 'npm',
-    args: 'start',
+    script: './start-app.sh',
     cwd: '/var/www/boletera',
     instances: 1,
     autorestart: true,
     watch: false,
     max_memory_restart: '1G',
-    env_file: '.env',
-    env: {
-      NODE_ENV: 'production'
-    },
+    interpreter: '/bin/bash',
     error_file: '/root/.pm2/logs/boletera-error.log',
     out_file: '/root/.pm2/logs/boletera-out.log',
     log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
@@ -53,7 +62,7 @@ EOF
 echo "✅ Archivo ecosystem.config.js creado"
 
 echo ""
-echo "=== PASO 3: Iniciar PM2 con configuración ==="
+echo "=== PASO 4: Iniciar PM2 con configuración ==="
 pm2 start ecosystem.config.js
 
 echo ""
