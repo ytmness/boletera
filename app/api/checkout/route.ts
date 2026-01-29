@@ -13,12 +13,20 @@ async function getReservedPendingQuantity(ticketTypeId: string, isTable: boolean
   const now = new Date();
   
   // Obtener todas las Sales PENDING no expiradas que tienen items de este ticketType
+  // Usar OR para manejar casos donde expiresAt puede ser null
   const pendingSales = await prisma.sale.findMany({
     where: {
       status: "PENDING",
-      expiresAt: {
-        gt: now, // No expiradas
-      },
+      OR: [
+        {
+          expiresAt: {
+            gt: now, // No expiradas
+          },
+        },
+        {
+          expiresAt: null, // Si no tiene expiración, considerar como válida
+        },
+      ],
       saleItems: {
         some: {
           ticketTypeId,
