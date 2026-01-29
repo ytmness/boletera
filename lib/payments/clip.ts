@@ -378,13 +378,22 @@ export async function createClipCharge(params: {
   currency: string;
   token: string;
   description: string;
-  reference: string;
+  reference?: string;
+  customer?: {
+    email?: string;
+    phone?: string;
+  };
+  installments?: number;
 }): Promise<{
   id: string;
   status: string;
   amount: number;
   currency: string;
   paid: boolean;
+  pending_action?: {
+    type: string;
+    url: string;
+  };
   raw?: any;
 }> {
   const client = getClipClient();
