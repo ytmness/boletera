@@ -194,23 +194,23 @@ export default function CheckoutPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid md:grid-cols-2 gap-8">
           {/* Resumen de la compra */}
-          <div className="bg-white/10 backdrop-blur-md rounded-lg p-6">
-            <h2 className="text-2xl font-bold regia-text-title mb-6">
+          <div className="bg-white/10 backdrop-blur-md rounded-lg p-6 border border-white/10">
+            <h2 className="text-2xl font-bold text-white mb-6">
               Resumen de tu compra
             </h2>
 
             <div className="space-y-4 mb-6">
               <div>
-                <h3 className="text-lg font-semibold regia-text-title mb-2">
+                <h3 className="text-xl font-semibold text-white mb-2">
                   {sale.event.name}
                 </h3>
                 {sale.event.artist && (
-                  <p className="regia-text-body text-sm mb-2">
+                  <p className="text-gray-200 text-base mb-2">
                     Artista: {sale.event.artist}
                   </p>
                 )}
                 {sale.event.eventDate && (
-                  <p className="regia-text-body text-sm">
+                  <p className="text-gray-200 text-base">
                     Fecha:{" "}
                     {new Date(sale.event.eventDate).toLocaleDateString("es-MX", {
                       day: "numeric",
@@ -222,17 +222,17 @@ export default function CheckoutPage() {
               </div>
 
               <div className="border-t border-white/20 pt-4">
-                <h4 className="font-semibold regia-text-title mb-3">Boletos:</h4>
+                <h4 className="font-semibold text-white text-lg mb-3">Boletos:</h4>
                 <div className="space-y-2">
                   {sale.saleItems.map((item, index) => (
                     <div
                       key={index}
-                      className="flex justify-between regia-text-body text-sm"
+                      className="flex justify-between text-gray-200 text-base"
                     >
                       <span>
                         {item.quantity}x {item.ticketType.name}
                       </span>
-                      <span>
+                      <span className="font-medium">
                         ${(item.ticketType.price * item.quantity).toLocaleString("es-MX", {
                           minimumFractionDigits: 2,
                         })}{" "}
@@ -243,28 +243,28 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              <div className="border-t border-white/20 pt-4 space-y-2">
-                <div className="flex justify-between items-center regia-text-body text-sm">
+              <div className="border-t border-white/20 pt-4 space-y-3">
+                <div className="flex justify-between items-center text-gray-200 text-base">
                   <span>Subtotal:</span>
-                  <span>
+                  <span className="font-medium">
                     ${sale.total.toLocaleString("es-MX", {
                       minimumFractionDigits: 2,
                     })}{" "}
                     {sale.currency}
                   </span>
                 </div>
-                <div className="flex justify-between items-center regia-text-body text-sm">
+                <div className="flex justify-between items-center text-gray-200 text-base">
                   <span>Cargo de servicio:</span>
-                  <span>
+                  <span className="font-medium">
                     ${(2).toLocaleString("es-MX", {
                       minimumFractionDigits: 2,
                     })}{" "}
                     {sale.currency}
                   </span>
                 </div>
-                <div className="flex justify-between items-center pt-2 border-t border-white/10">
-                  <span className="text-lg font-bold regia-text-title">Total:</span>
-                  <span className="text-xl font-bold regia-text-title">
+                <div className="flex justify-between items-center pt-3 border-t border-white/10">
+                  <span className="text-xl font-bold text-white">Total:</span>
+                  <span className="text-2xl font-bold text-regia-gold">
                     ${(sale.total + 2).toLocaleString("es-MX", {
                       minimumFractionDigits: 2,
                     })}{" "}
@@ -276,8 +276,8 @@ export default function CheckoutPage() {
           </div>
 
           {/* Formulario de pago */}
-          <div className="bg-white/10 backdrop-blur-md rounded-lg p-6">
-            <h2 className="text-2xl font-bold regia-text-title mb-6">
+          <div className="bg-white/10 backdrop-blur-md rounded-lg p-6 border border-white/10">
+            <h2 className="text-2xl font-bold text-white mb-6">
               Información de pago
             </h2>
 

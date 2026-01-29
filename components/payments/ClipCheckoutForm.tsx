@@ -273,8 +273,8 @@ export function ClipCheckoutForm({
         {/* Contenedor donde se montará el formulario de Clip */}
         <div
           id="checkout"
-          className="clip-checkout-form mb-4 bg-white rounded-lg p-6 shadow-xl"
-          style={{ minHeight: "300px" }}
+          className="clip-checkout-form mb-6 bg-white rounded-lg p-6 shadow-xl"
+          style={{ minHeight: "350px" }}
         />
 
         {/* Botón de pago */}
