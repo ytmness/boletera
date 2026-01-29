@@ -235,51 +235,37 @@ export async function POST(request: NextRequest) {
     const expiresAt = new Date();
     expiresAt.setMinutes(expiresAt.getMinutes() + 10);
 
-    // Usar transacción solo para crear la venta (más rápido)
-    const result = await prisma.$transaction(
-      async (tx) => {
-        const sale = await tx.sale.create({
-          data: {
-            eventId,
-            userId,
-            channel: "ONLINE",
-            status: "PENDING",
-            subtotal: subtotal,
-            tax: tax,
-            total: total,
-            totalAmount: totalAmount,
-            currency: "MXN",
-            buyerName,
-            buyerEmail,
-            buyerPhone: buyerPhone || null,
-            paymentStatus: "PENDING",
-            expiresAt,
-            saleItems: {
-              create: saleItemsData.map((item) => ({
-                ticketTypeId: item.ticketTypeId,
-                quantity: item.quantity,
-                isTable: item.isTable,
-                seatsPerTable: item.seatsPerTable || null,
-                tableNumber: item.tableNumber || null,
-              })),
-            },
-          },
-          include: {
-            saleItems: {
-              include: {
-                ticketType: true,
-              },
-            },
-          },
-        });
-
-        return { sale, totalAmount, currency: "MXN" };
+    // Crear la venta sin transacción (más rápido con pooler)
+    // El pooler maneja mejor las operaciones simples sin transacciones complejas
+    const sale = await prisma.sale.create({
+      data: {
+        eventId,
+        userId,
+        channel: "ONLINE",
+        status: "PENDING",
+        subtotal: subtotal,
+        tax: tax,
+        total: total,
+        totalAmount: totalAmount,
+        currency: "MXN",
+        buyerName,
+        buyerEmail,
+        buyerPhone: buyerPhone || null,
+        paymentStatus: "PENDING",
+        expiresAt,
+        saleItems: {
+          create: saleItemsData.map((item) => ({
+            ticketTypeId: item.ticketTypeId,
+            quantity: item.quantity,
+            isTable: item.isTable,
+            seatsPerTable: item.seatsPerTable || null,
+            tableNumber: item.tableNumber || null,
+          })),
+        },
       },
-      {
-        maxWait: 10000, // Esperar hasta 10 segundos para obtener el lock
-        timeout: 15000, // Timeout de 15 segundos para la transacción completa
-      }
-    );
+    });
+
+    const result = { sale, totalAmount, currency: "MXN" };
 
     return NextResponse.json({
       success: true,
