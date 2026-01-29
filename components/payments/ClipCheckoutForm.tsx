@@ -91,7 +91,7 @@ export function ClipCheckoutForm({
 
       // Crear el elemento Card con configuración
       const card = clip.element.create("Card", {
-        theme: "dark", // Cambiar a tema oscuro
+        theme: "light", // Mantener tema claro para mejor legibilidad
         locale: "es",
         paymentAmount: amount / 100, // Convertir de centavos a pesos
         terms: {
