@@ -86,13 +86,21 @@ export class ClipClient {
         authToken: this.authToken ? `${this.authToken.substring(0, 10)}...` : "MISSING",
       });
 
+      // Probar diferentes formatos de headers según documentación de Clip
+      // Clip puede requerir "Token" en lugar de "Bearer", o un formato diferente
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+
+      // Intentar con "Token" primero (formato común en algunas APIs)
+      headers["Authorization"] = `Token ${this.authToken}`;
+      
+      // Si Clip requiere Accept header específico, agregarlo
+      // headers["Accept"] = "application/json";
+
       const response = await fetch(url, {
         method: "POST",
-        headers: {
-          "Authorization": `Bearer ${this.authToken}`, // O "Token ${this.authToken}" según docs
-          "Content-Type": "application/json",
-          "Accept": "application/vnd.com.payclip.v2+json", // Header específico para v2
-        },
+        headers,
         body: JSON.stringify(payload),
       });
 
