@@ -255,7 +255,7 @@ function VerificarEmailContent() {
                     <Mail className="w-6 h-6 text-regia-black" />
                   </div>
                   <div>
-                    <h3 className="regia-title-secondary text-lg mb-2">Código de 6 Dígitos</h3>
+                    <h3 className="regia-title-secondary text-lg mb-2">Código de 8 Dígitos</h3>
                     <p className="regia-text-body text-sm">
                       Revisa tu bandeja de entrada y spam para encontrar el código
                     </p>
@@ -298,7 +298,7 @@ function VerificarEmailContent() {
                       Verifica tu Email
                     </h1>
                     <p className="regia-text-body text-sm">
-                      Ingresa el código de 6 dígitos que enviamos a tu email
+                      Ingresa el código de 8 dígitos que enviamos a tu email
                     </p>
                   </div>
 
@@ -311,7 +311,7 @@ function VerificarEmailContent() {
                       Verifica tu Email
                     </h1>
                     <p className="regia-text-body">
-                      Ingresa el código de 6 dígitos que enviamos a tu email
+                      Ingresa el código de 8 dígitos que enviamos a tu email
                     </p>
                   </div>
 
@@ -348,24 +348,24 @@ function VerificarEmailContent() {
                         onChange={(e) =>
                           setFormData({
                             ...formData,
-                            code: e.target.value.replace(/\D/g, "").slice(0, 6),
+                            code: e.target.value.replace(/\D/g, "").slice(0, 8),
                           })
                         }
                         className="w-full px-4 py-3 rounded-lg regia-bg-main border border-regia-gold-old/30 regia-text-body placeholder-regia-cream/50 focus:outline-none focus:ring-2 focus:ring-regia-gold-bright focus:border-regia-gold-bright transition-all text-center text-2xl tracking-widest font-mono"
-                        placeholder="000000"
+                        placeholder="00000000"
                         required
-                        maxLength={6}
-                        pattern="[0-9]{6}"
+                        maxLength={8}
+                        pattern="[0-9]{8}"
                       />
                       <p className="regia-text-body text-sm mt-2 text-center">
-                        Ingresa el código de 6 dígitos
+                        Ingresa el código de 8 dígitos
                       </p>
                     </div>
 
                     {/* Botón Submit */}
                     <Button
                       type="submit"
-                      disabled={isLoading || formData.code.length !== 6}
+                      disabled={isLoading || formData.code.length !== 8}
                       className="w-full regia-btn-primary text-base py-6"
                     >
                       {isLoading ? (
