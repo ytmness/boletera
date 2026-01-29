@@ -1,0 +1,142 @@
+═══════════════════════════════════════════════════════════════
+  CONFIGURAR scenario.com.mx - COMANDOS EXACTOS
+═══════════════════════════════════════════════════════════════
+
+📋 INFORMACIÓN DEL SERVIDOR
+───────────────────────────────────────────────────────────────
+IP: 216.128.139.41
+Usuario: root
+Contraseña: 6.QyP4EQ2fbYHU@h
+Directorio: ~/boletera
+Proceso PM2: boletera
+
+═══════════════════════════════════════════════════════════════
+  PASO 1: CONFIGURAR DNS EN GODADDY
+═══════════════════════════════════════════════════════════════
+
+1. Ve a: https://dcc.godaddy.com/
+2. Busca dominio: scenario.com.mx
+3. Click en "DNS" o "Manage DNS"
+4. Edita registro A con nombre "@":
+   - Cambia "WebsiteBuilder Site" → 216.128.139.41
+   - Guarda
+5. Edita CNAME "www":
+   - Elimínalo y crea registro A con valor: 216.128.139.41
+   - O déjalo como CNAME apuntando a scenario.com.mx.
+
+═══════════════════════════════════════════════════════════════
+  PASO 2: CONECTAR AL SERVIDOR Y CONFIGURAR NGINX
+═══════════════════════════════════════════════════════════════
+
+ssh root@216.128.139.41
+# Contraseña: 6.QyP4EQ2fbYHU@h
+
+# Editar configuración de Nginx
+nano /etc/nginx/sites-available/boletera
+
+# PEGAR ESTA CONFIGURACIÓN:
+───────────────────────────────────────────────────────────────
+server {
+    listen 80;
+    server_name scenario.com.mx www.scenario.com.mx;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+───────────────────────────────────────────────────────────────
+
+# Guardar: CTRL + O, ENTER, CTRL + X
+
+# Verificar configuración
+nginx -t
+
+# Si está bien, reiniciar Nginx
+systemctl restart nginx
+
+═══════════════════════════════════════════════════════════════
+  PASO 3: ACTUALIZAR VARIABLES DE ENTORNO
+═══════════════════════════════════════════════════════════════
+
+cd ~/boletera
+nano .env
+
+# Buscar y cambiar esta línea:
+NEXT_PUBLIC_APP_URL="https://scenario.com.mx"
+
+# Guardar: CTRL + O, ENTER, CTRL + X
+
+═══════════════════════════════════════════════════════════════
+  PASO 4: REBUILD Y REINICIAR APLICACIÓN
+═══════════════════════════════════════════════════════════════
+
+cd ~/boletera
+git pull origin main
+rm -rf .next
+npm run build
+pm2 restart boletera
+
+# Ver logs para verificar
+pm2 logs boletera --lines 30
+
+═══════════════════════════════════════════════════════════════
+  PASO 5: CONFIGURAR SSL (OPCIONAL PERO RECOMENDADO)
+═══════════════════════════════════════════════════════════════
+
+# Instalar Certbot (si no está instalado)
+apt update
+apt install -y certbot python3-certbot-nginx
+
+# Obtener certificado SSL
+certbot --nginx -d scenario.com.mx -d www.scenario.com.mx
+
+# Seguir instrucciones:
+# - Email: tu email
+# - Términos: A (aceptar)
+# - Redirección: 2 (automática)
+
+═══════════════════════════════════════════════════════════════
+  VERIFICAR QUE FUNCIONA
+═══════════════════════════════════════════════════════════════
+
+# Desde tu computadora local:
+nslookup scenario.com.mx
+# Debe mostrar: 216.128.139.41
+
+# Abrir en navegador:
+http://scenario.com.mx
+# Debe mostrar tu aplicación
+
+# Después de SSL:
+https://scenario.com.mx
+# Debe mostrar tu aplicación con 🔒
+
+═══════════════════════════════════════════════════════════════
+  COMANDOS ÚTILES PARA TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════
+
+# Ver estado de PM2
+pm2 status
+
+# Ver logs de la aplicación
+pm2 logs boletera --lines 50
+
+# Ver logs de Nginx
+tail -20 /var/log/nginx/error.log
+
+# Verificar que puerto 3000 está en uso
+ss -tlnp | grep 3000
+
+# Reiniciar todo
+systemctl restart nginx
+pm2 restart boletera
+
+═══════════════════════════════════════════════════════════════
