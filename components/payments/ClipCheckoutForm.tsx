@@ -97,20 +97,6 @@ export function ClipCheckoutForm({
         terms: {
           enabled: amount >= 30000, // Habilitar MSI solo si el monto es >= $300 MXN
         },
-        style: {
-          // Personalizar colores (si el SDK lo soporta)
-          base: {
-            color: "#f5f5f5",
-            fontSize: "14px",
-            fontFamily: "system-ui, -apple-system, sans-serif",
-            "::placeholder": {
-              color: "#999999",
-            },
-          },
-          invalid: {
-            color: "#ef4444",
-          },
-        },
       });
 
       // Montar el formulario en el contenedor "checkout"
