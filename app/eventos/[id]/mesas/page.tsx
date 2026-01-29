@@ -133,6 +133,15 @@ export default function EventMesasPage() {
   }, [eventId, router]);
 
   const handleSelectTable = (table: IndividualTable) => {
+    // Verificar si el usuario está logueado
+    if (!user) {
+      toast.error("Debes iniciar sesión para comprar boletos");
+      setTimeout(() => {
+        router.push(`/login?redirect=/eventos/${eventId}/mesas`);
+      }, 1500);
+      return;
+    }
+
     // Verificar si ya está en el carrito
     if (cartItems.some((item) => item.table?.id === table.id)) {
       toast.error("Esta mesa ya está en tu carrito");
@@ -145,6 +154,15 @@ export default function EventMesasPage() {
   };
 
   const handleSelectSection = (section: Section, quantity: number) => {
+    // Verificar si el usuario está logueado
+    if (!user) {
+      toast.error("Debes iniciar sesión para comprar boletos");
+      setTimeout(() => {
+        router.push(`/login?redirect=/eventos/${eventId}/mesas`);
+      }, 1500);
+      return;
+    }
+
     // Verificar disponibilidad
     const available = section.capacity - section.sold;
     if (quantity > available) {

@@ -110,10 +110,10 @@ export function PatriotasTablesMap({
     if (selectedTable?.id === table.id) return "#FFD700";
     if (hoveredTable === table.number) return "#FFA500";
 
-    // Color por zona (9 filas: 1-3 frontal, 4-6 media, 7-9 trasera)
-    if (table.row <= 3) return "#c4a905"; // Frontal
-    if (table.row <= 6) return "#d4b815"; // Media
-    return "#e4c825"; // Trasera
+    // Color por zona con más contraste (amarillo → naranja → naranja oscuro)
+    if (table.row <= 3) return "#FFB300"; // Frontal - Amarillo fuerte/ámbar
+    if (table.row <= 6) return "#FF8C00"; // Media - Naranja
+    return "#FF6B00"; // Trasera - Naranja oscuro
   };
 
   const getTableOpacity = (table: IndividualTable) => {
