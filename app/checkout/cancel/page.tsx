@@ -1,11 +1,15 @@
 "use client";
 
+import { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { XCircle, ArrowLeft, Home } from "lucide-react";
+import { XCircle, ArrowLeft, Home, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function CheckoutCancelPage() {
+// Hacer la página dinámica para evitar prerenderizado
+export const dynamic = 'force-dynamic';
+
+function CheckoutCancelContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const saleId = searchParams.get("saleId");
@@ -45,5 +49,20 @@ export default function CheckoutCancelPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CheckoutCancelPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen regia-bg-main flex items-center justify-center p-4">
+        <div className="text-center">
+          <Loader2 className="w-16 h-16 text-regia-gold-bright animate-spin mx-auto mb-4" />
+          <p className="regia-text-body">Cargando...</p>
+        </div>
+      </div>
+    }>
+      <CheckoutCancelContent />
+    </Suspense>
   );
 }
