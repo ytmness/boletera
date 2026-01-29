@@ -10,11 +10,28 @@ export const dynamic = 'force-dynamic';
  * Redirige a /checkout/[saleId] en lugar de crear un link de pago.
  */
 export async function POST(request: NextRequest) {
+  // Log para identificar quién está llamando a este endpoint deprecado
+  const referer = request.headers.get("referer") || "unknown";
+  const userAgent = request.headers.get("user-agent") || "unknown";
+  
+  console.error("⚠️ DEPRECATED ENDPOINT CALLED: /api/payments/clip/create-link");
+  console.error("   Referer:", referer);
+  console.error("   User-Agent:", userAgent);
+  console.error("   URL:", request.url);
+  
+  try {
+    const body = await request.json();
+    console.error("   Body:", JSON.stringify(body));
+  } catch (e) {
+    console.error("   Body: (no se pudo parsear)");
+  }
+
   // Este endpoint está deprecado - el nuevo flujo usa Checkout Transparente
   return NextResponse.json(
     {
       error: "Este endpoint está deprecado. Por favor usa el flujo de Checkout Transparente en /checkout/[saleId]",
       deprecated: true,
+      message: "El nuevo flujo redirige directamente a /checkout/[saleId] sin llamar a este endpoint",
     },
     { status: 410 } // 410 Gone - indica que el recurso ya no está disponible
   );
