@@ -42,11 +42,13 @@ export class ClipClient {
   private baseUrl: string;
 
   constructor(authToken?: string) {
-    this.authToken = authToken || process.env.CLIP_AUTH_TOKEN || "";
+    // Para Checkout Transparente, usar CLIP_API_KEY (misma que NEXT_PUBLIC_CLIP_API_KEY)
+    // Para endpoints legacy, usar CLIP_AUTH_TOKEN
+    this.authToken = authToken || process.env.CLIP_API_KEY || process.env.CLIP_AUTH_TOKEN || "";
     this.baseUrl = CLIP_API_BASE_URL;
 
     if (!this.authToken) {
-      throw new Error("CLIP_AUTH_TOKEN no está configurado en las variables de entorno");
+      throw new Error("CLIP_API_KEY o CLIP_AUTH_TOKEN no está configurado en las variables de entorno");
     }
   }
 
