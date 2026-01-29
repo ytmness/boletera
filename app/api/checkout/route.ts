@@ -107,111 +107,179 @@ export async function POST(request: NextRequest) {
       tableNumber?: number;
     }> = [];
 
-    // Usar transacción para garantizar consistencia
-    const result = await prisma.$transaction(async (tx) => {
-      for (const item of items) {
-        if (item.table) {
-          // Es una mesa VIP
-          const ticketType = event.ticketTypes.find(
-            (tt) => tt.isTable === true && Number(tt.price) === item.table.price
-          );
+    // Obtener usuario si está autenticado (fuera de la transacción)
+    const user = await getSession();
+    const userId = user?.id || null;
 
-          if (!ticketType) {
-            throw new Error(`Tipo de boleto no encontrado para mesa ${item.table.number}`);
-          }
-
-          // Verificar disponibilidad: maxQuantity - soldQuantity - reservedPending
-          const reservedPending = await getReservedPendingQuantity(ticketType.id, true);
-          const available = ticketType.maxQuantity - ticketType.soldQuantity - reservedPending;
-
-          if (available < 1) {
-            throw new Error(`No hay disponibilidad para mesa ${item.table.number}`);
-          }
-
-          subtotal += Number(ticketType.price);
-          saleItemsData.push({
-            ticketTypeId: ticketType.id,
-            quantity: 1, // 1 mesa
-            isTable: true,
-            seatsPerTable: ticketType.seatsPerTable || 4,
-            tableNumber: item.table.number,
-          });
-        } else if (item.section && item.quantity) {
-          // Es una sección (GENERAL, PREFERENTE)
-          const ticketType = event.ticketTypes.find(
-            (tt) => tt.id === item.section.id || tt.name === item.section.name
-          );
-
-          if (!ticketType) {
-            throw new Error(`Tipo de boleto no encontrado para ${item.section.name}`);
-          }
-
-          // Verificar disponibilidad considerando reservas pendientes
-          const reservedPending = await getReservedPendingQuantity(ticketType.id, false);
-          const available = ticketType.maxQuantity - ticketType.soldQuantity - reservedPending;
-
-          if (item.quantity > available) {
-            throw new Error(`Solo hay ${available} boletos disponibles para ${item.section.name}`);
-          }
-
-          subtotal += Number(ticketType.price) * item.quantity;
-          saleItemsData.push({
-            ticketTypeId: ticketType.id,
-            quantity: item.quantity,
-            isTable: false,
-          });
-        }
+    // Pre-calcular reservas pendientes para todos los ticketTypes necesarios (fuera de la transacción)
+    const ticketTypeIds = new Set<string>();
+    for (const item of items) {
+      if (item.table) {
+        const ticketType = event.ticketTypes.find(
+          (tt) => tt.isTable === true && Number(tt.price) === item.table.price
+        );
+        if (ticketType) ticketTypeIds.add(ticketType.id);
+      } else if (item.section && item.quantity) {
+        const ticketType = event.ticketTypes.find(
+          (tt) => tt.id === item.section.id || tt.name === item.section.name
+        );
+        if (ticketType) ticketTypeIds.add(ticketType.id);
       }
+    }
 
-      const tax = subtotal * 0.16; // IVA 16%
-      const total = subtotal + tax;
-      const totalAmount = Math.round(total * 100); // Convertir a centavos
-
-      // Obtener usuario si está autenticado
-      const user = await getSession();
-      const userId = user?.id || null;
-
-      // Crear la venta con reserva temporal (10 minutos)
-      const expiresAt = new Date();
-      expiresAt.setMinutes(expiresAt.getMinutes() + 10);
-
-      const sale = await tx.sale.create({
-        data: {
-          eventId,
-          userId,
-          channel: "ONLINE",
-          status: "PENDING",
-          subtotal: subtotal,
-          tax: tax,
-          total: total,
-          totalAmount: totalAmount,
-          currency: "MXN",
-          buyerName,
-          buyerEmail,
-          buyerPhone: buyerPhone || null,
-          paymentStatus: "PENDING",
-          expiresAt,
-          saleItems: {
-            create: saleItemsData.map((item) => ({
-              ticketTypeId: item.ticketTypeId,
-              quantity: item.quantity,
-              isTable: item.isTable,
-              seatsPerTable: item.seatsPerTable || null,
-              tableNumber: item.tableNumber || null,
-            })),
+    // Obtener todas las reservas pendientes de una vez
+    const now = new Date();
+    const pendingSales = await prisma.sale.findMany({
+      where: {
+        status: "PENDING",
+        OR: [
+          { expiresAt: { gt: now } },
+          { expiresAt: null },
+        ],
+        saleItems: {
+          some: {
+            ticketTypeId: { in: Array.from(ticketTypeIds) },
           },
         },
-        include: {
-          saleItems: {
-            include: {
-              ticketType: true,
+      },
+      include: {
+        saleItems: {
+          where: {
+            ticketTypeId: { in: Array.from(ticketTypeIds) },
+          },
+        },
+      },
+    });
+
+    // Crear mapa de reservas por ticketTypeId
+    const reservedByTicketType = new Map<string, number>();
+    for (const sale of pendingSales) {
+      for (const saleItem of sale.saleItems) {
+        const current = reservedByTicketType.get(saleItem.ticketTypeId) || 0;
+        reservedByTicketType.set(saleItem.ticketTypeId, current + saleItem.quantity);
+      }
+    }
+
+    // Validar disponibilidad y preparar datos (fuera de la transacción)
+    for (const item of items) {
+      if (item.table) {
+        // Es una mesa VIP
+        const ticketType = event.ticketTypes.find(
+          (tt) => tt.isTable === true && Number(tt.price) === item.table.price
+        );
+
+        if (!ticketType) {
+          return NextResponse.json(
+            { error: `Tipo de boleto no encontrado para mesa ${item.table.number}` },
+            { status: 400 }
+          );
+        }
+
+        // Verificar disponibilidad: maxQuantity - soldQuantity - reservedPending
+        const reservedPending = reservedByTicketType.get(ticketType.id) || 0;
+        const available = ticketType.maxQuantity - ticketType.soldQuantity - reservedPending;
+
+        if (available < 1) {
+          return NextResponse.json(
+            { error: `No hay disponibilidad para mesa ${item.table.number}` },
+            { status: 400 }
+          );
+        }
+
+        subtotal += Number(ticketType.price);
+        saleItemsData.push({
+          ticketTypeId: ticketType.id,
+          quantity: 1, // 1 mesa
+          isTable: true,
+          seatsPerTable: ticketType.seatsPerTable || 4,
+          tableNumber: item.table.number,
+        });
+      } else if (item.section && item.quantity) {
+        // Es una sección (GENERAL, PREFERENTE)
+        const ticketType = event.ticketTypes.find(
+          (tt) => tt.id === item.section.id || tt.name === item.section.name
+        );
+
+        if (!ticketType) {
+          return NextResponse.json(
+            { error: `Tipo de boleto no encontrado para ${item.section.name}` },
+            { status: 400 }
+          );
+        }
+
+        // Verificar disponibilidad considerando reservas pendientes
+        const reservedPending = reservedByTicketType.get(ticketType.id) || 0;
+        const available = ticketType.maxQuantity - ticketType.soldQuantity - reservedPending;
+
+        if (item.quantity > available) {
+          return NextResponse.json(
+            { error: `Solo hay ${available} boletos disponibles para ${item.section.name}` },
+            { status: 400 }
+          );
+        }
+
+        subtotal += Number(ticketType.price) * item.quantity;
+        saleItemsData.push({
+          ticketTypeId: ticketType.id,
+          quantity: item.quantity,
+          isTable: false,
+        });
+      }
+    }
+
+    const tax = subtotal * 0.16; // IVA 16%
+    const total = subtotal + tax;
+    const totalAmount = Math.round(total * 100); // Convertir a centavos
+
+    // Crear la venta con reserva temporal (10 minutos)
+    const expiresAt = new Date();
+    expiresAt.setMinutes(expiresAt.getMinutes() + 10);
+
+    // Usar transacción solo para crear la venta (más rápido)
+    const result = await prisma.$transaction(
+      async (tx) => {
+        const sale = await tx.sale.create({
+          data: {
+            eventId,
+            userId,
+            channel: "ONLINE",
+            status: "PENDING",
+            subtotal: subtotal,
+            tax: tax,
+            total: total,
+            totalAmount: totalAmount,
+            currency: "MXN",
+            buyerName,
+            buyerEmail,
+            buyerPhone: buyerPhone || null,
+            paymentStatus: "PENDING",
+            expiresAt,
+            saleItems: {
+              create: saleItemsData.map((item) => ({
+                ticketTypeId: item.ticketTypeId,
+                quantity: item.quantity,
+                isTable: item.isTable,
+                seatsPerTable: item.seatsPerTable || null,
+                tableNumber: item.tableNumber || null,
+              })),
             },
           },
-        },
-      });
+          include: {
+            saleItems: {
+              include: {
+                ticketType: true,
+              },
+            },
+          },
+        });
 
-      return { sale, totalAmount, currency: "MXN" };
-    });
+        return { sale, totalAmount, currency: "MXN" };
+      },
+      {
+        maxWait: 10000, // Esperar hasta 10 segundos para obtener el lock
+        timeout: 15000, // Timeout de 15 segundos para la transacción completa
+      }
+    );
 
     return NextResponse.json({
       success: true,
