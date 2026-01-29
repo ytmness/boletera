@@ -1,78 +1,127 @@
 /**
- * Tipos TypeScript para el SDK de Clip Checkout Transparente
+ * Tipos TypeScript para el SDK de Clip Checkout Transparente (OFICIAL)
  * 
  * Documentación: https://developer.clip.mx/docs/api/checkout-transparente/sdk/inicio
+ * SDK URL: https://sdk.clip.mx/js/clip-sdk.js
  */
 
 declare global {
   interface Window {
-    ClipCheckout?: ClipCheckoutConstructor;
+    ClipSDK?: ClipSDKConstructor;
   }
 }
 
-export interface ClipCheckoutConstructor {
-  new (config: ClipCheckoutConfig): ClipCheckoutInstance;
+/**
+ * Constructor del SDK de Clip
+ */
+export interface ClipSDKConstructor {
+  new (apiKey: string): ClipSDKInstance;
 }
 
-export interface ClipCheckoutConfig {
+/**
+ * Instancia del SDK de Clip
+ */
+export interface ClipSDKInstance {
   /**
-   * API Key pública de Clip (obtenida desde el panel de Clip)
+   * Objeto para crear elementos de pago
    */
-  apiKey: string;
+  element: {
+    /**
+     * Crea un elemento de formulario de tarjeta
+     * @param type Tipo de elemento ("Card")
+     * @param options Opciones de configuración
+     */
+    create(type: "Card", options?: ClipCardOptions): ClipCardElement;
+  };
+}
+
+/**
+ * Opciones para el elemento Card
+ */
+export interface ClipCardOptions {
+  /**
+   * Tema del formulario
+   * @default "light"
+   */
+  theme?: "light" | "dark";
 
   /**
-   * Callback que se ejecuta cuando se crea exitosamente un token
-   * @param token Token generado por el SDK que debe enviarse al backend
-   */
-  onTokenCreated?: (token: string) => void;
-
-  /**
-   * Callback que se ejecuta cuando ocurre un error
-   * @param error Objeto con información del error
-   */
-  onError?: (error: ClipError) => void;
-
-  /**
-   * Idioma del formulario (opcional)
-   * @default "es"
+   * Idioma del formulario
+   * @default "es" (o el idioma del navegador)
    */
   locale?: "es" | "en";
 
   /**
-   * Estilo personalizado del formulario (opcional)
+   * Monto del pago (en centavos) - requerido para MSI
    */
-  style?: ClipCheckoutStyle;
+  paymentAmount?: number;
+
+  /**
+   * Configuración de términos (MSI)
+   */
+  terms?: {
+    /**
+     * Habilita el selector de Meses Sin Intereses
+     */
+    enabled?: boolean;
+  };
 }
 
-export interface ClipCheckoutInstance {
+/**
+ * Elemento de formulario de tarjeta
+ */
+export interface ClipCardElement {
   /**
-   * Monta el formulario de pago en el elemento especificado
-   * @param elementId ID del elemento HTML o elemento DOM donde se montará el formulario
+   * Monta el formulario en el contenedor especificado
+   * @param containerId ID del elemento HTML (sin "#")
    */
-  mount(elementId: string | HTMLElement): void;
+  mount(containerId: string): void;
 
   /**
-   * Desmonta el formulario de pago
+   * Tokeniza la tarjeta y retorna el Card Token ID
+   * @returns Promise con el objeto CardToken
+   * @throws ClipError si hay errores de validación
    */
-  unmount(): void;
+  cardToken(): Promise<ClipCardToken>;
 
   /**
-   * Actualiza la configuración del checkout
-   * @param config Nueva configuración
+   * Obtiene el valor de los installments (MSI) seleccionados
+   * @returns Promise con el número de cuotas
    */
-  update?(config: Partial<ClipCheckoutConfig>): void;
+  installments(): Promise<number>;
+
+  /**
+   * Desmonta el formulario (opcional, no documentado oficialmente)
+   */
+  unmount?(): void;
 }
 
+/**
+ * Token de tarjeta generado por el SDK
+ */
+export interface ClipCardToken {
+  /**
+   * ID del token de tarjeta (válido por 15 minutos, un solo uso)
+   */
+  id: string;
+}
+
+/**
+ * Error del SDK de Clip
+ */
 export interface ClipError {
+  /**
+   * Código de error
+   * - CL2200: Error de validación de campos
+   * - CL2290: Error de tokenización
+   * - AI1300: Error de red/conexión
+   */
+  code: string;
+
   /**
    * Mensaje de error
    */
   message: string;
-
-  /**
-   * Código de error (opcional)
-   */
-  code?: string;
 
   /**
    * Detalles adicionales del error (opcional)
@@ -80,36 +129,92 @@ export interface ClipError {
   details?: any;
 }
 
-export interface ClipCheckoutStyle {
+/**
+ * Respuesta de la API de Payments de Clip
+ */
+export interface ClipPaymentResponse {
   /**
-   * Color principal del formulario
+   * ID del pago
    */
-  primaryColor?: string;
+  id: string;
 
   /**
-   * Color de fondo del formulario
+   * Monto del pago en centavos
    */
-  backgroundColor?: string;
+  amount: number;
 
   /**
-   * Color del texto
+   * Moneda del pago
    */
-  textColor?: string;
+  currency: string;
 
   /**
-   * Color del borde
+   * Estado del pago
+   * - approved: Pago aprobado
+   * - rejected: Pago rechazado
+   * - pending: Pago pendiente (puede requerir 3DS)
+   * - authorized: Pago autorizado (pendiente de captura)
+   * - refunded: Pago reembolsado
+   * - cancelled: Pago cancelado
    */
-  borderColor?: string;
+  status: string;
 
   /**
-   * Radio de borde
+   * Detalles del estado
    */
-  borderRadius?: string;
+  status_detail: {
+    code: string;
+    message: string;
+  };
 
   /**
-   * Fuente personalizada
+   * Acción pendiente (ej: 3DS)
    */
-  fontFamily?: string;
+  pending_action?: {
+    type: "open_modal";
+    url: string;
+  };
+
+  /**
+   * Información del método de pago
+   */
+  payment_method?: {
+    id: string;
+    type: string;
+    card?: {
+      bin: string;
+      issuer: string;
+      name: string;
+      country: string;
+      last_digits: string;
+      exp_year: string;
+      exp_month: string;
+    };
+    token: string;
+  };
+
+  /**
+   * Información del cliente
+   */
+  customer?: {
+    email: string;
+    phone: string;
+  };
+
+  /**
+   * Fecha de creación
+   */
+  created_at: string;
+
+  /**
+   * Fecha de aprobación (si aplica)
+   */
+  approved_at?: string;
+
+  /**
+   * Respuesta completa (raw)
+   */
+  [key: string]: any;
 }
 
 export {};

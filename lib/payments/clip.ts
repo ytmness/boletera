@@ -208,39 +208,71 @@ export class ClipClient {
    * POST https://api.payclip.com/payments
    * 
    * Referencia: Documentación oficial de Clip Checkout Transparente
+   * https://developer.clip.mx/docs/api/checkout-transparente/sdk/realizar-pago
    * 
    * IMPORTANTE: NO requiere certificación PCI-DSS ya que Clip maneja el formulario
    * Necesitas verificar tu identidad con Clip y obtener una API Key
    */
   async createCharge(params: {
-    amount: number; // Monto en centavos (MXN)
+    amount: number; // Monto en PESOS (no centavos) según documentación
     currency: string; // "MXN"
-    token: string; // Token generado por el SDK de Clip
+    token: string; // Card Token ID generado por el SDK de Clip
     description: string; // Descripción del pago
-    reference: string; // Referencia única (saleId)
+    reference?: string; // Referencia única (saleId) - opcional
+    customer?: {
+      email?: string;
+      phone?: string;
+    };
+    installments?: number; // Para MSI (Meses Sin Intereses)
   }): Promise<{
     id: string;
     status: string;
     amount: number;
     currency: string;
     paid: boolean;
+    pending_action?: {
+      type: string;
+      url: string;
+    };
     raw?: any;
   }> {
     try {
       // Usar el endpoint de payments según documentación oficial
       const url = `${CLIP_PAYMENTS_API_URL}/payments`;
 
-      const payload = {
-        amount: params.amount,
+      // Construir payload según documentación oficial de Clip
+      const payload: any = {
+        amount: params.amount, // En PESOS, no centavos
         currency: params.currency,
-        token: params.token,
         description: params.description,
-        reference: params.reference,
+        payment_method: {
+          token: params.token, // Card Token ID del SDK
+        },
       };
+
+      // Agregar customer si está presente
+      if (params.customer) {
+        payload.customer = params.customer;
+      }
+
+      // Agregar reference si está presente (external_reference en Clip)
+      if (params.reference) {
+        payload.external_reference = params.reference;
+      }
+
+      // Agregar installments para MSI si está presente
+      if (params.installments && params.installments > 1) {
+        payload.installments = params.installments;
+      }
 
       console.log("Clip API Create Charge Request:", {
         url,
-        payload: { ...payload, token: `${params.token.substring(0, 10)}...` },
+        payload: {
+          ...payload,
+          payment_method: {
+            token: `${params.token.substring(0, 10)}...`,
+          },
+        },
         authToken: this.authToken ? `${this.authToken.substring(0, 10)}...` : "MISSING",
       });
 
@@ -269,7 +301,16 @@ export class ClipClient {
           status: response.status,
           statusText: response.statusText,
           url,
-          payload: { ...payload, token: `${params.token.substring(0, 10)}...` },
+          headers: {
+            ...headers,
+            Authorization: `Bearer ${this.authToken.substring(0, 10)}...`,
+          },
+          payload: {
+            ...payload,
+            payment_method: {
+              token: `${params.token.substring(0, 10)}...`,
+            },
+          },
           errorData,
           errorText,
         });
@@ -281,16 +322,25 @@ export class ClipClient {
 
       const data = await response.json();
 
+      console.log("✅ Clip API Response:", {
+        id: data.id,
+        status: data.status,
+        status_detail: data.status_detail,
+        amount: data.amount,
+        pending_action: data.pending_action,
+      });
+
       return {
-        id: data.id || data.charge_id || "",
+        id: data.id || "",
         status: data.status || "unknown",
         amount: data.amount || params.amount,
         currency: data.currency || params.currency,
-        paid: data.status === "paid" || data.status === "approved" || data.paid === true,
+        paid: data.status === "approved" || data.status === "paid",
+        pending_action: data.pending_action,
         raw: data,
       };
     } catch (error) {
-      console.error("Error creating Clip charge:", error);
+      console.error("❌ Error creating Clip charge:", error);
       throw error instanceof Error
         ? error
         : new Error("Error desconocido al crear cargo en Clip");

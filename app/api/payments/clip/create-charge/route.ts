@@ -59,8 +59,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Calcular monto total desde SaleItems (en centavos)
-    const totalAmount = sale.totalAmount || Math.round(Number(sale.total) * 100);
+    // Calcular monto total en PESOS (no centavos) según documentación de Clip
+    const totalAmount = Number(sale.total);
 
     // Construir descripción del pago
     const itemsDescription = sale.saleItems
@@ -74,13 +74,18 @@ export async function POST(request: NextRequest) {
 
     const description = `${sale.event.name} - ${itemsDescription}`;
 
+    // Obtener datos del cliente (email/phone) desde el body si están disponibles
+    const { installments, customer } = body;
+
     // Crear cargo en Clip usando el token
     const chargeResponse = await createClipCharge({
-      amount: totalAmount,
+      amount: totalAmount, // Monto en PESOS según documentación de Clip
       currency: sale.currency || "MXN",
       token,
       description,
       reference: saleId,
+      customer,
+      installments,
     });
 
     // Actualizar la venta con la referencia de pago
