@@ -28,13 +28,15 @@ export default function AccesosPage() {
       const response = await fetch("/api/auth/session");
       const data = await response.json();
 
-      if (!data.user) {
+      if (!data.success || !data.data?.user) {
         router.push("/login?redirect=/accesos");
         return;
       }
 
+      const currentUser = data.data.user;
+
       // Verificar rol ACCESOS o ADMIN
-      if (data.user.role !== "ACCESOS" && data.user.role !== "ADMIN") {
+      if (currentUser.role !== "ACCESOS" && currentUser.role !== "ADMIN") {
         setError("No tienes permisos para acceder a esta página");
         setTimeout(() => {
           router.push("/");
@@ -42,7 +44,7 @@ export default function AccesosPage() {
         return;
       }
 
-      setUser(data.user);
+      setUser(currentUser);
     } catch (err) {
       console.error("Error al verificar autenticación:", err);
       setError("Error al verificar permisos");

@@ -31,12 +31,12 @@ export default function AdminPage() {
       const response = await fetch("/api/auth/session");
       const data = await response.json();
 
-      if (!data.user || data.user.role !== "ADMIN") {
+      if (!data.success || !data.data?.user || data.data.user.role !== "ADMIN") {
         router.push("/login");
         return;
       }
 
-      setUser(data.user);
+      setUser(data.data.user);
     } catch (error) {
       router.push("/login");
     } finally {
