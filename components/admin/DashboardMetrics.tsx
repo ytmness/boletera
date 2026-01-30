@@ -14,6 +14,7 @@ export function DashboardMetrics({ totalRevenue, totalTicketsSold, totalOrders, 
     return new Intl.NumberFormat('es-MX', {
       style: 'currency',
       currency: 'MXN',
+      minimumFractionDigits: 0,
     }).format(amount);
   };
 
@@ -22,29 +23,33 @@ export function DashboardMetrics({ totalRevenue, totalTicketsSold, totalOrders, 
       title: "Ingresos Totales",
       value: formatCurrency(totalRevenue),
       icon: DollarSign,
-      color: "from-green-500 to-emerald-600",
+      iconColor: "text-green-500",
       bgColor: "bg-green-500/10",
+      borderColor: "border-green-500/30",
     },
     {
       title: "Boletos Vendidos",
       value: totalTicketsSold.toLocaleString(),
       icon: Ticket,
-      color: "from-blue-500 to-cyan-600",
-      bgColor: "bg-blue-500/10",
+      iconColor: "text-regia-gold-bright",
+      bgColor: "bg-regia-gold-bright/10",
+      borderColor: "border-regia-gold-bright/30",
     },
     {
       title: "Órdenes Completadas",
       value: totalOrders.toLocaleString(),
       icon: ShoppingCart,
-      color: "from-purple-500 to-pink-600",
-      bgColor: "bg-purple-500/10",
+      iconColor: "text-blue-500",
+      bgColor: "bg-blue-500/10",
+      borderColor: "border-blue-500/30",
     },
     {
       title: "Eventos Activos",
       value: totalEvents.toLocaleString(),
       icon: TrendingUp,
-      color: "from-orange-500 to-red-600",
-      bgColor: "bg-orange-500/10",
+      iconColor: "text-regia-gold-old",
+      bgColor: "bg-regia-gold-old/10",
+      borderColor: "border-regia-gold-old/30",
     },
   ];
 
@@ -55,15 +60,15 @@ export function DashboardMetrics({ totalRevenue, totalTicketsSold, totalOrders, 
         return (
           <div
             key={metric.title}
-            className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
+            className={`bg-regia-black rounded-xl border ${metric.borderColor} p-6 hover:border-regia-gold-bright/50 transition-all`}
           >
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">{metric.title}</p>
-                <p className="text-2xl font-bold text-gray-900 mt-2">{metric.value}</p>
+              <div className="flex-1">
+                <p className="regia-text-muted text-sm">{metric.title}</p>
+                <p className="text-3xl font-bold text-regia-cream mt-2">{metric.value}</p>
               </div>
-              <div className={`${metric.bgColor} p-3 rounded-lg`}>
-                <Icon className={`w-6 h-6 bg-gradient-to-br ${metric.color} text-transparent bg-clip-text`} strokeWidth={2.5} />
+              <div className={`${metric.bgColor} p-4 rounded-lg`}>
+                <Icon className={`w-8 h-8 ${metric.iconColor}`} strokeWidth={2} />
               </div>
             </div>
           </div>
