@@ -30,17 +30,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Crear fechas de inicio y fin de ventas (30 días antes y hasta el día del evento)
+    const eventDateObj = new Date(eventDate);
+    const salesStartDate = new Date();
+    const salesEndDate = new Date(eventDateObj);
+
     // Crear el evento
     const event = await prisma.event.create({
       data: {
         name,
         artist,
         venue,
-        eventDate: new Date(eventDate),
+        eventDate: eventDateObj,
         eventTime,
         description: description || "",
         imageUrl: "/images/default-event.jpg", // Imagen por defecto
-        status: "active",
+        isActive: true,
+        maxCapacity: 5000, // Valor por defecto, se puede actualizar después
+        salesStartDate,
+        salesEndDate,
       },
     });
 
