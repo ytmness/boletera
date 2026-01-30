@@ -6,7 +6,7 @@ import Image from "next/image";
 import { PatriotasTablesMap } from "@/components/eventos/PatriotasTablesMap";
 import { IndividualTable, VIP_TABLES_162, NON_VIP_SECTIONS_162 } from "@/lib/patriotas-tables-162";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Trash2, ArrowLeft, MapPin, Users, CreditCard, Ticket, Info, X, Calendar, Music, LogIn, User, Shield, Scan } from "lucide-react";
+import { ShoppingCart, Trash2, ArrowLeft, MapPin, Users, CreditCard, Ticket, Info, X, Calendar, Music, LogIn, LogOut, User, Shield, Scan } from "lucide-react";
 import { toast } from "sonner";
 
 interface Section {
@@ -217,6 +217,28 @@ export default function EventMesasPage() {
   });
   const [isProcessingCheckout, setIsProcessingCheckout] = useState(false);
 
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success("Sesión cerrada exitosamente");
+        setUser(null);
+        router.push("/");
+        router.refresh();
+      } else {
+        toast.error(data.error || "Error al cerrar sesión");
+      }
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+      toast.error("Error al cerrar sesión");
+    }
+  };
+
   // Función para iniciar el checkout (con o sin modal según si está logueado)
   const handleStartCheckout = () => {
     if (cartItems.length === 0) {
@@ -322,9 +344,9 @@ export default function EventMesasPage() {
                 )}
               </button>
               {user ? (
-                <button onClick={() => router.push("/login")} className="flex items-center gap-2 text-regia-cream/90 hover:text-regia-gold-bright transition-all duration-300 text-sm font-medium uppercase tracking-wider hover:scale-105">
-                  <User className="w-4 h-4" />
-                  <span>{user.name || user.email}</span>
+                <button onClick={handleLogout} className="flex items-center gap-2 text-regia-cream/90 hover:text-regia-gold-bright transition-all duration-300 text-sm font-medium uppercase tracking-wider hover:scale-105" title="Cerrar Sesión">
+                  <LogOut className="w-4 h-4" />
+                  <span>Cerrar Sesión</span>
                 </button>
               ) : (
                 <button onClick={() => router.push("/login")} className="flex items-center gap-2 text-regia-cream/90 hover:text-regia-gold-bright transition-all duration-300 text-sm font-medium uppercase tracking-wider hover:scale-105">
@@ -479,11 +501,11 @@ export default function EventMesasPage() {
             )}
           </button>
 
-          {/* Login / User */}
+          {/* Login / Logout / User */}
           {user ? (
-            <button onClick={() => router.push("/login")} className="flex items-center gap-2 text-regia-cream/90 hover:text-regia-gold-bright transition-all duration-300 text-sm font-medium uppercase tracking-wider hover:scale-105">
-              <User className="w-4 h-4" />
-              <span>{user.name || user.email}</span>
+            <button onClick={handleLogout} className="flex items-center gap-2 text-regia-cream/90 hover:text-regia-gold-bright transition-all duration-300 text-sm font-medium uppercase tracking-wider hover:scale-105" title="Cerrar Sesión">
+              <LogOut className="w-4 h-4" />
+              <span>Cerrar Sesión</span>
             </button>
           ) : (
             <button onClick={() => router.push("/login")} className="flex items-center gap-2 text-regia-cream/90 hover:text-regia-gold-bright transition-all duration-300 text-sm font-medium uppercase tracking-wider hover:scale-105">

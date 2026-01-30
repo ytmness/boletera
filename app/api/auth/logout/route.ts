@@ -1,30 +1,37 @@
-import { NextResponse } from "next/server";
-import { signOut } from "@/lib/auth/supabase-auth";
+import { NextRequest, NextResponse } from "next/server";
+import { createServerClient } from "@/lib/auth/supabase-auth";
+
+// Marcar como dinámica porque usa cookies
+export const dynamic = 'force-dynamic';
 
 /**
  * POST /api/auth/logout
- * Cerrar sesión usando Supabase Auth
+ * Cerrar sesión del usuario
  */
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
-    await signOut();
+    const supabase = createServerClient();
     
-    const response = NextResponse.json({
+    // Cerrar sesión en Supabase Auth
+    const { error } = await supabase.auth.signOut();
+    
+    if (error) {
+      console.error("[LOGOUT] Error al cerrar sesión:", error);
+      return NextResponse.json(
+        { error: "Error al cerrar sesión" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
       success: true,
       message: "Sesión cerrada exitosamente",
     });
-
-    // Limpiar cookies de Supabase
-    response.cookies.delete("sb-access-token");
-    response.cookies.delete("sb-refresh-token");
-
-    return response;
-  } catch (error) {
-    console.error("Logout error:", error);
+  } catch (error: any) {
+    console.error("[LOGOUT] Error general:", error);
     return NextResponse.json(
       { error: "Error al cerrar sesión" },
       { status: 500 }
     );
   }
 }
-
