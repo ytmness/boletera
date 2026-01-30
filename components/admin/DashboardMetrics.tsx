@@ -36,7 +36,7 @@ export function DashboardMetrics({ totalRevenue, totalTicketsSold, totalOrders, 
       borderColor: "border-regia-gold-bright/30",
     },
     {
-      title: "Órdenes Completadas",
+      title: "Órdenes Pagadas",
       value: totalOrders.toLocaleString(),
       icon: ShoppingCart,
       iconColor: "text-blue-500",
@@ -64,8 +64,8 @@ export function DashboardMetrics({ totalRevenue, totalTicketsSold, totalOrders, 
           >
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <p className="regia-text-muted text-sm">{metric.title}</p>
-                <p className="text-3xl font-bold text-regia-cream mt-2">{metric.value}</p>
+                <p className="text-sm font-medium text-white">{metric.title}</p>
+                <p className="text-3xl font-bold text-white mt-2">{metric.value}</p>
               </div>
               <div className={`${metric.bgColor} p-4 rounded-lg`}>
                 <Icon className={`w-8 h-8 ${metric.iconColor}`} strokeWidth={2} />
