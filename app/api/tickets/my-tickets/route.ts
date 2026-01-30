@@ -69,12 +69,13 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    // Formatear respuesta
+    // Formatear respuesta - Solo mostrar QR si isQrVisible = true
     const tickets = sales.flatMap((sale) =>
       sale.tickets.map((ticket) => ({
         id: ticket.id,
         ticketNumber: ticket.ticketNumber,
-        qrCode: ticket.qrCode,
+        qrCode: ticket.isQrVisible ? ticket.qrCode : null, // Solo mostrar si está visible
+        isQrVisible: ticket.isQrVisible, // Indicar si el QR está disponible
         status: ticket.status,
         tableNumber: ticket.tableNumber,
         seatNumber: ticket.seatNumber,

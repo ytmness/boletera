@@ -11,7 +11,8 @@ import { QRCodeSVG } from "qrcode.react";
 interface TicketData {
   id: string;
   ticketNumber: string;
-  qrCode: string;
+  qrCode: string | null;
+  isQrVisible: boolean;
   status: string;
   tableNumber: string | null;
   seatNumber: number | null;
@@ -421,24 +422,40 @@ export default function MisBoletosPage() {
                               <QrCode className="w-5 h-5 text-regia-gold-bright" />
                               <p className="regia-title-secondary">Código QR de Acceso</p>
                             </div>
-                            <p className="regia-text-body text-sm">
-                              Presenta este código QR en la entrada del evento para validar tu boleto
-                            </p>
+                            {ticket.isQrVisible ? (
+                              <p className="regia-text-body text-sm">
+                                Presenta este código QR en la entrada del evento para validar tu boleto
+                              </p>
+                            ) : (
+                              <p className="regia-text-body text-sm text-yellow-400">
+                                🔒 Tu código QR estará disponible próximamente. Recibirás un correo cuando esté listo.
+                              </p>
+                            )}
                           </div>
                           <div className="bg-white p-4 rounded-lg shadow-lg">
-                            <QRCodeSVG
-                              value={JSON.stringify({
-                                ticketId: ticket.id,
-                                qrHash: ticket.qrCode,
-                                timestamp: Date.now()
-                              })}
-                              size={180}
-                              level="H"
-                              includeMargin={true}
-                            />
-                            <p className="text-center text-xs text-gray-600 mt-2 font-mono">
-                              {ticket.ticketNumber}
-                            </p>
+                            {ticket.isQrVisible && ticket.qrCode ? (
+                              <>
+                                <QRCodeSVG
+                                  value={JSON.stringify({
+                                    ticketId: ticket.id,
+                                    qrHash: ticket.qrCode,
+                                    timestamp: Date.now()
+                                  })}
+                                  size={180}
+                                  level="H"
+                                  includeMargin={true}
+                                />
+                                <p className="text-center text-xs text-gray-600 mt-2 font-mono">
+                                  {ticket.ticketNumber}
+                                </p>
+                              </>
+                            ) : (
+                              <div className="flex flex-col items-center justify-center h-[180px] bg-gray-100 rounded-lg">
+                                <QrCode className="w-16 h-16 text-gray-400 mb-3" />
+                                <p className="text-sm text-gray-600 font-medium">QR Pendiente</p>
+                                <p className="text-xs text-gray-500 mt-1">#{ticket.ticketNumber}</p>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
