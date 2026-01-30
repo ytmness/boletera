@@ -232,6 +232,9 @@ model Ticket {
   
   status          TicketStatus  @default(VALID)
   
+  // Control de visibilidad del QR (para admin)
+  isQrVisible     Boolean       @default(false) // false = QR oculto para el cliente, true = visible
+  
   // Para mesas VIP - identificar asiento dentro de la mesa
   tableNumber     String?       // ej: "Mesa 5"
   seatNumber      Int?          // ej: 1, 2, 3, 4 (para mesa de 4)
