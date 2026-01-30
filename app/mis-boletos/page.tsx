@@ -61,10 +61,10 @@ export default function MisBoletosPage() {
         const sessionData = await sessionResponse.json();
         
         // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/0a40da1d-54df-4a70-9c53-c9c9e8cfa786',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/mis-boletos/page.tsx:59',message:'Session check result in mis-boletos',data:{hasUser:!!sessionData.user,userRole:sessionData.user?.role},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+        fetch('http://127.0.0.1:7242/ingest/0a40da1d-54df-4a70-9c53-c9c9e8cfa786',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/mis-boletos/page.tsx:59',message:'Session check result in mis-boletos',data:{hasSuccess:!!sessionData.success,hasData:!!sessionData.data,hasUser:!!sessionData.data?.user,userRole:sessionData.data?.user?.role},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
         // #endregion
         
-        if (!sessionData.user) {
+        if (!sessionData.success || !sessionData.data?.user) {
           // #region agent log
           fetch('http://127.0.0.1:7242/ingest/0a40da1d-54df-4a70-9c53-c9c9e8cfa786',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/mis-boletos/page.tsx:62',message:'Redirecting to login - no user',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
           // #endregion
@@ -73,14 +73,16 @@ export default function MisBoletosPage() {
           return;
         }
 
-        if (sessionData.user.role !== "CLIENTE") {
+        const currentUser = sessionData.data.user;
+
+        if (currentUser.role !== "CLIENTE") {
           toast.error("Esta página es solo para clientes");
           router.push("/");
           return;
         }
 
-        setUser(sessionData.user);
-        setUserRole(sessionData.user?.role || null);
+        setUser(currentUser);
+        setUserRole(currentUser?.role || null);
 
         // Cargar boletos
         const response = await fetch("/api/tickets/my-tickets");
