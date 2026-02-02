@@ -77,6 +77,14 @@ export async function POST(request: NextRequest) {
     // Obtener datos del cliente (email/phone) desde el body si están disponibles
     const { customer } = body;
 
+    console.log("📝 Preparando cargo Clip:", {
+      saleId,
+      totalAmount,
+      currency: sale.currency || "MXN",
+      description,
+      customer,
+    });
+
     // Crear cargo en Clip usando el token
     const chargeResponse = await createClipCharge({
       amount: totalAmount, // Monto en PESOS según documentación de Clip
@@ -86,6 +94,33 @@ export async function POST(request: NextRequest) {
       reference: saleId,
       customer,
     });
+
+    console.log("📥 RESPUESTA COMPLETA DE CLIP:", {
+      chargeId: chargeResponse.id,
+      status: chargeResponse.status,
+      paid: chargeResponse.paid,
+      amount: chargeResponse.amount,
+      currency: chargeResponse.currency,
+      pending_action: chargeResponse.pending_action,
+      raw_response: chargeResponse.raw, // RESPUESTA COMPLETA
+    });
+
+    // Verificar si Clip rechazó el pago
+    if (chargeResponse.raw) {
+      const rawData = chargeResponse.raw;
+      
+      // Logging detallado de campos críticos
+      console.log("🔍 DETALLES DEL RECHAZO/ESTADO:", {
+        status: rawData.status,
+        status_detail: rawData.status_detail,
+        decline_reason: rawData.decline_reason,
+        decline_code: rawData.decline_code,
+        error_message: rawData.error_message,
+        error_code: rawData.error_code,
+        response_code: rawData.response_code,
+        authorization_code: rawData.authorization_code,
+      });
+    }
 
     // Actualizar la venta con la referencia de pago
     await prisma.sale.update({
