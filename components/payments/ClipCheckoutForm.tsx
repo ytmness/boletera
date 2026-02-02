@@ -10,6 +10,8 @@ interface ClipCheckoutFormProps {
   saleId: string;
   amount: number; // Monto en centavos
   currency: string;
+  buyerEmail: string; // Email del comprador (REQUERIDO por Clip)
+  buyerPhone?: string; // Teléfono del comprador (OPCIONAL)
   onSuccess: (chargeId: string) => void;
   onError: (error: string) => void;
 }
@@ -28,6 +30,8 @@ export function ClipCheckoutForm({
   saleId,
   amount,
   currency,
+  buyerEmail,
+  buyerPhone,
   onSuccess,
   onError,
 }: ClipCheckoutFormProps) {
@@ -167,6 +171,10 @@ export function ClipCheckoutForm({
           saleId,
           token: cardTokenId,
           installments: installments > 1 ? installments : undefined,
+          customer: {
+            email: buyerEmail, // REQUERIDO por Clip
+            phone: buyerPhone, // OPCIONAL
+          },
         }),
       });
 

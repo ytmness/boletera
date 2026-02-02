@@ -13,6 +13,9 @@ interface Sale {
   currency: string;
   status: string;
   paymentStatus: string;
+  buyerName: string;
+  buyerEmail: string;
+  buyerPhone: string | null;
   event: {
     name: string;
     artist: string;
@@ -286,6 +289,8 @@ export default function CheckoutPage() {
               saleId={saleId}
               amount={totalAmount}
               currency={sale.currency}
+              buyerEmail={sale.buyerEmail}
+              buyerPhone={sale.buyerPhone || undefined}
               onSuccess={handlePaymentSuccess}
               onError={handlePaymentError}
             />
