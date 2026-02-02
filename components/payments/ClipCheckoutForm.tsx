@@ -294,6 +294,18 @@ export function ClipCheckoutForm({
         </div>
       )}
 
+      {/* Tip para el usuario */}
+      <div className="mb-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg backdrop-blur-sm">
+        <div className="flex items-start">
+          <CreditCard className="w-4 h-4 text-blue-400 mr-2 mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="text-xs text-blue-300">
+              💡 <strong>Tip:</strong> Si el número de tarjeta no se valida al escribir, intenta <strong>copiarlo y pegarlo</strong> directamente en el campo.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Formulario con el elemento de Clip */}
       <form id="payment-form" onSubmit={handleSubmit}>
         {/* Contenedor donde se montará el formulario de Clip */}
