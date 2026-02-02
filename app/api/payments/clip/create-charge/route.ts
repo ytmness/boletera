@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
     const description = `${sale.event.name} - ${itemsDescription}`;
 
     // Obtener datos del cliente (email/phone) desde el body si están disponibles
-    const { installments, customer } = body;
+    const { customer } = body;
 
     // Crear cargo en Clip usando el token
     const chargeResponse = await createClipCharge({
@@ -85,7 +85,6 @@ export async function POST(request: NextRequest) {
       description,
       reference: saleId,
       customer,
-      installments,
     });
 
     // Actualizar la venta con la referencia de pago

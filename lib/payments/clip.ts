@@ -260,10 +260,7 @@ export class ClipClient {
         payload.external_reference = params.reference;
       }
 
-      // Agregar installments para MSI si está presente
-      if (params.installments && params.installments > 1) {
-        payload.installments = params.installments;
-      }
+      // NO agregar installments - causaba errores en el SDK de Clip
 
       console.log("Clip API Create Charge Request:", {
         url,

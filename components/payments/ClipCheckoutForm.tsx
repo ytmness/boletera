@@ -99,7 +99,7 @@ export function ClipCheckoutForm({
         locale: "es",
         paymentAmount: amount / 100, // Convertir de centavos a pesos
         terms: {
-          enabled: amount >= 30000, // Habilitar MSI solo si el monto es >= $300 MXN
+          enabled: false, // Desactivar MSI para evitar errores del SDK
         },
       });
 
@@ -148,17 +148,6 @@ export function ClipCheckoutForm({
 
       console.log("✅ Card Token obtenido:", cardTokenId.substring(0, 10) + "...");
 
-      // Obtener installments si está habilitado MSI
-      let installments = 1;
-      try {
-        if (amount >= 30000) {
-          installments = await cardElementRef.current.installments();
-          console.log("📊 Installments seleccionados:", installments);
-        }
-      } catch (e) {
-        console.log("ℹ️ No se obtuvieron installments (puede que no apliquen)");
-      }
-
       console.log("🔄 Enviando pago al servidor...");
 
       // Enviar el token al backend para crear el cargo
@@ -170,7 +159,6 @@ export function ClipCheckoutForm({
         body: JSON.stringify({
           saleId,
           token: cardTokenId,
-          installments: installments > 1 ? installments : undefined,
           customer: {
             email: buyerEmail, // REQUERIDO por Clip
             phone: buyerPhone, // OPCIONAL
