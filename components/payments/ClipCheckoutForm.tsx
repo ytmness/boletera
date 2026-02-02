@@ -188,7 +188,12 @@ export function ClipCheckoutForm({
         throw new Error("Respuesta inválida del servidor");
       }
 
-      console.log("✅ Pago procesado exitosamente:", data.data);
+      console.log("📋 Respuesta de Clip:", data.data);
+
+      // Verificar si el pago fue rechazado
+      if (data.data.paid === false || data.data.status === "rejected" || data.data.status === "declined") {
+        throw new Error("Tu pago fue rechazado. Verifica los datos de tu tarjeta e intenta de nuevo.");
+      }
 
       // Verificar si requiere 3DS
       if (data.data.status === "pending" && data.data.pending_action?.url) {
@@ -197,8 +202,13 @@ export function ClipCheckoutForm({
         toast.info("Requiere validación 3DS (próximamente)");
       }
 
+      // Verificar que el pago fue aprobado
+      if (!data.data.paid && data.data.status !== "approved") {
+        throw new Error("El pago no pudo ser procesado. Por favor intenta de nuevo.");
+      }
+
       // Pago procesado exitosamente
-      toast.success("¡Pago procesado exitosamente!");
+      toast.success("¡Pago aprobado exitosamente!");
       onSuccess(data.data.chargeId);
     } catch (err: any) {
       console.error("❌ Error al procesar el pago:", err);
