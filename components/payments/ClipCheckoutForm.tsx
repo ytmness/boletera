@@ -187,7 +187,7 @@ export function ClipCheckoutForm({
       if (data.data.status === "pending" && data.data.pending_action?.url) {
         console.log("🔐 Requiere autenticación 3DS");
         // TODO: Implementar modal de 3DS si es necesario
-        toast.info("Requiere validación 3DS (próximamente)");
+        // NO mostrar toast aquí, manejar en el flujo principal
       }
 
       // Verificar que el pago fue aprobado
@@ -196,34 +196,35 @@ export function ClipCheckoutForm({
       }
 
       // Pago procesado exitosamente
-      toast.success("¡Pago aprobado exitosamente!");
+      // NO mostrar toast aquí para evitar duplicados
       onSuccess(data.data.chargeId);
     } catch (err: any) {
       console.error("❌ Error al procesar el pago:", err);
 
-      // Manejar errores específicos del SDK de Clip
+      // Determinar el mensaje de error apropiado
+      let errorMessage = "Error al procesar el pago";
+      
       if (err.code) {
         switch (err.code) {
           case "CL2200":
           case "CL2290":
-            setError(`Error de validación: ${err.message}`);
-            toast.error(`Error de validación: ${err.message}`);
+            errorMessage = `Error de validación: ${err.message}`;
             break;
           case "AI1300":
-            setError("Error de conexión. Por favor intenta de nuevo.");
-            toast.error("Error de conexión");
+            errorMessage = "Error de conexión. Por favor intenta de nuevo.";
             break;
           default:
-            setError(err.message || "Error al procesar el pago");
-            toast.error(err.message || "Error al procesar el pago");
+            errorMessage = err.message || "Error al procesar el pago";
         }
       } else {
-        const errorMessage = err.message || "Error al procesar el pago";
-        setError(errorMessage);
-        toast.error(errorMessage);
+        errorMessage = err.message || "Error al procesar el pago";
       }
 
-      onError(err.message || "Error al procesar el pago");
+      // Mostrar error solo UNA vez (en el componente)
+      setError(errorMessage);
+      // NO llamar a toast.error aquí para evitar duplicados
+      // Dejar que el componente padre lo maneje a través de onError
+      onError(errorMessage);
     } finally {
       setIsProcessing(false);
     }
