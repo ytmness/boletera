@@ -129,6 +129,24 @@ export default function HomePage() {
   const [user, setUser] = useState<any>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const mobileVideoRef = useRef<HTMLVideoElement>(null);
+
+  // Video móvil - autoplay estilo Somnus (simple iOS)
+  useEffect(() => {
+    const v = mobileVideoRef.current;
+    if (!v) return;
+
+    const tryPlay = () => {
+      v.muted = true;
+      v.playsInline = true;
+      v.play().catch(() => {});
+    };
+
+    v.addEventListener("loadeddata", tryPlay, { once: true });
+    tryPlay();
+
+    return () => v.removeEventListener("loadeddata", tryPlay);
+  }, []);
 
   // Reproducción automática agresiva con DEBUG
   useEffect(() => {
@@ -374,7 +392,24 @@ export default function HomePage() {
         {/* Video de fondo (solo desktop) / Imagen (móvil) */}
         {featuredEvent && (
           <div className="absolute inset-0 z-0">
-            {/* Video solo en desktop */}
+            {/* Video móvil (igual que Somnus: se renderiza en móvil) */}
+            <video
+              ref={mobileVideoRef}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+              poster="/assets/flyerfinal-10-1-25.jpg"
+              className="lg:hidden w-full h-full object-cover hero-video-no-controls"
+              style={{ objectPosition: "center 45%" }}
+              disablePictureInPicture
+              controlsList="nodownload"
+            >
+              <source src="/assets/hero-video.mp4" type="video/mp4" />
+            </video>
+
+            {/* Video desktop (se queda igual) */}
             <video
               ref={videoRef}
               autoPlay
@@ -393,10 +428,10 @@ export default function HomePage() {
               <source src="/assets/hero-video.mp4" type="video/mp4" />
             </video>
 
-            {/* Imagen estática en móvil */}
-            <div 
-              className="lg:hidden w-full h-full bg-cover bg-center"
-              style={{ backgroundImage: 'url(/assets/flyerfinal-10-1-25.jpg)' }}
+            {/* Fallback imagen por si el video no carga en móvil */}
+            <div
+              className="absolute inset-0 -z-[1] lg:hidden bg-cover bg-center"
+              style={{ backgroundImage: "url(/assets/flyerfinal-10-1-25.jpg)" }}
             />
             {/* Overlay oscuro con gradiente - más suave para ver el video */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/80" />
