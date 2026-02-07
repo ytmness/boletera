@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 import { PatriotasTablesMap } from "@/components/eventos/PatriotasTablesMap";
 import { IndividualTable, VIP_TABLES_162, NON_VIP_SECTIONS_162 } from "@/lib/patriotas-tables-162";
@@ -950,6 +951,21 @@ export default function EventMesasPage() {
                   <a href="/#contacto" className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors">
                     Contacto
                   </a>
+                </li>
+                <li>
+                  <Link href="/terminos" className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors">
+                    Términos y Condiciones
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/terminos#reembolsos" className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors">
+                    Política de Reembolsos
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/terminos#faq" className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors">
+                    Preguntas Frecuentes
+                  </Link>
                 </li>
               </ul>
             </div>
