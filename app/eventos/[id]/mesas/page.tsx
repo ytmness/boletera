@@ -938,21 +938,6 @@ export default function EventMesasPage() {
               <h4 className="regia-title-secondary text-base mb-4">Enlaces</h4>
               <ul className="space-y-2">
                 <li>
-                  <a href="/#eventos" className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors">
-                    Eventos
-                  </a>
-                </li>
-                <li>
-                  <button onClick={() => router.push("/mis-boletos")} className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors text-left">
-                    Mis Boletos
-                  </button>
-                </li>
-                <li>
-                  <a href="/#contacto" className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors">
-                    Contacto
-                  </a>
-                </li>
-                <li>
                   <Link href="/terminos" className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors">
                     Términos y Condiciones
                   </Link>

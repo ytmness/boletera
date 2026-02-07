@@ -923,21 +923,6 @@ export default function HomePage() {
               <h4 className="regia-title-secondary text-base mb-4">Enlaces</h4>
               <ul className="space-y-2">
                 <li>
-                  <a href="#eventos" className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors">
-                    Eventos
-                  </a>
-                </li>
-                <li>
-                  <a href="#nosotros" className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors">
-                    Nosotros
-                  </a>
-                </li>
-                <li>
-                  <a href="#contacto" className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors">
-                    Contacto
-                  </a>
-                </li>
-                <li>
                   <Link href="/terminos" className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors">
                     Términos y Condiciones
                   </Link>
