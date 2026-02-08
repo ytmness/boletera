@@ -154,9 +154,9 @@ export function PatriotasTablesMap({
         </div>
       </div>
 
-      {/* Controles - más compactos en móvil */}
-      <div className="mb-3 sm:mb-4 flex items-center justify-between flex-wrap gap-2 sm:gap-4">
-        <div className="flex gap-1.5 sm:gap-2 flex-wrap">
+      {/* Controles */}
+      <div className="mb-4 flex items-center justify-between flex-wrap gap-4">
+        <div className="flex gap-2 flex-wrap">
           <Button
             size="sm"
             variant="outline"
@@ -209,9 +209,8 @@ export function PatriotasTablesMap({
           </Button>
         </div>
 
-        <div className="text-white/70 text-xs sm:text-sm">
-          <span className="hidden sm:inline">Usa los botones para hacer zoom | </span>
-          Actual: {(zoom * 100).toFixed(0)}%
+        <div className="text-white/70 text-sm">
+          Usa los botones para hacer zoom | Actual: {(zoom * 100).toFixed(0)}%
         </div>
       </div>
 
@@ -283,9 +282,13 @@ export function PatriotasTablesMap({
         </div>
       )}
 
-      {/* Mapa con imagen de fondo y overlay SVG - adaptado para móvil */}
+      {/* Mapa con imagen de fondo y overlay SVG */}
       <div 
-        className="relative bg-[#1a1a1a] rounded-xl border border-[#c4a905]/20 overflow-auto flex items-center justify-center touch-pan-y min-h-[360px] sm:min-h-[480px] lg:min-h-[600px] max-h-[75dvh] sm:max-h-[80dvh] lg:max-h-[800px]"
+        className="relative bg-[#1a1a1a] rounded-xl border border-[#c4a905]/20 overflow-auto flex items-center justify-center"
+        style={{ 
+          minHeight: "600px",
+          maxHeight: "800px",
+        }}
       >
         <div 
           style={{ 

@@ -166,9 +166,11 @@ export function FooterMockup({
       content: "Grupo Regia es tu plataforma de confianza para eventos en vivo. Ofrecemos una experiencia única de compra de boletos.",
     },
     quickLinks: [
-      { label: "Términos y Condiciones", href: "/terminos" },
-      { label: "Política de Reembolsos", href: "/terminos#reembolsos" },
-      { label: "Preguntas Frecuentes", href: "/terminos#faq" },
+      { label: "Eventos", href: "#eventos" },
+      { label: "Nosotros", href: "#nosotros" },
+      { label: "Contacto", href: "#contacto" },
+      { label: "Términos y Condiciones", href: "#terminos" },
+      { label: "Política de Privacidad", href: "#privacidad" },
     ],
     contact: {
       title: "Contacto",

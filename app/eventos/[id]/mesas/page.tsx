@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
 import { PatriotasTablesMap } from "@/components/eventos/PatriotasTablesMap";
 import { IndividualTable, VIP_TABLES_162, NON_VIP_SECTIONS_162 } from "@/lib/patriotas-tables-162";
@@ -938,19 +937,19 @@ export default function EventMesasPage() {
               <h4 className="regia-title-secondary text-base mb-4">Enlaces</h4>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/terminos" className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors">
-                    Términos y Condiciones
-                  </Link>
+                  <a href="/#eventos" className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors">
+                    Eventos
+                  </a>
                 </li>
                 <li>
-                  <Link href="/terminos#reembolsos" className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors">
-                    Política de Reembolsos
-                  </Link>
+                  <button onClick={() => router.push("/mis-boletos")} className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors text-left">
+                    Mis Boletos
+                  </button>
                 </li>
                 <li>
-                  <Link href="/terminos#faq" className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors">
-                    Preguntas Frecuentes
-                  </Link>
+                  <a href="/#contacto" className="regia-text-body text-sm hover:text-regia-gold-bright transition-colors">
+                    Contacto
+                  </a>
                 </li>
               </ul>
             </div>

@@ -283,6 +283,7 @@ export default function CheckoutPage() {
             <h2 className="text-2xl font-bold text-white mb-6">
               Información de pago
             </h2>
+
             <ClipCheckoutForm
               apiKey={clipApiKey}
               saleId={saleId}
