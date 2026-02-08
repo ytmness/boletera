@@ -180,11 +180,12 @@ export function ClipCheckoutForm({
 
       // Verificar si el pago fue rechazado
       if (data.data.paid === false || data.data.status === "rejected" || data.data.status === "declined") {
-        const reason = data.data.declineReason || data.data.decline_reason;
+        const reasonRaw = data.data.declineReason || data.data.decline_reason;
         const code = data.data.declineCode || data.data.decline_code;
+        const reason = typeof reasonRaw === "string" ? reasonRaw : (reasonRaw?.message || (reasonRaw ? JSON.stringify(reasonRaw) : null));
         let msg = "Tu pago fue rechazado. Verifica los datos de tu tarjeta e intenta de nuevo.";
         if (reason) msg += ` (${reason})`;
-        else if (code) msg += ` Código: ${code}`;
+        else if (code) msg += ` Código: ${typeof code === "string" ? code : String(code)}`;
         throw new Error(msg);
       }
 

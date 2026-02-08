@@ -218,6 +218,13 @@ export async function POST(request: NextRequest) {
     }
 
     const rawData = chargeResponse.raw || {};
+    // Extraer motivo como string (Clip puede devolver objetos)
+    const reasonRaw = rawData.decline_reason || rawData.status_detail || rawData.error_message;
+    let declineReason: string | null = null;
+    if (typeof reasonRaw === "string") declineReason = reasonRaw;
+    else if (reasonRaw && typeof reasonRaw === "object") declineReason = (reasonRaw as any).message || (reasonRaw as any).description || JSON.stringify(reasonRaw);
+    const codeRaw = rawData.decline_code || rawData.error_code;
+    const declineCode = typeof codeRaw === "string" ? codeRaw : (codeRaw != null ? String(codeRaw) : null);
     return NextResponse.json({
       success: true,
       data: {
@@ -225,9 +232,8 @@ export async function POST(request: NextRequest) {
         status: chargeResponse.status,
         paid: chargeResponse.paid,
         saleId,
-        // Motivos de rechazo de Clip (para mostrar al usuario)
-        declineReason: rawData.decline_reason || rawData.status_detail || rawData.error_message || null,
-        declineCode: rawData.decline_code || rawData.error_code || null,
+        declineReason,
+        declineCode,
       },
     });
   } catch (error) {

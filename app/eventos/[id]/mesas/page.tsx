@@ -109,44 +109,17 @@ export default function EventMesasPage() {
     return () => clearInterval(interval);
   }, [eventId]);
 
-  // Restaurar carrito desde localStorage al cargar (NO reinicia el tiempo)
+  // Timer del carrito: iniciar al agregar items (sin persistir en localStorage)
+  // La persistencia en localStorage causaba rechazos de Clip; timer solo en sesión activa
   useEffect(() => {
-    if (!eventId) return;
-    try {
-      const stored = localStorage.getItem(`boletera_cart_${eventId}`);
-      if (!stored) return;
-      const data = JSON.parse(stored);
-      if (!data.items || !Array.isArray(data.items)) return;
-      // Si expiró, limpiar y redirigir
-      const now = Date.now();
-      if (data.expiresAt && now > data.expiresAt) {
-        localStorage.removeItem(`boletera_cart_${eventId}`);
-        toast.error("Tu reserva ha expirado. Por favor selecciona de nuevo.");
-        router.replace(`/eventos/${eventId}/mesas`);
-        return;
-      }
-      setCartItems(data.items.map((i: any) => ({ ...i, addedAt: new Date(i.addedAt || Date.now()) })));
-      if (data.expiresAt) setCartExpiresAt(data.expiresAt);
-    } catch (e) {
-      console.warn("Error restaurando carrito:", e);
-    }
-  }, [eventId]);
-
-  // Guardar carrito en localStorage cuando cambie
-  useEffect(() => {
-    if (!eventId) return;
-    if (cartItems.length === 0) {
-      localStorage.removeItem(`boletera_cart_${eventId}`);
+    if (!eventId || cartItems.length === 0) {
       setCartExpiresAt(null);
       return;
     }
-    const payload = {
-      items: cartItems.map((i) => ({ ...i, addedAt: i.addedAt?.getTime?.() ?? Date.now() })),
-      expiresAt: cartExpiresAt ?? Date.now() + CART_EXPIRY_MS,
-    };
-    if (!cartExpiresAt) setCartExpiresAt(payload.expiresAt);
-    localStorage.setItem(`boletera_cart_${eventId}`, JSON.stringify(payload));
-  }, [eventId, cartItems, cartExpiresAt]);
+    if (!cartExpiresAt) {
+      setCartExpiresAt(Date.now() + CART_EXPIRY_MS);
+    }
+  }, [eventId, cartItems.length, cartExpiresAt]);
 
   // Timer: actualizar timeLeft cada segundo y redirigir si expira
   useEffect(() => {
@@ -160,7 +133,6 @@ export default function EventMesasPage() {
       if (remaining <= 0) {
         setCartItems([]);
         setCartExpiresAt(null);
-        localStorage.removeItem(`boletera_cart_${eventId}`);
         toast.error("Tu reserva ha expirado. Por favor selecciona de nuevo.");
         setShowCart(false);
         router.replace(`/eventos/${eventId}/mesas`);
