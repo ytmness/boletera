@@ -141,10 +141,10 @@ export async function POST(request: NextRequest) {
             where: { ticketTypeId: saleItem.ticketTypeId },
           });
 
-          // Crear cada ticket - sufijo único evita colisiones (Preferente A/B → mismo "PRE")
+          // Crear cada ticket (formato original que funcionaba en General, Preferente A, Mesas)
           for (let i = 0; i < ticketsToCreate; i++) {
             ticketCount += 1;
-            const ticketNumber = `${sale.event.name.substring(0, 3).toUpperCase()}-${ticketType.name.substring(0, 3).toUpperCase()}-${String(ticketCount).padStart(6, "0")}-${crypto.randomUUID().substring(0, 8)}`;
+            const ticketNumber = `${sale.event.name.substring(0, 3).toUpperCase()}-${ticketType.name.substring(0, 3).toUpperCase()}-${String(ticketCount).padStart(6, "0")}`;
 
             // Crear ticket primero para obtener el ID
             const ticket = await tx.ticket.create({
