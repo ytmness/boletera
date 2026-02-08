@@ -42,11 +42,6 @@ export default function EventMesasPage() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
-  const [cartExpiresAt, setCartExpiresAt] = useState<number | null>(null); // timestamp en ms
-  const [timeLeft, setTimeLeft] = useState<number | null>(null); // segundos restantes
-
-  const CART_STORAGE_KEY = `boletera_cart_${eventId}`;
-  const CART_EXPIRY_MS = 10 * 60 * 1000; // 10 minutos
 
   // Función para cargar mesas y secciones desde la BD
   const loadTables = async () => {
@@ -108,40 +103,6 @@ export default function EventMesasPage() {
 
     return () => clearInterval(interval);
   }, [eventId]);
-
-  // Timer del carrito: iniciar al agregar items (sin persistir en localStorage)
-  // La persistencia en localStorage causaba rechazos de Clip; timer solo en sesión activa
-  useEffect(() => {
-    if (!eventId || cartItems.length === 0) {
-      setCartExpiresAt(null);
-      return;
-    }
-    if (!cartExpiresAt) {
-      setCartExpiresAt(Date.now() + CART_EXPIRY_MS);
-    }
-  }, [eventId, cartItems.length, cartExpiresAt]);
-
-  // Timer: actualizar timeLeft cada segundo y redirigir si expira
-  useEffect(() => {
-    if (!cartExpiresAt || cartItems.length === 0) {
-      setTimeLeft(null);
-      return;
-    }
-    const tick = () => {
-      const remaining = Math.max(0, Math.floor((cartExpiresAt - Date.now()) / 1000));
-      setTimeLeft(remaining);
-      if (remaining <= 0) {
-        setCartItems([]);
-        setCartExpiresAt(null);
-        toast.error("Tu reserva ha expirado. Por favor selecciona de nuevo.");
-        setShowCart(false);
-        router.replace(`/eventos/${eventId}/mesas`);
-      }
-    };
-    tick();
-    const interval = setInterval(tick, 1000);
-    return () => clearInterval(interval);
-  }, [cartExpiresAt, cartItems.length, eventId]);
 
   // Cargar evento y mesas desde la BD
   useEffect(() => {
@@ -855,19 +816,6 @@ export default function EventMesasPage() {
                       </div>
                     ))}
                   </div>
-
-                  {/* Timer 10 minutos - NO se reinicia al recargar */}
-                  {timeLeft !== null && (
-                    <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 mb-4">
-                      <div className="flex items-center justify-between">
-                        <span className="text-amber-400 text-sm font-medium">Tiempo restante para completar:</span>
-                        <span className={`font-mono font-bold text-lg ${timeLeft <= 60 ? "text-red-400" : "text-amber-400"}`}>
-                          {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, "0")}
-                        </span>
-                      </div>
-                      <p className="text-amber-400/70 text-xs mt-1">Tu reserva expira en {Math.floor(timeLeft / 60)} min. Completa el pago antes.</p>
-                    </div>
-                  )}
 
                   {/* Resumen */}
                   <div className="bg-regia-cream/5 rounded-lg p-4 mb-6">
