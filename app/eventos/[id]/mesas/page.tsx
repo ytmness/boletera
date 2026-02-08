@@ -7,7 +7,7 @@ import Image from "next/image";
 import { PatriotasTablesMap } from "@/components/eventos/PatriotasTablesMap";
 import { IndividualTable, VIP_TABLES_162, NON_VIP_SECTIONS_162 } from "@/lib/patriotas-tables-162";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Trash2, ArrowLeft, MapPin, Users, CreditCard, Ticket, Info, X, Calendar, Music, LogIn, LogOut, User, Shield, Scan, Menu } from "lucide-react";
+import { ShoppingCart, Trash2, ArrowLeft, MapPin, Users, CreditCard, Ticket, Info, X, Calendar, Music, LogIn, LogOut, User, Shield, Scan } from "lucide-react";
 import { toast } from "sonner";
 
 interface Section {
@@ -39,14 +39,8 @@ export default function EventMesasPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [showCart, setShowCart] = useState(false);
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
-  const [cartExpiresAt, setCartExpiresAt] = useState<number | null>(null); // timestamp en ms
-  const [timeLeft, setTimeLeft] = useState<number | null>(null); // segundos restantes
-
-  const CART_STORAGE_KEY = `boletera_cart_${eventId}`;
-  const CART_EXPIRY_MS = 10 * 60 * 1000; // 10 minutos
 
   // Función para cargar mesas y secciones desde la BD
   const loadTables = async () => {
@@ -109,68 +103,6 @@ export default function EventMesasPage() {
     return () => clearInterval(interval);
   }, [eventId]);
 
-  // Restaurar carrito desde localStorage al cargar (NO reinicia el tiempo)
-  useEffect(() => {
-    if (!eventId) return;
-    try {
-      const stored = localStorage.getItem(`boletera_cart_${eventId}`);
-      if (!stored) return;
-      const data = JSON.parse(stored);
-      if (!data.items || !Array.isArray(data.items)) return;
-      // Si expiró, limpiar y redirigir
-      const now = Date.now();
-      if (data.expiresAt && now > data.expiresAt) {
-        localStorage.removeItem(`boletera_cart_${eventId}`);
-        toast.error("Tu reserva ha expirado. Por favor selecciona de nuevo.");
-        router.replace(`/eventos/${eventId}/mesas`);
-        return;
-      }
-      setCartItems(data.items.map((i: any) => ({ ...i, addedAt: new Date(i.addedAt || Date.now()) })));
-      if (data.expiresAt) setCartExpiresAt(data.expiresAt);
-    } catch (e) {
-      console.warn("Error restaurando carrito:", e);
-    }
-  }, [eventId]);
-
-  // Guardar carrito en localStorage cuando cambie
-  useEffect(() => {
-    if (!eventId) return;
-    if (cartItems.length === 0) {
-      localStorage.removeItem(`boletera_cart_${eventId}`);
-      setCartExpiresAt(null);
-      return;
-    }
-    const payload = {
-      items: cartItems.map((i) => ({ ...i, addedAt: i.addedAt?.getTime?.() ?? Date.now() })),
-      expiresAt: cartExpiresAt ?? Date.now() + CART_EXPIRY_MS,
-    };
-    if (!cartExpiresAt) setCartExpiresAt(payload.expiresAt);
-    localStorage.setItem(`boletera_cart_${eventId}`, JSON.stringify(payload));
-  }, [eventId, cartItems, cartExpiresAt]);
-
-  // Timer: actualizar timeLeft cada segundo y redirigir si expira
-  useEffect(() => {
-    if (!cartExpiresAt || cartItems.length === 0) {
-      setTimeLeft(null);
-      return;
-    }
-    const tick = () => {
-      const remaining = Math.max(0, Math.floor((cartExpiresAt - Date.now()) / 1000));
-      setTimeLeft(remaining);
-      if (remaining <= 0) {
-        setCartItems([]);
-        setCartExpiresAt(null);
-        localStorage.removeItem(`boletera_cart_${eventId}`);
-        toast.error("Tu reserva ha expirado. Por favor selecciona de nuevo.");
-        setShowCart(false);
-        router.replace(`/eventos/${eventId}/mesas`);
-      }
-    };
-    tick();
-    const interval = setInterval(tick, 1000);
-    return () => clearInterval(interval);
-  }, [cartExpiresAt, cartItems.length, eventId]);
-
   // Cargar evento y mesas desde la BD
   useEffect(() => {
     const loadEvent = async () => {
@@ -217,7 +149,7 @@ export default function EventMesasPage() {
       return;
     }
 
-    // Agregar al carrito (el timer se inicia en el save effect si es el primer item)
+    // Agregar al carrito
     setCartItems([...cartItems, { table, addedAt: new Date() }]);
     toast.success(`Mesa #${table.number} agregada al carrito`);
   };
@@ -493,7 +425,7 @@ export default function EventMesasPage() {
     <div className="min-h-screen flex flex-col regia-bg-main relative">
       {/* Header flotante personalizado - igual a la landing */}
       <header className="fixed top-0 left-0 right-0 z-30 px-4 sm:px-6 lg:px-12 py-4 sm:py-6 bg-regia-black/80 backdrop-blur-md border-b border-regia-gold-old/20">
-        {/* Versión móvil - Logo + carrito + menú hamburguesa */}
+        {/* Versión móvil */}
         <div className="w-full flex lg:hidden items-center justify-between">
           <Image
             src="/assets/logo-grupo-regia.png"
@@ -503,7 +435,7 @@ export default function EventMesasPage() {
             className="opacity-90 cursor-pointer"
             onClick={() => router.push("/")}
           />
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <button onClick={() => setShowCart(true)} className="relative text-regia-gold-old hover:text-regia-gold-bright transition-colors">
               <ShoppingCart className="w-6 h-6" />
               {cartItems.length > 0 && (
@@ -512,59 +444,11 @@ export default function EventMesasPage() {
                 </span>
               )}
             </button>
-            <button
-              onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="p-2 text-regia-cream/90 hover:text-regia-gold-bright transition-colors"
-              aria-label={showMobileMenu ? "Cerrar menú" : "Abrir menú"}
-            >
-              {showMobileMenu ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            <button onClick={() => router.push("/login")} className="text-regia-gold-old hover:text-regia-gold-bright transition-colors">
+              <LogIn className="w-6 h-6" />
             </button>
           </div>
         </div>
-
-        {/* Menú desplegable móvil */}
-        {showMobileMenu && (
-          <div className="lg:hidden absolute top-full left-0 right-0 mt-0 bg-regia-black/98 backdrop-blur-md border-b border-regia-gold-old/20 shadow-xl z-40">
-            <nav className="flex flex-col py-4 px-4 space-y-1">
-              <a href="/#eventos" onClick={() => setShowMobileMenu(false)} className="flex items-center gap-3 py-3 px-4 text-regia-cream/90 hover:text-regia-gold-bright hover:bg-regia-gold-old/10 rounded-lg transition-colors">
-                <Calendar className="w-5 h-5" />
-                <span>Eventos</span>
-              </a>
-              <button onClick={() => { router.push("/mis-boletos"); setShowMobileMenu(false); }} className="flex items-center gap-3 py-3 px-4 text-regia-cream/90 hover:text-regia-gold-bright hover:bg-regia-gold-old/10 rounded-lg transition-colors text-left w-full">
-                <Music className="w-5 h-5" />
-                <span>Mis Boletos</span>
-              </button>
-              <button onClick={() => { setShowCart(true); setShowMobileMenu(false); }} className="flex items-center gap-3 py-3 px-4 text-regia-cream/90 hover:text-regia-gold-bright hover:bg-regia-gold-old/10 rounded-lg transition-colors text-left w-full">
-                <ShoppingCart className="w-5 h-5" />
-                <span>Carrito {cartItems.length > 0 && `(${cartItems.length})`}</span>
-              </button>
-              {userRole === "ADMIN" && (
-                <button onClick={() => { router.push("/admin"); setShowMobileMenu(false); }} className="flex items-center gap-3 py-3 px-4 text-regia-cream/90 hover:text-regia-gold-bright hover:bg-regia-gold-old/10 rounded-lg transition-colors text-left w-full">
-                  <Shield className="w-5 h-5" />
-                  <span>Admin</span>
-                </button>
-              )}
-              {(userRole === "ACCESOS" || userRole === "ADMIN") && (
-                <button onClick={() => { router.push("/accesos"); setShowMobileMenu(false); }} className="flex items-center gap-3 py-3 px-4 text-regia-cream/90 hover:text-regia-gold-bright hover:bg-regia-gold-old/10 rounded-lg transition-colors text-left w-full">
-                  <Scan className="w-5 h-5" />
-                  <span>Accesos</span>
-                </button>
-              )}
-              <div className="border-t border-regia-gold-old/20 my-2" />
-              {user ? (
-                <button onClick={() => { handleLogout(); setShowMobileMenu(false); }} className="flex items-center gap-3 py-3 px-4 text-regia-cream/90 hover:text-regia-gold-bright hover:bg-regia-gold-old/10 rounded-lg transition-colors text-left w-full">
-                  <LogOut className="w-5 h-5" />
-                  <span>Cerrar Sesión</span>
-                </button>
-              ) : (
-                <button onClick={() => { router.push("/login"); setShowMobileMenu(false); }} className="flex items-center gap-3 py-3 px-4 text-regia-cream/90 hover:text-regia-gold-bright hover:bg-regia-gold-old/10 rounded-lg transition-colors text-left w-full">
-                  <LogIn className="w-5 h-5" />
-                  <span>Iniciar Sesión</span>
-                </button>
-              )}
-            </nav>
-          </div>
-        )}
 
         {/* Versión desktop */}
         <div className="w-full hidden lg:flex items-center justify-between">
@@ -794,20 +678,13 @@ export default function EventMesasPage() {
           </div>
         </div>
 
-        {/* Panel de carrito lateral - adaptable a móvil con zoom */}
+        {/* Panel de carrito lateral */}
         {showCart && (
-          <>
-            {/* Backdrop en móvil - tap para cerrar */}
-            <div 
-              className="fixed inset-0 bg-black/60 z-[49] md:hidden" 
-              onClick={() => setShowCart(false)}
-              aria-hidden="true"
-            />
-            <div className="fixed top-0 right-0 bottom-0 w-full max-w-[min(100vw,400px)] md:w-96 md:max-w-none bg-regia-black border-l border-regia-gold-old/20 shadow-2xl z-50 flex flex-col max-h-[100dvh] overflow-hidden">
-            <div className="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6 min-h-0">
+          <div className="fixed top-0 right-0 h-full w-full md:w-96 bg-regia-black border-l border-regia-gold-old/20 shadow-2xl z-50 overflow-y-auto">
+            <div className="p-6">
               {/* Header del carrito */}
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl sm:text-2xl font-bold text-regia-cream">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-regia-cream">
                   Tu Carrito ({cartItems.length})
                 </h2>
                 <button
@@ -884,19 +761,6 @@ export default function EventMesasPage() {
                     ))}
                   </div>
 
-                  {/* Timer 10 minutos - NO se reinicia al recargar */}
-                  {timeLeft !== null && (
-                    <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 mb-4">
-                      <div className="flex items-center justify-between">
-                        <span className="text-amber-400 text-sm font-medium">Tiempo restante para completar:</span>
-                        <span className={`font-mono font-bold text-lg ${timeLeft <= 60 ? "text-red-400" : "text-amber-400"}`}>
-                          {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, "0")}
-                        </span>
-                      </div>
-                      <p className="text-amber-400/70 text-xs mt-1">Tu reserva expira en {Math.floor(timeLeft / 60)} min. Completa el pago antes.</p>
-                    </div>
-                  )}
-
                   {/* Resumen */}
                   <div className="bg-regia-cream/5 rounded-lg p-4 mb-6">
                     <div className="flex justify-between mb-2">
@@ -950,7 +814,6 @@ export default function EventMesasPage() {
               )}
             </div>
           </div>
-          </>
         )}
 
         {/* Modal de Checkout */}
