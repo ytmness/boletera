@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import crypto from "crypto";
 import { prisma } from "@/lib/db/prisma";
 import { createClipCharge } from "@/lib/payments/clip";
 import { generateQRHash } from "@/lib/services/qr-generator";
@@ -140,6 +139,9 @@ export async function POST(request: NextRequest) {
       // Usar transacción para crear tickets de forma segura
       await prisma.$transaction(
         async (tx) => {
+          // Contador GLOBAL de tickets - evita colisión Preferente A/B (mismo prefijo "PRE")
+          let globalCount = await tx.ticket.count();
+
           // Crear tickets a partir de los saleItems
           for (const saleItem of sale.saleItems) {
             const ticketType = saleItem.ticketType;
@@ -147,22 +149,15 @@ export async function POST(request: NextRequest) {
             // Determinar cuántos tickets crear
             let ticketsToCreate: number;
             if (saleItem.isTable) {
-              // Para mesas: crear tickets por asientos (seatsPerTable)
               ticketsToCreate = saleItem.seatsPerTable || 4;
             } else {
-              // Para boletos normales: crear según quantity
               ticketsToCreate = saleItem.quantity;
             }
 
-            // Obtener el count inicial UNA VEZ antes del loop
-            let ticketCount = await tx.ticket.count({
-              where: { ticketTypeId: saleItem.ticketTypeId },
-            });
-
-            // Crear cada ticket - sufijo UUID garantiza unicidad (evita colisión Preferente A/B)
+            // Crear cada ticket - contador global garantiza unicidad
             for (let i = 0; i < ticketsToCreate; i++) {
-              ticketCount += 1;
-              const ticketNumber = `${sale.event.name.substring(0, 3).toUpperCase()}-${ticketType.name.substring(0, 3).toUpperCase()}-${String(ticketCount).padStart(6, "0")}-${crypto.randomUUID().substring(0, 8)}`;
+              globalCount += 1;
+              const ticketNumber = `${sale.event.name.substring(0, 3).toUpperCase()}-${ticketType.name.substring(0, 3).toUpperCase()}-${String(globalCount).padStart(6, "0")}`;
 
               // Crear ticket primero para obtener el ID
               const ticket = await tx.ticket.create({
