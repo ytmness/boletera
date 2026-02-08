@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Clock, Music, Users, User, LogIn, Shield, Scan, Mail, Lock, Ticket } from "lucide-react";
+import { Calendar, MapPin, Clock, Music, Users, User, LogIn, Shield, Scan, Mail, Lock, Ticket, Menu, X } from "lucide-react";
 import { toast } from "sonner";
 
 export default function LoginPage() {
@@ -14,6 +14,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   // Cargar sesión del usuario y redirigir si ya está logueado
   useEffect(() => {
@@ -74,7 +75,7 @@ export default function LoginPage() {
     <div className="min-h-screen regia-bg-main overflow-x-hidden">
       {/* Header flotante con logos y navegación integrada */}
       <header className="absolute top-0 left-0 right-0 z-30 px-4 sm:px-6 lg:px-12 py-4 sm:py-6">
-        {/* Versión móvil - Logos simplificados */}
+        {/* Versión móvil - Logo + menú hamburguesa */}
         <div className="w-full flex lg:hidden items-center justify-between">
           <Image
             src="/assets/logo-grupo-regia.png"
@@ -85,12 +86,46 @@ export default function LoginPage() {
             onClick={() => router.push("/")}
           />
           <button
-            onClick={() => router.push("/")}
-            className="text-regia-gold-old hover:text-regia-gold-bright transition-colors"
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            className="p-2 text-regia-cream/90 hover:text-regia-gold-bright transition-colors"
+            aria-label={showMobileMenu ? "Cerrar menú" : "Abrir menú"}
           >
-            <LogIn className="w-6 h-6" />
+            {showMobileMenu ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
+
+        {/* Menú desplegable móvil */}
+        {showMobileMenu && (
+          <div className="lg:hidden absolute top-full left-0 right-0 mt-0 bg-regia-black/98 backdrop-blur-md border-b border-regia-gold-old/20 shadow-xl z-40">
+            <nav className="flex flex-col py-4 px-4 space-y-1">
+              <a href="/#eventos" onClick={() => setShowMobileMenu(false)} className="flex items-center gap-3 py-3 px-4 text-regia-cream/90 hover:text-regia-gold-bright hover:bg-regia-gold-old/10 rounded-lg transition-colors">
+                <Calendar className="w-5 h-5" />
+                <span>Eventos</span>
+              </a>
+              <button onClick={() => { router.push("/mis-boletos"); setShowMobileMenu(false); }} className="flex items-center gap-3 py-3 px-4 text-regia-cream/90 hover:text-regia-gold-bright hover:bg-regia-gold-old/10 rounded-lg transition-colors text-left w-full">
+                <Music className="w-5 h-5" />
+                <span>Mis Boletos</span>
+              </button>
+              {userRole === "ADMIN" && (
+                <button onClick={() => { router.push("/admin"); setShowMobileMenu(false); }} className="flex items-center gap-3 py-3 px-4 text-regia-cream/90 hover:text-regia-gold-bright hover:bg-regia-gold-old/10 rounded-lg transition-colors text-left w-full">
+                  <Shield className="w-5 h-5" />
+                  <span>Admin</span>
+                </button>
+              )}
+              {(userRole === "ACCESOS" || userRole === "ADMIN") && (
+                <button onClick={() => { router.push("/accesos"); setShowMobileMenu(false); }} className="flex items-center gap-3 py-3 px-4 text-regia-cream/90 hover:text-regia-gold-bright hover:bg-regia-gold-old/10 rounded-lg transition-colors text-left w-full">
+                  <Scan className="w-5 h-5" />
+                  <span>Accesos</span>
+                </button>
+              )}
+              <div className="border-t border-regia-gold-old/20 my-2" />
+              <button onClick={() => { router.push("/login"); setShowMobileMenu(false); }} className="flex items-center gap-3 py-3 px-4 text-regia-cream/90 hover:text-regia-gold-bright hover:bg-regia-gold-old/10 rounded-lg transition-colors text-left w-full">
+                <LogIn className="w-5 h-5" />
+                <span>Iniciar Sesión</span>
+              </button>
+            </nav>
+          </div>
+        )}
 
         {/* Versión desktop - Navegación completa */}
         <div className="w-full hidden lg:flex items-center justify-between">

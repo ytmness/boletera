@@ -6,7 +6,7 @@ import Image from "next/image";
 import { PatriotasTablesMap } from "@/components/eventos/PatriotasTablesMap";
 import { IndividualTable, VIP_TABLES_162, NON_VIP_SECTIONS_162 } from "@/lib/patriotas-tables-162";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Trash2, ArrowLeft, MapPin, Users, CreditCard, Ticket, Info, X, Calendar, Music, LogIn, LogOut, User, Shield, Scan } from "lucide-react";
+import { ShoppingCart, Trash2, ArrowLeft, MapPin, Users, CreditCard, Ticket, Info, X, Calendar, Music, LogIn, LogOut, User, Shield, Scan, Menu } from "lucide-react";
 import { toast } from "sonner";
 
 interface Section {
@@ -38,6 +38,7 @@ export default function EventMesasPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [showCart, setShowCart] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
 
@@ -424,7 +425,7 @@ export default function EventMesasPage() {
     <div className="min-h-screen flex flex-col regia-bg-main relative">
       {/* Header flotante personalizado - igual a la landing */}
       <header className="fixed top-0 left-0 right-0 z-30 px-4 sm:px-6 lg:px-12 py-4 sm:py-6 bg-regia-black/80 backdrop-blur-md border-b border-regia-gold-old/20">
-        {/* Versión móvil */}
+        {/* Versión móvil - Logo + carrito + menú hamburguesa */}
         <div className="w-full flex lg:hidden items-center justify-between">
           <Image
             src="/assets/logo-grupo-regia.png"
@@ -434,7 +435,7 @@ export default function EventMesasPage() {
             className="opacity-90 cursor-pointer"
             onClick={() => router.push("/")}
           />
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <button onClick={() => setShowCart(true)} className="relative text-regia-gold-old hover:text-regia-gold-bright transition-colors">
               <ShoppingCart className="w-6 h-6" />
               {cartItems.length > 0 && (
@@ -443,11 +444,59 @@ export default function EventMesasPage() {
                 </span>
               )}
             </button>
-            <button onClick={() => router.push("/login")} className="text-regia-gold-old hover:text-regia-gold-bright transition-colors">
-              <LogIn className="w-6 h-6" />
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="p-2 text-regia-cream/90 hover:text-regia-gold-bright transition-colors"
+              aria-label={showMobileMenu ? "Cerrar menú" : "Abrir menú"}
+            >
+              {showMobileMenu ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
+
+        {/* Menú desplegable móvil */}
+        {showMobileMenu && (
+          <div className="lg:hidden absolute top-full left-0 right-0 mt-0 bg-regia-black/98 backdrop-blur-md border-b border-regia-gold-old/20 shadow-xl z-40">
+            <nav className="flex flex-col py-4 px-4 space-y-1">
+              <a href="/#eventos" onClick={() => setShowMobileMenu(false)} className="flex items-center gap-3 py-3 px-4 text-regia-cream/90 hover:text-regia-gold-bright hover:bg-regia-gold-old/10 rounded-lg transition-colors">
+                <Calendar className="w-5 h-5" />
+                <span>Eventos</span>
+              </a>
+              <button onClick={() => { router.push("/mis-boletos"); setShowMobileMenu(false); }} className="flex items-center gap-3 py-3 px-4 text-regia-cream/90 hover:text-regia-gold-bright hover:bg-regia-gold-old/10 rounded-lg transition-colors text-left w-full">
+                <Music className="w-5 h-5" />
+                <span>Mis Boletos</span>
+              </button>
+              <button onClick={() => { setShowCart(true); setShowMobileMenu(false); }} className="flex items-center gap-3 py-3 px-4 text-regia-cream/90 hover:text-regia-gold-bright hover:bg-regia-gold-old/10 rounded-lg transition-colors text-left w-full">
+                <ShoppingCart className="w-5 h-5" />
+                <span>Carrito {cartItems.length > 0 && `(${cartItems.length})`}</span>
+              </button>
+              {userRole === "ADMIN" && (
+                <button onClick={() => { router.push("/admin"); setShowMobileMenu(false); }} className="flex items-center gap-3 py-3 px-4 text-regia-cream/90 hover:text-regia-gold-bright hover:bg-regia-gold-old/10 rounded-lg transition-colors text-left w-full">
+                  <Shield className="w-5 h-5" />
+                  <span>Admin</span>
+                </button>
+              )}
+              {(userRole === "ACCESOS" || userRole === "ADMIN") && (
+                <button onClick={() => { router.push("/accesos"); setShowMobileMenu(false); }} className="flex items-center gap-3 py-3 px-4 text-regia-cream/90 hover:text-regia-gold-bright hover:bg-regia-gold-old/10 rounded-lg transition-colors text-left w-full">
+                  <Scan className="w-5 h-5" />
+                  <span>Accesos</span>
+                </button>
+              )}
+              <div className="border-t border-regia-gold-old/20 my-2" />
+              {user ? (
+                <button onClick={() => { handleLogout(); setShowMobileMenu(false); }} className="flex items-center gap-3 py-3 px-4 text-regia-cream/90 hover:text-regia-gold-bright hover:bg-regia-gold-old/10 rounded-lg transition-colors text-left w-full">
+                  <LogOut className="w-5 h-5" />
+                  <span>Cerrar Sesión</span>
+                </button>
+              ) : (
+                <button onClick={() => { router.push("/login"); setShowMobileMenu(false); }} className="flex items-center gap-3 py-3 px-4 text-regia-cream/90 hover:text-regia-gold-bright hover:bg-regia-gold-old/10 rounded-lg transition-colors text-left w-full">
+                  <LogIn className="w-5 h-5" />
+                  <span>Iniciar Sesión</span>
+                </button>
+              )}
+            </nav>
+          </div>
+        )}
 
         {/* Versión desktop */}
         <div className="w-full hidden lg:flex items-center justify-between">
