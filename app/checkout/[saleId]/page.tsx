@@ -285,11 +285,10 @@ export default function CheckoutPage() {
             </h2>
             <div className="bg-amber-500/20 border border-amber-500/50 rounded-lg p-4 mb-6">
               <p className="text-amber-100 text-sm font-medium">
-                ⚠️ Importante: Para que tu pago funcione, desactiva el <strong>bloqueador de anuncios</strong> para esta página. 
-                O prueba en <strong>modo incógnito</strong> (Ctrl+Shift+N) sin extensiones.
+                ⚠️ Si tu pago es rechazado: desactiva el bloqueador de anuncios o prueba en modo incógnito.
               </p>
               <p className="text-amber-200/80 text-xs mt-2">
-                Clip requiere cargar scripts de verificación (Forter, Cybersource). Si están bloqueados, el pago será rechazado.
+                Si ya lo intentaste y sigue fallando, contacta a <a href="mailto:soporte@clip.mx" className="underline hover:text-amber-100">soporte@clip.mx</a> para verificar que Checkout Transparente esté habilitado en tu cuenta Clip.
               </p>
             </div>
 

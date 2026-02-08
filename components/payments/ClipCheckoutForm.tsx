@@ -185,7 +185,7 @@ export function ClipCheckoutForm({
         const reason = typeof reasonRaw === "string" ? reasonRaw : (reasonRaw?.message || (reasonRaw ? JSON.stringify(reasonRaw) : null));
         let msg = "Tu pago fue rechazado.";
         if (reason === "Rejected" || reason === "rejected") {
-          msg += " Esto suele ocurrir cuando un bloqueador de anuncios bloquea los scripts de verificación. Solución: desactiva el bloqueador para este sitio o prueba en modo incógnito (Ctrl+Shift+N) sin extensiones.";
+          msg += " Si ya probaste en modo incógnito y con distintas tarjetas, es probable que tu cuenta Clip necesite verificación. Contacta a soporte@clip.mx para habilitar Checkout Transparente.";
         } else {
           msg += " Verifica los datos de tu tarjeta e intenta de nuevo.";
           if (reason) msg += ` (${reason})`;
