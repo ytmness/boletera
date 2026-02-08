@@ -62,9 +62,7 @@ export async function getSession(): Promise<SessionUser | null> {
       error,
     } = await supabase.auth.getSession();
 
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/0a40da1d-54df-4a70-9c53-c9c9e8cfa786',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/auth/supabase-auth.ts:42',message:'getSession - Supabase session check',data:{hasSession:!!session,hasError:!!error,hasUser:!!session?.user,userEmail:session?.user?.email},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-    // #endregion
+
 
     if (error || !session?.user) {
       return null;

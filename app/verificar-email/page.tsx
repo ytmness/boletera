@@ -72,10 +72,6 @@ function VerificarEmailContent() {
 
       toast.success("¡Código verificado exitosamente!");
 
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/0a40da1d-54df-4a70-9c53-c9c9e8cfa786',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/verificar-email/page.tsx:43',message:'Before redirect',data:{userRole:data.user?.role,hasSession:!!data.session},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-      // #endregion
-
       // Redirigir según el rol
       const redirectPath = data.user?.role === "ADMIN" ? "/admin" 
         : data.user?.role === "VENDEDOR" ? "/vendedor"
@@ -83,19 +79,10 @@ function VerificarEmailContent() {
         : data.user?.role === "CLIENTE" ? "/mis-boletos"
         : "/";
 
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/0a40da1d-54df-4a70-9c53-c9c9e8cfa786',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/verificar-email/page.tsx:52',message:'Redirecting',data:{redirectPath},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-      // #endregion
-
       // Esperar un momento para que las cookies se establezcan antes de redirigir
       await new Promise(resolve => setTimeout(resolve, 100));
       
       router.push(redirectPath);
-      
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/0a40da1d-54df-4a70-9c53-c9c9e8cfa786',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/verificar-email/page.tsx:58',message:'After router.push, before refresh',data:{redirectPath},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-      // #endregion
-      
       router.refresh();
     } catch (error: any) {
       toast.error(error.message);

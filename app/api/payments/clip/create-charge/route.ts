@@ -136,6 +136,16 @@ export async function POST(request: NextRequest) {
 
     // Si el pago fue aprobado inmediatamente, procesar los tickets
     if (chargeResponse.paid) {
+      // Idempotencia: si ya hay tickets (webhook pudo procesar primero), no duplicar
+      const existingTickets = await prisma.ticket.count({ where: { saleId } });
+      if (existingTickets > 0) {
+        console.log(`Sale ${saleId} ya tiene ${existingTickets} tickets, omitiendo creación`);
+        return NextResponse.json({
+          success: true,
+          data: { chargeId: chargeResponse.id, status: chargeResponse.status, paid: true, saleId },
+        });
+      }
+
       // Usar transacción para crear tickets de forma segura
       await prisma.$transaction(
         async (tx) => {
@@ -158,11 +168,10 @@ export async function POST(request: NextRequest) {
               where: { ticketTypeId: saleItem.ticketTypeId },
             });
 
-            // Crear cada ticket
+            // Crear cada ticket - incluir ticketTypeId para evitar colisiones (Preferente A/B → mismo "PRE")
             for (let i = 0; i < ticketsToCreate; i++) {
-              // Incrementar contador local
               ticketCount += 1;
-              const ticketNumber = `${sale.event.name.substring(0, 3).toUpperCase()}-${ticketType.name.substring(0, 3).toUpperCase()}-${String(ticketCount).padStart(6, "0")}`;
+              const ticketNumber = `${sale.event.name.substring(0, 3).toUpperCase()}-${ticketType.id.substring(0, 8)}-${String(ticketCount).padStart(6, "0")}`;
 
               // Crear ticket primero para obtener el ID
               const ticket = await tx.ticket.create({
