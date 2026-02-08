@@ -411,7 +411,7 @@ export default function HomePage() {
         )}
 
         {/* Header flotante con logos y navegación integrada */}
-        <header className="absolute top-0 left-0 right-0 z-50 px-3 sm:px-4 md:px-6 lg:px-12 py-2 sm:py-3 md:py-4 lg:py-6 lg:bg-transparent bg-regia-black/80 backdrop-blur-md border-b border-regia-gold-old/20 lg:border-0">
+        <header className="absolute top-0 left-0 right-0 z-50 px-3 sm:px-4 md:px-6 lg:px-12 py-2 sm:py-3 md:py-4 lg:py-6 bg-regia-black/80 backdrop-blur-md border-b border-regia-gold-old/20 lg:bg-transparent lg:backdrop-blur-none lg:border-0">
           {/* Versión móvil - Logo + menú hamburguesa */}
           <div className="w-full flex lg:hidden items-center justify-between">
             <Image
