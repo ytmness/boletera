@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { createClipCharge } from "@/lib/payments/clip";
 import { generateQRHash } from "@/lib/services/qr-generator";
+import { generateUniqueTicketNumber } from "@/lib/utils";
 
 export const dynamic = 'force-dynamic';
 
@@ -139,6 +140,12 @@ export async function POST(request: NextRequest) {
       // Usar transacción para crear tickets de forma segura
       await prisma.$transaction(
         async (tx) => {
+          // Idempotencia: si el webhook ya creó los tickets, no duplicar (check dentro de tx)
+          const existingTickets = await tx.ticket.count({ where: { saleId } });
+          if (existingTickets > 0) {
+            console.log(`[create-charge] Sale ${saleId} ya tiene ${existingTickets} tickets, omitiendo`);
+            return;
+          }
           // Crear tickets a partir de los saleItems
           for (const saleItem of sale.saleItems) {
             const ticketType = saleItem.ticketType;
@@ -162,7 +169,11 @@ export async function POST(request: NextRequest) {
             for (let i = 0; i < ticketsToCreate; i++) {
               // Incrementar contador local
               ticketCount += 1;
-              const ticketNumber = `${sale.event.name.substring(0, 3).toUpperCase()}-${ticketType.name.substring(0, 3).toUpperCase()}-${String(ticketCount).padStart(6, "0")}`;
+              const ticketNumber = generateUniqueTicketNumber(
+                sale.event.name,
+                ticketType.name,
+                ticketCount
+              );
 
               // Crear ticket primero para obtener el ID
               const ticket = await tx.ticket.create({

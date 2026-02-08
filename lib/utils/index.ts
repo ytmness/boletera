@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { randomBytes } from "crypto";
 
 /**
  * Combina clases de Tailwind CSS de manera eficiente
@@ -51,6 +52,22 @@ export function generateTicketNumber(eventId: string, sequenceNumber: number): s
   const eventPrefix = eventId.slice(0, 4).toUpperCase();
   const paddedNumber = String(sequenceNumber).padStart(6, "0");
   return `${eventPrefix}-${paddedNumber}`;
+}
+
+/**
+ * Genera un ticketNumber único para evitar colisiones en pagos concurrentes.
+ * Formato: EVENT-TYPE-COUNT-UNIQUE (ej: VIC-GEN-000001-A1B2C3)
+ */
+export function generateUniqueTicketNumber(
+  eventName: string,
+  ticketTypeName: string,
+  sequenceNumber: number
+): string {
+  const eventPrefix = eventName.substring(0, 3).toUpperCase();
+  const typePrefix = ticketTypeName.substring(0, 3).toUpperCase();
+  const padded = String(sequenceNumber).padStart(6, "0");
+  const unique = randomBytes(4).toString("hex").toUpperCase();
+  return `${eventPrefix}-${typePrefix}-${padded}-${unique}`;
 }
 
 /**
