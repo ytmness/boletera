@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
 import { prisma } from "@/lib/db/prisma";
 import { generateQRHash, generateQRPayload } from "@/lib/services/qr-generator";
-import crypto from "crypto";
 
 export const dynamic = 'force-dynamic';
 
@@ -108,13 +108,6 @@ export async function POST(request: NextRequest) {
 
     // Procesar según el estado del pago
     if (paymentStatus === "paid" || paymentStatus === "approved" || eventType === "payment.paid") {
-      // Idempotencia: si ya hay tickets (create-charge pudo procesar primero), no duplicar
-      const existingTickets = await prisma.ticket.count({ where: { saleId: sale.id } });
-      if (existingTickets > 0) {
-        console.log(`Sale ${sale.id} ya tiene ${existingTickets} tickets, omitiendo creación`);
-        return NextResponse.json({ success: true, message: "Already processed" });
-      }
-
       // PAGO APROBADO: Crear tickets y actualizar inventario
       await prisma.$transaction(
         async (tx) => {
@@ -148,10 +141,10 @@ export async function POST(request: NextRequest) {
             where: { ticketTypeId: saleItem.ticketTypeId },
           });
 
-          // Crear cada ticket - incluir ticketTypeId para evitar colisiones (Preferente A/B → mismo "PRE")
+          // Crear cada ticket - sufijo único evita colisiones (Preferente A/B → mismo "PRE")
           for (let i = 0; i < ticketsToCreate; i++) {
             ticketCount += 1;
-            const ticketNumber = `${sale.event.name.substring(0, 3).toUpperCase()}-${ticketType.id.substring(0, 8)}-${String(ticketCount).padStart(6, "0")}`;
+            const ticketNumber = `${sale.event.name.substring(0, 3).toUpperCase()}-${ticketType.name.substring(0, 3).toUpperCase()}-${String(ticketCount).padStart(6, "0")}-${crypto.randomUUID().substring(0, 8)}`;
 
             // Crear ticket primero para obtener el ID
             const ticket = await tx.ticket.create({
