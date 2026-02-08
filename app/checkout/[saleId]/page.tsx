@@ -283,15 +283,6 @@ export default function CheckoutPage() {
             <h2 className="text-2xl font-bold text-white mb-6">
               Información de pago
             </h2>
-            <div className="bg-amber-500/20 border border-amber-500/50 rounded-lg p-4 mb-6">
-              <p className="text-amber-100 text-sm font-medium">
-                ⚠️ Si tu pago es rechazado: desactiva el bloqueador de anuncios o prueba en modo incógnito.
-              </p>
-              <p className="text-amber-200/80 text-xs mt-2">
-                Si ya lo intentaste y sigue fallando, contacta a <a href="mailto:soporte@clip.mx" className="underline hover:text-amber-100">soporte@clip.mx</a> para verificar que Checkout Transparente esté habilitado en tu cuenta Clip.
-              </p>
-            </div>
-
             <ClipCheckoutForm
               apiKey={clipApiKey}
               saleId={saleId}

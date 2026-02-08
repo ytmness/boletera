@@ -180,18 +180,7 @@ export function ClipCheckoutForm({
 
       // Verificar si el pago fue rechazado
       if (data.data.paid === false || data.data.status === "rejected" || data.data.status === "declined") {
-        const reasonRaw = data.data.declineReason || data.data.decline_reason;
-        const code = data.data.declineCode || data.data.decline_code;
-        const reason = typeof reasonRaw === "string" ? reasonRaw : (reasonRaw?.message || (reasonRaw ? JSON.stringify(reasonRaw) : null));
-        let msg = "Tu pago fue rechazado.";
-        if (reason === "Rejected" || reason === "rejected") {
-          msg += " Si ya probaste en modo incógnito y con distintas tarjetas, es probable que tu cuenta Clip necesite verificación. Contacta a soporte@clip.mx para habilitar Checkout Transparente.";
-        } else {
-          msg += " Verifica los datos de tu tarjeta e intenta de nuevo.";
-          if (reason) msg += ` (${reason})`;
-          else if (code) msg += ` Código: ${typeof code === "string" ? code : String(code)}`;
-        }
-        throw new Error(msg);
+        throw new Error("Tu pago fue rechazado. Verifica los datos de tu tarjeta e intenta de nuevo.");
       }
 
       // Verificar si requiere 3DS
