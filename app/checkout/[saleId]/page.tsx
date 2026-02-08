@@ -283,9 +283,15 @@ export default function CheckoutPage() {
             <h2 className="text-2xl font-bold text-white mb-6">
               Información de pago
             </h2>
-            <p className="text-sm text-gray-400 mb-4">
-              Si tu pago es rechazado, desactiva el bloqueador de anuncios para esta página e intenta de nuevo.
-            </p>
+            <div className="bg-amber-500/20 border border-amber-500/50 rounded-lg p-4 mb-6">
+              <p className="text-amber-100 text-sm font-medium">
+                ⚠️ Importante: Para que tu pago funcione, desactiva el <strong>bloqueador de anuncios</strong> para esta página. 
+                O prueba en <strong>modo incógnito</strong> (Ctrl+Shift+N) sin extensiones.
+              </p>
+              <p className="text-amber-200/80 text-xs mt-2">
+                Clip requiere cargar scripts de verificación (Forter, Cybersource). Si están bloqueados, el pago será rechazado.
+              </p>
+            </div>
 
             <ClipCheckoutForm
               apiKey={clipApiKey}

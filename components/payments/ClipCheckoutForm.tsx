@@ -183,9 +183,14 @@ export function ClipCheckoutForm({
         const reasonRaw = data.data.declineReason || data.data.decline_reason;
         const code = data.data.declineCode || data.data.decline_code;
         const reason = typeof reasonRaw === "string" ? reasonRaw : (reasonRaw?.message || (reasonRaw ? JSON.stringify(reasonRaw) : null));
-        let msg = "Tu pago fue rechazado. Verifica los datos de tu tarjeta e intenta de nuevo.";
-        if (reason) msg += ` (${reason})`;
-        else if (code) msg += ` Código: ${typeof code === "string" ? code : String(code)}`;
+        let msg = "Tu pago fue rechazado.";
+        if (reason === "Rejected" || reason === "rejected") {
+          msg += " Esto suele ocurrir cuando un bloqueador de anuncios bloquea los scripts de verificación. Solución: desactiva el bloqueador para este sitio o prueba en modo incógnito (Ctrl+Shift+N) sin extensiones.";
+        } else {
+          msg += " Verifica los datos de tu tarjeta e intenta de nuevo.";
+          if (reason) msg += ` (${reason})`;
+          else if (code) msg += ` Código: ${typeof code === "string" ? code : String(code)}`;
+        }
         throw new Error(msg);
       }
 
