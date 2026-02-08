@@ -217,6 +217,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const rawData = chargeResponse.raw || {};
     return NextResponse.json({
       success: true,
       data: {
@@ -224,6 +225,9 @@ export async function POST(request: NextRequest) {
         status: chargeResponse.status,
         paid: chargeResponse.paid,
         saleId,
+        // Motivos de rechazo de Clip (para mostrar al usuario)
+        declineReason: rawData.decline_reason || rawData.status_detail || rawData.error_message || null,
+        declineCode: rawData.decline_code || rawData.error_code || null,
       },
     });
   } catch (error) {
